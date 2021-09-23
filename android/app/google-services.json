@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "707965562923",
+    "project_id": "virtual-closet-cs307",
+    "storage_bucket": "virtual-closet-cs307.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707965562923:android:ba5dda8631e061e57b7a6e",
+        "android_client_info": {
+          "package_name": "com.example.virtual_closet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707965562923-trsqstalvir2qivcr7viqvktftj6l727.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLyKWiAT7Btm6Cm48hS8kCi92TPqXblPY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "707965562923-trsqstalvir2qivcr7viqvktftj6l727.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "707965562923-q4mogl3pafr2a3bdtu705pp95v3u1h65.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.virtual.closet.cs370"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
