@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'camera_screen/camera_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //Ensure plugin services are initialized
+  final cameras = await availableCameras(); //Get list of available cameras
+  final firstCamera = cameras.first;
+  runApp(MyApp(firstCamera: firstCamera));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final firstCamera;
+  const MyApp({Key? key, required this.firstCamera}) : super(key: key);
 
   // This widget is the root of your application.
   @override
@@ -113,3 +121,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
