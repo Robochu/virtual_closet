@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'camera_screen/take_picture_screen.dart';
 import 'camera_screen/all_camera.dart';
+import 'package:weather/weather.dart';
 
 
 
@@ -156,8 +157,9 @@ class _LoginState extends State<Login> {
 class MyHomePage extends StatefulWidget {
   final camera;
   const MyHomePage({Key? key, required this.title, this.camera}) : super(key: key);
-
+  
   final String title;
+  
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -166,8 +168,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
-
-
+  String weatherText = '';
+  
   //list of widgets - TEMPORARY for initial display only
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -199,6 +201,27 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  // Method to call weather api and get current weather using lattitude and longitude or city name etc.
+  Future<void> getWeatherInfo() async 
+  {
+    // Get api weather key from website and use with api weather factory
+    String weatherAPIKey = "f7f16d98c61e6bf232846a3016491357";
+    WeatherFactory wf =  WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
+
+    // Use current lattitude and longitude to get current weather for current location or City name
+    double lat = 55.0111;
+    double lon = 15.0569;
+    String cityName = 'Kongens Lyngby';
+    Weather wll = await wf.currentWeatherByLocation(lat, lon); 
+    Weather city = await wf.currentWeatherByCityName(cityName);
+
+    // Change weather text to text from api weather call
+    setState(() 
+    {      
+      weatherText = city.weatherDescription!;
     });
   }
 
