@@ -9,14 +9,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized(); //Ensure plugin services are initialized
   final cameras = await availableCameras(); //Get list of available cameras
   final firstCamera = cameras.first;
-  runApp(MyApp(firstCamera: firstCamera));
+  runApp(MaterialApp(
+    home: MyApp(firstCamera: firstCamera),
+  ));
 }
 
 class MyApp extends StatelessWidget {
   final firstCamera;
   const MyApp({Key? key, this.firstCamera}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+
+// This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,9 +37,118 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(
-          title: 'Flutter Demo Home Page',
-          camera: firstCamera,),
+      home: Login(),
+    );
+  }
+}
+
+class Login extends StatefulWidget {
+  final camera;
+  const Login({Key? key, this.camera}) : super(key: key);
+
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+
+  TextEditingController usernameText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Virtual Closet'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(10),
+        child: ListView(
+          children: <Widget>[
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: Text(
+                'Virtual Closet',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 36),
+                )
+              ),
+        Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(10),
+          child: TextField(
+            controller: usernameText,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'User Name',
+            ),
+          ),
+        ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: passwordText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                ),
+                obscureText: true,
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                print("Open forgot password screen");
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.blue,
+              ),
+              child: Text('Forgot Password')
+            ),
+            Container(
+              height: 50,
+              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blue,
+                ),
+                child: Text('Login'),
+                onPressed: () {
+                  print("Login functionality here");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyHomePage(
+                      title: 'Virtual Closet Home',
+                    )),
+                  );
+                },
+              )
+            ),
+            Container(
+              child: Row(
+                children: <Widget>[
+                  Text('New User?'),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
+                    child: Text('Sign up',
+                    style: TextStyle(fontSize: 20),
+                    ),
+                    onPressed: () {
+                      print("Open sign up screen");
+                    }
+                  )
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              )
+            )
+          ]
+        )
+      )
     );
   }
 }
@@ -54,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
 
-  
+
   //list of widgets - TEMPORARY for initial display only
   static const TextStyle optionStyle =
   TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -127,12 +240,13 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         ],
         currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
     );
   }
 }
+
 
 
 
