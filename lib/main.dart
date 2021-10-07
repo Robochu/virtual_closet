@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'camera_screen/all_camera.dart';
+import 'package:virtual_closet/camera_screen/image_gallery.dart';
 import 'package:weather/weather.dart';
 
 void main() {
@@ -141,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String weatherText = '';
 
   //list of widgets - TEMPORARY for initial display only
+  //list of widgets - TEMPORARY for initial display only
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
@@ -152,8 +153,6 @@ class _MyHomePageState extends State<MyHomePage> {
       'Closet',
       style: optionStyle,
     ),
-
-
     Text(
       'Laundry',
       style: optionStyle,
@@ -200,38 +199,51 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _onButtonPressed(),
-        child: const Icon(Icons.add),
-        elevation: 2.0,
+      floatingActionButton: Container(
+        height: 75,
+        width: 75,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: () => _onButtonPressed(),
+            child: const Icon(Icons.add),
+          ),
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Container(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              IconButton(
+                tooltip: "Home",
+                  icon: Icon(Icons.home, size: 35),
+                  onPressed: () {
+                    _onItemTapped(0);
+                  }),
+              IconButton(
+                  tooltip: "Closet",
+                  icon: Icon(Icons.auto_awesome_mosaic, size: 35),
+                  onPressed: () {
+                    _onItemTapped(1);
+                  }),
+              SizedBox(width: 40), //placeholder for FAB
+              IconButton(
+                  tooltip: "Laundry",
+                  icon: Icon(Icons.auto_awesome, size: 35),
+                  onPressed: () {
+                    _onItemTapped(2);
+                  }),
+              IconButton(
+                  tooltip: "Account",
+                  icon: Icon(Icons.account_circle, size: 35),
+                  onPressed: () {
+                    _onItemTapped(3);
+                  }),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome_mosaic), //TODO: change icon
-            label: 'Closet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'Add an item',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome),
-            label: 'Laundry',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          )
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
@@ -242,7 +254,7 @@ class _MyHomePageState extends State<MyHomePage> {
         context: context,
         builder: (context) {
           return Container(
-            height: 150,
+            height: 120,
             color: Colors.white,
             child: Column(
               children: <Widget>[
@@ -250,14 +262,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   leading: const Icon(Icons.camera),
                   title: const Text('Camera'),
                   onTap: () => {
-                    CameraScreen().callScreen("camera"),
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ImageFromGalleryScreen('camera'))),
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.auto_awesome_mosaic),
                   title: const Text('Gallery'),
                   onTap: () => {
-                    CameraScreen().callScreen("gallery"),
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ImageFromGalleryScreen('gallery'))),
                   },
                 ),
               ],
@@ -266,5 +286,5 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  void _openScreen(String name) {}
+
 }

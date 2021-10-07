@@ -29,7 +29,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  camera:
+  image_picker: ^0.8.4+2
 
 
 
