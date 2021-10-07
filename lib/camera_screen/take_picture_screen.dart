@@ -1,12 +1,11 @@
 import 'package:virtual_closet/camera_screen/all_camera.dart';
 // A screen that allows users to take a picture using a given camera.
 
-class TakePictureScreen extends StatefulWidget {
+class TakePictureScreen extends StatefulWidget{
   const TakePictureScreen({
     Key? key,
     required this.camera,
-  }) : super(key: key);
-
+}) : super(key:key);
   final CameraDescription camera;
 
   @override
@@ -14,6 +13,7 @@ class TakePictureScreen extends StatefulWidget {
 }
 
 class TakePictureScreenState extends State<TakePictureScreen> {
+
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
 
@@ -78,6 +78,5 @@ class TakePictureScreenState extends State<TakePictureScreen> {
         child: const Icon(Icons.camera_alt),
       ),
     );
-    return Container();
   }
 }
