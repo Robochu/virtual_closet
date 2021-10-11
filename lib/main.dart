@@ -1,6 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/camera_screen/image_gallery.dart';
 import 'package:weather/weather.dart';
+
+import 'fire_auth.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -11,12 +15,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  @override
 // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Virtual Closet',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -33,7 +36,13 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController usernameText = TextEditingController();
+
+  Future<FirebaseApp> _initializeFirebase() async {
+    FirebaseApp firebaseApp = await Firebase.initializeApp();
+    return firebaseApp;
+  }
+
+  TextEditingController emailText = TextEditingController();
   TextEditingController passwordText = TextEditingController();
 
   @override
@@ -42,9 +51,25 @@ class _LoginState extends State<Login> {
         appBar: AppBar(
           title: Text('Virtual Closet'),
         ),
-        body: Padding(
+        body:
+        Padding(
             padding: EdgeInsets.all(10),
             child: ListView(children: <Widget>[
+              FutureBuilder(
+                future: _initializeFirebase(),
+                builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Column(
+                      children: [
+                        Text('Login'),
+                      ],
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
               Container(
                   alignment: Alignment.center,
                   padding: EdgeInsets.all(10),
@@ -59,10 +84,10 @@ class _LoginState extends State<Login> {
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
                 child: TextField(
-                  controller: usernameText,
+                  controller: emailText,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
-                    labelText: 'User Name',
+                    labelText: 'Email',
                   ),
                 ),
               ),
@@ -96,33 +121,54 @@ class _LoginState extends State<Login> {
                     child: Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyHomePage(
-                                  title: 'Virtual Closet Home',
-                                )),
-                      );
+                      Future<User?> user = Authentication.signInWithEmailPassword(email: emailText.text, password: passwordText.text, context: context);
+                      if (user != null) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  MyHomePage(
+                                    title: 'Virtual Closet Home',
+                                  )),
+                        );
+                      }
+                      else {
+                        print("Incorrect username and password");
+                      }
                     },
                   )),
               Container(
                   child: Row(
-                children: <Widget>[
-                  Text('New User?'),
-                  TextButton(
-                      style: TextButton.styleFrom(
-                        primary: Colors.blue,
-                      ),
-                      child: Text(
-                        'Sign up',
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        print("Open sign up screen");
-                      })
-                ],
-                mainAxisAlignment: MainAxisAlignment.center,
-              ))
+                    children: <Widget>[
+                      Text('New User?'),
+                      TextButton(
+                          style: TextButton.styleFrom(
+                            primary: Colors.blue,
+                          ),
+                          child: Text(
+                            'Sign up',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          onPressed: () {
+                            print("Open sign up screen");
+                            Future<User?> user = Authentication.registerWithEmailPassword(email: emailText.text, password: passwordText.text);
+                            if (user != null) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MyHomePage(
+                                          title: 'Virtual Closet Home',
+                                        )),
+                              );
+                            }
+                            else {
+                              print("Incorrect username and password");
+                            }
+                          })
+                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                  ))
             ])));
   }
 }
@@ -143,7 +189,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //list of widgets - TEMPORARY for initial display only
   //list of widgets - TEMPORARY for initial display only
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
       'Home',
@@ -175,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // Get api weather key from website and use with api weather factory
     String weatherAPIKey = "f7f16d98c61e6bf232846a3016491357";
     WeatherFactory wf =
-        WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
+    WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
 
     // Use current latitude and longitude to get current weather for current location or City name
     double lat = 55.0111;
@@ -217,7 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               IconButton(
-                tooltip: "Home",
+                  tooltip: "Home",
                   icon: Icon(Icons.home, size: 35),
                   onPressed: () {
                     _onItemTapped(0);
