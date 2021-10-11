@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/camera_screen/image_gallery.dart';
 import 'package:weather/weather.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'fire_auth.dart';
 
@@ -15,6 +17,7 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
 // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,20 @@ class MyApp extends StatelessWidget {
       home: Login(),
     );
   }
+}
+
+// Sending user notifications class
+class NotificationService {
+  // Singleton object
+  static final NotificationService _notificationService = NotificationService._internal();
+  factory NotificationService()
+  {
+    return _notificationService;
+  }
+  NotificationService._internal();
+
+  //FlutterLocalNotificationsPlugin initialize for IOS and Android
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 }
 
 class Login extends StatefulWidget {
@@ -185,6 +202,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
   String weatherText = '';
+  double currentLongitude = 0.0;
+  double currentLattitude = 0.0;
 
   //list of widgets - TEMPORARY for initial display only
   //list of widgets - TEMPORARY for initial display only
@@ -217,22 +236,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
-  Future<void> getWeatherInfo() async {
+  Future<void> getWeatherInfo() async
+  {
+    bool isServiceAvailable;
+    LocationPermission permissions;
+
     // Get api weather key from website and use with api weather factory
     String weatherAPIKey = "f7f16d98c61e6bf232846a3016491357";
     WeatherFactory wf =
-    WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
+        WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
 
-    // Use current latitude and longitude to get current weather for current location or City name
-    double lat = 55.0111;
-    double lon = 15.0569;
-    String cityName = 'Kongens Lyngby';
-    Weather wll = await wf.currentWeatherByLocation(lat, lon);
-    Weather city = await wf.currentWeatherByCityName(cityName);
+    // If app can use current location get current lattitude and longitude to get weather for current location
+    Position position = await Geolocator
+    .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+
+    // Set lattitude and longitude
+    currentLattitude = position.latitude;
+    currentLongitude = position.longitude;
+    Weather wlatlong = await wf.currentWeatherByLocation(currentLattitude, currentLongitude);
 
     // Change weather text to text from api weather call
-    setState(() {
-      weatherText = city.weatherDescription!;
+    setState(()
+    {
+      weatherText = wlatlong.toString();
     });
   }
 
