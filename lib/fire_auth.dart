@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'database.dart';
 
 class Authentication {
   static Future<User?> registerWithEmailPassword({
@@ -16,6 +17,12 @@ class Authentication {
       user = userCredential.user;
       await user?.reload();
       user = auth.currentUser;
+
+      //create a document for this user in database
+      if(user != null) {
+        await DatabaseService(user.uid).updateUserData(email);
+      }
+
     } on FirebaseAuthException catch(e) {
       if (e.code == 'weak-password') {
         print('This password is too weak');
