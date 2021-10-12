@@ -214,10 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Home',
       style: optionStyle,
     ),
-    Text(
-      'Closet',
-      style: optionStyle,
-    ),
+    Closet(),
     Text(
       'Laundry',
       style: optionStyle,
@@ -359,4 +356,42 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 
+}
+
+class Closet extends StatefulWidget {
+  const Closet({Key? key}) : super(key: key);
+
+  @override
+  State<Closet> createState() => _ClosetState();
+}
+
+class _ClosetState extends State<Closet> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: GridView.count(
+        // Create a grid with 2 columns. If you change the scrollDirection to
+        // horizontal, this produces 2 rows.
+        crossAxisCount: 2,
+        // Generate 100 widgets that display their index in the List.
+        children: List.generate(100, (index) {
+          return InkWell(
+            child: Card(
+              child: Center(
+                child: Text(
+                  'Item $index',
+                  style: Theme.of(context).textTheme.headline5,
+                ),
+              ),
+            ),
+            onTap: () => press(index),
+          );
+        }),
+      )
+    );
+  }
+
+  void press(int index) {
+
+  }
 }
