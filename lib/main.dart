@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'fire_auth.dart';
+import 'closet.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -352,10 +353,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Home',
       style: optionStyle,
     ),
-    Text(
-      'Closet',
-      style: optionStyle,
-    ),
+    Closet(),
     Text(
       'Laundry',
       style: optionStyle,
@@ -495,6 +493,4 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         });
   }
-
-
 }
