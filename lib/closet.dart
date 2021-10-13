@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'clothes.dart';
+
 class Closet extends StatefulWidget {
   const Closet({Key? key}) : super(key: key);
 
@@ -10,20 +12,18 @@ class Closet extends StatefulWidget {
 class _ClosetState extends State<Closet> {
   @override
   Widget build(BuildContext context) {
+    List<Clothing> clothes = Clothing.download();
     return Scaffold(
       body: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to
         // horizontal, this produces 2 rows.
         crossAxisCount: 2,
         // Generate 100 widgets that display their index in the List.
-        children: List.generate(100, (index) {
+        children: List.generate(clothes.length, (index) {
           return InkWell(
             child: Card(
-              child: Center(
-                child: Text(
-                  'Item $index',
-                  style: Theme.of(context).textTheme.headline5,
-                ),
+              child: Image (
+                image: NetworkImage(clothes[index].imagePath),
               ),
             ),
             onTap: () => press(context),
