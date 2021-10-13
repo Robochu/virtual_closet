@@ -35,7 +35,7 @@ class Authentication {
 
       //create a document for this user in database
       if(user != null) {
-        await DatabaseService(user.uid).updateUserData(name, email);
+        await DatabaseService(uid : user.uid).updateUserData(name, email);
       }
 
     } on FirebaseAuthException catch(e) {

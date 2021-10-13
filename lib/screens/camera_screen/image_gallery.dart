@@ -5,8 +5,10 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:provider/provider.dart';
+import 'package:virtual_closet/service/database.dart';
 import 'package:virtual_closet/clothes.dart';
+import 'package:virtual_closet/models/user.dart';
 
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;
@@ -33,6 +35,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<MyUser?>(context);
     var title;
     var source;
     if (type == 'camera') {
@@ -42,7 +45,13 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       title = "Image from Gallery";
       source = ImageSource.gallery;
     }
-
+    void up() async {
+      Clothing item = Clothing(user!.uid, _image.path, '', '', '', '');
+      Future<String?> location = item.upload();
+      await DatabaseService(uid: user.uid).updateUserCloset(item, location);
+      Navigator.pop(context);
+      print('\n\n\n\n');
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -89,13 +98,11 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
           ElevatedButton(
             // onPress: null = disabled button
             onPressed:  (_image == null) ? null : () => up(),
+
             child: const Text('Continue to details'),
            style: ElevatedButton.styleFrom(
              primary: Colors.blue,
            ),
-
-
-
           )
 
         ],
@@ -103,8 +110,5 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
     );
   }
 
-  void up() {
-    Clothing(_image.path, '', '', '', '').upload();
-    print('\n\n\n\n');
-  }
+
 }

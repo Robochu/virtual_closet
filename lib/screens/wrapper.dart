@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:virtual_closet/auth_screen.dart';
+import 'package:virtual_closet/screens/authentication/auth_screen.dart';
 
-import 'main.dart';
-import 'models/user.dart';
+import '../main.dart';
+import '../models/user.dart';
 
 class Wrapper extends StatelessWidget {
 

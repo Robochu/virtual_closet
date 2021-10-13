@@ -1,19 +1,42 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
-import 'clothes.dart';
+import 'package:provider/provider.dart';
+import '../../service/database.dart';
+import '../../clothes.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Closet extends StatefulWidget {
-  const Closet({Key? key}) : super(key: key);
+  final String uid;
+  const Closet({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<Closet> createState() => _ClosetState();
 }
 
 class _ClosetState extends State<Closet> {
-  List<Clothing> clothes = [];
 
+  Future<List<Clothing>> download() async {
+    List<Clothing> result = <Clothing>[];
+    await FirebaseStorage.instance.ref().child('clothes/${widget.uid}/').listAll().then((res) async {
+      for (var ref in res.items) {
+        await ref.getDownloadURL().then((link) async {
+          await ref.getMetadata().then((metadata) => {
+            result.add(Clothing(widget.uid,
+              link,
+              metadata.customMetadata!['category']!,
+              metadata.customMetadata!['sleeves']!,
+              metadata.customMetadata!['color']!,
+              metadata.customMetadata!['materials']!,
+            ))
+          });
+        });
+      }
+    });
+    return result;
+  }
+  List<Clothing> clothes = [];
   _ClosetState() {
-    Clothing.download().then((items) => {
+    download().then((items) => {
       setState(() => {
         clothes = items
       })
@@ -22,6 +45,17 @@ class _ClosetState extends State<Closet> {
 
   @override
   Widget build(BuildContext context) {
+    //final clothes = Provider.of<List<Clothing>?>(context) ?? [];
+
+    if(clothes == null || clothes.isEmpty) {
+      return const Center(
+        child: Text("Oops you don't have anything in here yet. "
+            "Click the plus button to add more items.",
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
     return Scaffold(
       body: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to
