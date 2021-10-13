@@ -141,19 +141,23 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       print("Login functionality here");
                       Future<User?> user = Authentication.signInWithEmailPassword(email: emailText.text, password: passwordText.text, context: context);
-                      if (user != null) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  MyHomePage(
-                                    title: 'Virtual Closet Home',
-                                  )),
-                        );
-                      }
-                      else {
-                        print("Incorrect username and password");
-                      }
+                      user.then((value) async {
+                        if (value?.email != null) {
+                          print(value?.email);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    MyHomePage(
+                                      title: 'Virtual Closet Home',
+                                      user: value!,
+                                    )),
+                          );
+                        }
+                        else {
+                          print("Null email; login failed");
+                        }
+                      });
                     },
                   )),
               Container(
@@ -168,22 +172,13 @@ class _LoginState extends State<Login> {
                             'Sign up',
                             style: TextStyle(fontSize: 20),
                           ),
-                          onPressed: () {
-                            print("Open sign up screen");
-                            Future<User?> user = Authentication.registerWithEmailPassword(email: emailText.text, password: passwordText.text);
-                            if (user != null) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        MyHomePage(
-                                          title: 'Virtual Closet Home',
-                                        )),
-                              );
-                            }
-                            else {
-                              print("Incorrect username and password");
-                            }
+                          onPressed: () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      SignUpPage()),
+                            );
                           })
                     ],
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -192,10 +187,153 @@ class _LoginState extends State<Login> {
   }
 }
 
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({Key? key}) : super(key: key);
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  TextEditingController nameText = TextEditingController();
+  TextEditingController emailText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+  TextEditingController confirmPasswordText = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Virtual Closet'),
+        ),
+        body:
+        Padding(
+            padding: EdgeInsets.all(10),
+            child: ListView(children: <Widget>[
+              /*FutureBuilder(
+                future: _initializeFirebase(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<FirebaseApp> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Column(
+                      children: [
+                        Text('Login'),
+                      ],
+                    );
+                  }
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),*/
+              Container(
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    'Virtual Closet',
+                    style: TextStyle(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 36),
+                  )),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: nameText,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Name',
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: emailText,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Email',
+                  ),
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: passwordText,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Password',
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.all(10),
+                child: TextField(
+                  controller: confirmPasswordText,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Password Again',
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              Container(
+                  height: 50,
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
+                    child: Text('Done'),
+                    onPressed: () {
+                      if ((nameText.text == null) || (nameText.text == "")) {
+                        print("Please enter a name");
+                      }
+                      else {
+                        if (passwordText.text == confirmPasswordText.text) {
+                          Future<User?> user = Authentication
+                              .registerWithEmailPassword(
+                              name: nameText.text,
+                              email: emailText.text,
+                              password: passwordText.text);
+                          user.then((value) async {
+                            if (value?.email != null) {
+                              print(value?.email);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        MyHomePage(
+                                          title: 'Virtual Closet Home',
+                                          user: value!,
+                                        )),
+                              );
+                            }
+                            else {
+                              print("Null email; sign up failed");
+                            }
+                          });
+                        }
+                        else {
+                          print("Passwords must match");
+                        }
+                      }
+                    },
+                  )),
+            ])));
+  }
+}
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.user}) : super(key: key);
 
   final String title;
+  final User user;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -268,7 +406,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: _widgetOptions.elementAt(_selectedIndex)
       ),
       floatingActionButton: Container(
         height: 75,
