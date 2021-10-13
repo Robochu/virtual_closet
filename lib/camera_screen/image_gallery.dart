@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'package:virtual_closet/clothes.dart';
+
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;
 
@@ -86,9 +88,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
           SizedBox(height:60),
           ElevatedButton(
             // onPress: null = disabled button
-            onPressed:  (_image == null) ? null : () => {
-
-            },
+            onPressed:  (_image == null) ? null : () => up(),
             child: const Text('Continue to details'),
            style: ElevatedButton.styleFrom(
              primary: Colors.blue,
@@ -101,5 +101,10 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
         ],
       ),
     );
+  }
+
+  void up() {
+    Clothing(_image.path, '', '', '', '').upload();
+    print('\n\n\n\n');
   }
 }

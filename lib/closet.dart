@@ -10,9 +10,18 @@ class Closet extends StatefulWidget {
 }
 
 class _ClosetState extends State<Closet> {
+  List<Clothing> clothes = [];
+
+  _ClosetState() {
+    Clothing.download().then((items) => {
+      setState(() => {
+        clothes = items
+      })
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Clothing> clothes = Clothing.download();
     return Scaffold(
       body: GridView.count(
         // Create a grid with 2 columns. If you change the scrollDirection to
