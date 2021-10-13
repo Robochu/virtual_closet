@@ -1,14 +1,28 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'database.dart';
+import 'package:virtual_closet/models/user.dart';
 
 class Authentication {
-  static Future<User?> registerWithEmailPassword({
+  static final FirebaseAuth auth = FirebaseAuth.instance;
+
+  static MyUser? _createUser(User? user) {
+    if(user != null) {
+      return MyUser(user.uid);
+    }
+    return null;
+  }
+
+  //create a stream to listen to authentication status changes
+  Stream<MyUser?> get user {
+    return auth.authStateChanges().map(_createUser);
+  }
+
+  static Future<MyUser?> registerWithEmailPassword({
     required String name,
     required String email,
     required String password,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
@@ -21,7 +35,7 @@ class Authentication {
 
       //create a document for this user in database
       if(user != null) {
-        await DatabaseService(user.uid).updateUserData(email);
+        await DatabaseService(user.uid).updateUserData(name, email);
       }
 
     } on FirebaseAuthException catch(e) {
@@ -35,15 +49,14 @@ class Authentication {
     } catch(e) {
       print(e);
     }
-    return user;
+    return _createUser(user);
   }
 
-  static Future<User?> signInWithEmailPassword({
+  static Future<MyUser?> signInWithEmailPassword({
     required String email,
     required String password,
     required BuildContext context,
   }) async {
-    FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(email: email, password: password);
@@ -57,6 +70,15 @@ class Authentication {
         return Future<Null>.value(null);
       }
     }
-    return user;
+    return _createUser(user);
+  }
+
+  Future signOut() async {
+    try {
+      return await auth.signOut();
+    } catch (e){
+      print(e);
+      return null;
+    }
   }
 }

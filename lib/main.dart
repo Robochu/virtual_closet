@@ -5,12 +5,16 @@ import 'package:virtual_closet/camera_screen/image_gallery.dart';
 import 'package:weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
+import 'package:virtual_closet/models/user.dart';
 import 'fire_auth.dart';
 import 'closet.dart';
 import 'clothes.dart';
+import 'package:provider/provider.dart';
+import 'wrapper.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(
     home: MyApp(),
   ));
@@ -23,43 +27,50 @@ class MyApp extends StatelessWidget {
 // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtual Closet',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Login(),
-    );
+    return StreamProvider<MyUser?>.value(
+        value: Authentication().user,
+        initialData: null,
+        child: MaterialApp(
+          title: 'Virtual Closet',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          home: Wrapper(),
+        ));
   }
 }
 
 // Sending user notifications class
 class NotificationService {
   // Singleton object
-  static final NotificationService _notificationService = NotificationService._internal();
-  factory NotificationService()
-  {
+  static final NotificationService _notificationService =
+      NotificationService._internal();
+
+  factory NotificationService() {
     return _notificationService;
   }
+
   NotificationService._internal();
 
   //FlutterLocalNotificationsPlugin initialize for IOS and Android
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 }
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  const Login({Key? key, required this.toggleView}) : super(key: key);
+  final Function toggleView;
 
   @override
   State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
-
+  /*
   Future<FirebaseApp> _initializeFirebase() async {
     FirebaseApp firebaseApp = await Firebase.initializeApp();
     return firebaseApp;
-  }
+  }*/
 
   TextEditingController emailText = TextEditingController();
   TextEditingController passwordText = TextEditingController();
@@ -70,24 +81,13 @@ class _LoginState extends State<Login> {
         appBar: AppBar(
           title: Text('Virtual Closet'),
         ),
-        body:
-        Padding(
+        body: Padding(
             padding: EdgeInsets.all(10),
             child: ListView(children: <Widget>[
-              FutureBuilder(
-                future: _initializeFirebase(),
-                builder: (BuildContext context, AsyncSnapshot<FirebaseApp> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return Column(
-                      children: [
-                        Text('Login'),
-                      ],
-                    );
-                  }
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
+              Column(
+                children: [
+                  Text('Login'),
+                ],
               ),
               Container(
                   alignment: Alignment.center,
@@ -140,8 +140,12 @@ class _LoginState extends State<Login> {
                     child: Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
-                      Future<User?> user = Authentication.signInWithEmailPassword(email: emailText.text, password: passwordText.text, context: context);
-                      user.then((value) async {
+                      Future<MyUser?> user =
+                          Authentication.signInWithEmailPassword(
+                              email: emailText.text,
+                              password: passwordText.text,
+                              context: context);
+                      /*user.then((value) async {
                         if (value?.email != null) {
                           print(value?.email);
                           Navigator.push(
@@ -157,38 +161,38 @@ class _LoginState extends State<Login> {
                         else {
                           print("Null email; login failed");
                         }
-                      });
+                      });*/
                     },
                   )),
               Container(
                   child: Row(
-                    children: <Widget>[
-                      Text('New User?'),
-                      TextButton(
-                          style: TextButton.styleFrom(
-                            primary: Colors.blue,
-                          ),
-                          child: Text(
-                            'Sign up',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          onPressed: () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      SignUpPage()),
-                            );
+                children: <Widget>[
+                  Text('New User?'),
+                  TextButton(
+                      style: TextButton.styleFrom(
+                        primary: Colors.blue,
+                      ),
+                      child: Text(
+                        'Sign up',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      onPressed: () => {
+                            widget.toggleView(),
+                            /*
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUpPage()),*/
                           })
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.center,
-                  ))
+                ],
+                mainAxisAlignment: MainAxisAlignment.center,
+              ))
             ])));
   }
 }
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({Key? key, required this.toggleView}) : super(key: key);
+  final Function toggleView;
 
   @override
   State<SignUpPage> createState() => _SignUpPageState();
@@ -206,11 +210,10 @@ class _SignUpPageState extends State<SignUpPage> {
         appBar: AppBar(
           title: Text('Virtual Closet'),
         ),
-        body:
-        Padding(
-            padding: EdgeInsets.all(10),
-            child: ListView(children: <Widget>[
-              /*FutureBuilder(
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: ListView(children: <Widget>[
+            /*FutureBuilder(
                 future: _initializeFirebase(),
                 builder: (BuildContext context,
                     AsyncSnapshot<FirebaseApp> snapshot) {
@@ -226,82 +229,81 @@ class _SignUpPageState extends State<SignUpPage> {
                   );
                 },
               ),*/
-              Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    'Virtual Closet',
-                    style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 36),
-                  )),
-              Container(
+            Container(
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(10),
-                child: TextField(
-                  controller: nameText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter Name',
-                  ),
+                child: Text(
+                  'Virtual Closet',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 36),
+                )),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: nameText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Name',
                 ),
               ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: TextField(
-                  controller: emailText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter Email',
-                  ),
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: emailText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Email',
                 ),
               ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: TextField(
-                  controller: passwordText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter Password',
-                  ),
-                  obscureText: true,
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: passwordText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Password',
                 ),
+                obscureText: true,
               ),
-              Container(
-                alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
-                child: TextField(
-                  controller: confirmPasswordText,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter Password Again',
-                  ),
-                  obscureText: true,
+            ),
+            Container(
+              alignment: Alignment.center,
+              padding: EdgeInsets.all(10),
+              child: TextField(
+                controller: confirmPasswordText,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Enter Password Again',
                 ),
+                obscureText: true,
               ),
-              Container(
-                  height: 50,
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
-                    ),
-                    child: Text('Done'),
-                    onPressed: () {
-                      if ((nameText.text == null) || (nameText.text == "")) {
-                        print("Please enter a name");
-                      }
-                      else {
-                        if (passwordText.text == confirmPasswordText.text) {
-                          Future<User?> user = Authentication
-                              .registerWithEmailPassword(
-                              name: nameText.text,
-                              email: emailText.text,
-                              password: passwordText.text);
-                          user.then((value) async {
+            ),
+            Container(
+                height: 50,
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                  ),
+                  child: Text('Done'),
+                  onPressed: () {
+                    if ((nameText.text == null) || (nameText.text == "")) {
+                      print("Please enter a name");
+                    } else {
+                      if (passwordText.text == confirmPasswordText.text) {
+                        Future<MyUser?> user =
+                            Authentication.registerWithEmailPassword(
+                                name: nameText.text,
+                                email: emailText.text,
+                                password: passwordText.text);
+                        /*user.then((value) async {
                             if (value?.email != null) {
                               print(value?.email);
                               Navigator.push(
@@ -317,23 +319,44 @@ class _SignUpPageState extends State<SignUpPage> {
                             else {
                               print("Null email; sign up failed");
                             }
-                          });
-                        }
-                        else {
-                          print("Passwords must match");
-                        }
+                          });*/
+                      } else {
+                        print("Passwords must match");
                       }
-                    },
-                  )),
-            ])));
+                    }
+                  },
+                )),
+            Container(
+                child: Row(
+              children: <Widget>[
+                Text('Have an account?'),
+                TextButton(
+                    style: TextButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
+                    child: Text(
+                      'Login here',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    onPressed: () => {
+                          widget.toggleView(),
+                          /*
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignUpPage()),*/
+                        })
+              ],
+              mainAxisAlignment: MainAxisAlignment.center,
+            ))
+          ]),
+        ));
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title, required this.user}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
-  final User user;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -348,7 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //list of widgets - TEMPORARY for initial display only
   //list of widgets - TEMPORARY for initial display only
   static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     Text(
       'Home',
@@ -373,8 +396,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
-  Future<void> getWeatherInfo() async
-  {
+  Future<void> getWeatherInfo() async {
     bool isServiceAvailable;
     LocationPermission permissions;
 
@@ -384,29 +406,40 @@ class _MyHomePageState extends State<MyHomePage> {
         WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
 
     // If app can use current location get current lattitude and longitude to get weather for current location
-    Position position = await Geolocator
-    .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
 
     // Set lattitude and longitude
     currentLattitude = position.latitude;
     currentLongitude = position.longitude;
-    Weather wlatlong = await wf.currentWeatherByLocation(currentLattitude, currentLongitude);
+    Weather wlatlong =
+        await wf.currentWeatherByLocation(currentLattitude, currentLongitude);
 
     // Change weather text to text from api weather call
-    setState(()
-    {
+    setState(() {
       weatherText = wlatlong.toString();
     });
   }
+
+  final Authentication _auth = Authentication();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text('TEMP logout'),
+            onPressed: () async {
+              await _auth.signOut();
+            },
+          ),
+        ],
       ),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex)
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
       floatingActionButton: Container(
         height: 75,
