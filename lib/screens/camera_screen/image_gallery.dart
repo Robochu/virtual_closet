@@ -47,8 +47,8 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
     }
     void up() async {
       Clothing item = Clothing(user!.uid, _image.path, '', '', '', '');
-      Future<String?> location = item.upload();
-      await DatabaseService(uid: user.uid).updateUserCloset(item, location);
+      item.upload();
+      await DatabaseService(uid: user.uid).updateUserCloset(item);
       Navigator.pop(context);
       print('\n\n\n\n');
     }

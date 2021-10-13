@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:path/path.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,13 +8,17 @@ import 'package:virtual_closet/service/database.dart';
 
 class Clothing {
   String? uid;
-  String imagePath;
+  String? path;
+  String? filename;
+  String? link;
   String category;
   String sleeves;
   String color;
   String materials;
 
-  Clothing(this.uid, this.imagePath, this.category, this.sleeves, this.color, this.materials);
+  Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials);
+
+  Clothing.usingLink(this.uid, this.link, this.category, this.sleeves, this.color, this.materials);
 /*
   Future<List<Clothing>> download() async {
     List<Clothing> result = <Clothing>[];
@@ -35,8 +40,8 @@ class Clothing {
     return result;
   }*/
 
-  Future<String?> upload() async {
-    File image = File(imagePath);
+  Future<void> upload() async {
+    File image = File(path!);
 
     // Create your custom metadata.
     SettableMetadata metadata = SettableMetadata(
@@ -47,18 +52,17 @@ class Clothing {
         'materials': materials,
       },
     );
+
     try {
       // Pass metadata to any file upload method e.g putFile.
-      UploadTask task = FirebaseStorage.instance.ref('clothes/$uid/').putFile(image, metadata);
-      return (await task).ref.getDownloadURL();
+      filename = basename(path!);
+      UploadTask task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putFile(image, metadata);
+      (await task).ref.getDownloadURL().then((link) => {
+        this.link = link
+      });
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
       print('If this ever gets printed, complain to Oleg.');
     }
-
   }
-}
-
-class ClothingToStorage {
-
 }

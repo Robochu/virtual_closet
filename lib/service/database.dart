@@ -18,7 +18,7 @@ class DatabaseService {
 
   }
 
-  Future updateUserCloset(Clothing item, Future<String?> location) async {
+  Future updateUserCloset(Clothing item) async {
     //DocumentReference closet = closetCollection.doc(uid);
     CollectionReference closet = usersCollection.doc(uid).collection('closet');
     return await closet.doc().set({
@@ -26,7 +26,7 @@ class DatabaseService {
       'sleeves': item.sleeves,
       'color': item.color,
       'material': item.materials,
-      'imageURL': await location
+      'imageURL': item.link,
     });
   }
 

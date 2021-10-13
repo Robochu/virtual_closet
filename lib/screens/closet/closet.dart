@@ -14,27 +14,8 @@ class Closet extends StatefulWidget {
 }
 
 class _ClosetState extends State<Closet> {
-
-  Future<List<Clothing>> download() async {
-    List<Clothing> result = <Clothing>[];
-    await FirebaseStorage.instance.ref().child('clothes/${widget.uid}/').listAll().then((res) async {
-      for (var ref in res.items) {
-        await ref.getDownloadURL().then((link) async {
-          await ref.getMetadata().then((metadata) => {
-            result.add(Clothing(widget.uid,
-              link,
-              metadata.customMetadata!['category']!,
-              metadata.customMetadata!['sleeves']!,
-              metadata.customMetadata!['color']!,
-              metadata.customMetadata!['materials']!,
-            ))
-          });
-        });
-      }
-    });
-    return result;
-  }
   List<Clothing> clothes = [];
+
   _ClosetState() {
     download().then((items) => {
       setState(() => {
@@ -43,11 +24,31 @@ class _ClosetState extends State<Closet> {
     });
   }
 
+  Future<List<Clothing>> download() async {
+    List<Clothing> result = <Clothing>[];
+    await FirebaseStorage.instance.ref().child('clothes/eqvoYX1qLAM4L2eJd9m34UDxSM82/').listAll().then((res) async {
+      for (var ref in res.items) {
+        await ref.getDownloadURL().then((link) async {
+          await ref.getMetadata().then((metadata) {
+            result.add(Clothing.usingLink(widget.uid,
+              link,
+              metadata.customMetadata!['category']!,
+              metadata.customMetadata!['sleeves']!,
+              metadata.customMetadata!['color']!,
+              metadata.customMetadata!['materials']!,
+            ));
+          });
+        });
+      }
+    });
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     //final clothes = Provider.of<List<Clothing>?>(context) ?? [];
 
-    if(clothes == null || clothes.isEmpty) {
+    if(clothes.isEmpty) {
       return const Center(
         child: Text("Oops you don't have anything in here yet. "
             "Click the plus button to add more items.",
@@ -66,36 +67,44 @@ class _ClosetState extends State<Closet> {
           return InkWell(
             child: Card(
               child: Image (
-                image: NetworkImage(clothes[index].imagePath),
+                image: NetworkImage(clothes[index].link!),
+                fit: BoxFit.cover,
               ),
             ),
-            onTap: () => press(context),
+            onTap: () => press(context, clothes[index]),
           );
         }),
       )
     );
   }
 
-  void press(BuildContext context) {
+  void press(BuildContext context, Clothing clothing) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const DetailPage(title: 'Placeholder'),
+        builder: (context) => DetailPage(title: 'Placeholder', clothing: clothing),
       ),
     );
   }
 }
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key, required this.title}) : super(key: key);
+  const DetailPage({Key? key, required this.title, required this.clothing}) : super(key: key);
 
   final String title;
+  final Clothing clothing;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
 }
 
 class _DetailPageState extends State<DetailPage> {
+  Clothing? clothing;
+
+  _DetailPageState() {
+    clothing = widget.clothing;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,29 +113,32 @@ class _DetailPageState extends State<DetailPage> {
       ),
       body: ListView(
         padding: const EdgeInsets.all(8),
-        children: const <Widget>[
-          Text(
+        children: <Widget>[
+          Image (
+            image: NetworkImage(widget.clothing.link!),
+          ),
+          const Text(
             'Category',
             style: TextStyle(
               fontSize: 20,
               color: Colors.grey
             ),
           ),
-          Text(
+          const Text(
             'Sleeve-type',
             style: TextStyle(
                 fontSize: 20,
                 color: Colors.grey
             ),
           ),
-          Text(
+          const Text(
             'Color',
             style: TextStyle(
                 fontSize: 20,
                 color: Colors.grey
             ),
           ),
-          Text(
+          const Text(
             'Materials',
             style: TextStyle(
                 fontSize: 20,
