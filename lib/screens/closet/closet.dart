@@ -31,6 +31,7 @@ class _ClosetState extends State<Closet> {
         await ref.getDownloadURL().then((link) async {
           await ref.getMetadata().then((metadata) {
             result.add(Clothing.usingLink(widget.uid,
+              ref.name,
               link,
               metadata.customMetadata!['category']!,
               metadata.customMetadata!['sleeves']!,
@@ -101,8 +102,10 @@ class DetailPage extends StatefulWidget {
 class _DetailPageState extends State<DetailPage> {
   Clothing? clothing;
 
-  _DetailPageState() {
-    clothing = widget.clothing;
+  @override
+  void initState() {
+    super.initState();
+    clothing = Clothing.clone(widget.clothing);
   }
 
   @override
@@ -122,6 +125,23 @@ class _DetailPageState extends State<DetailPage> {
             style: TextStyle(
               fontSize: 20,
               color: Colors.grey
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: DropdownButton<String>(
+              value: clothing!.category,
+              onChanged: (String? value) {
+                setState(() {
+                  clothing!.category = value!;
+                });
+              },
+              items: <String>['Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
             ),
           ),
           const Text(
@@ -144,6 +164,36 @@ class _DetailPageState extends State<DetailPage> {
                 fontSize: 20,
                 color: Colors.grey
             ),
+          ),
+          Row(
+
+            children: <Widget>[
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue,
+                  ),
+                  child: const Text('Cancel'),
+                  onPressed: () => {
+                    Navigator.pop(context)
+                  },
+                ),
+              ),
+              Container(
+                width: 10,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
+                  ),
+                  child: const Text('Save'),
+                  onPressed: clothing == widget.clothing ? null : () => {
+                    clothing!.upload()
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

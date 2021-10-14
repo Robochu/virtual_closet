@@ -46,7 +46,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       source = ImageSource.gallery;
     }
     void up() async {
-      Clothing item = Clothing(user!.uid, _image.path, '', '', '', '');
+      Clothing item = Clothing(user!.uid, _image.path, 'Tops', '', '', '');
       item.upload();
       await DatabaseService(uid: user.uid).updateUserCloset(item);
       Navigator.pop(context);

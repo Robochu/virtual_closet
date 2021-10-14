@@ -1,12 +1,14 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:io';
-import 'package:path/path.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:virtual_closet/service/database.dart';
 
 class Clothing {
+  static Random random = Random();
+
   String? uid;
   String? path;
   String? filename;
@@ -18,7 +20,31 @@ class Clothing {
 
   Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials);
 
-  Clothing.usingLink(this.uid, this.link, this.category, this.sleeves, this.color, this.materials);
+  Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials);
+
+  Clothing.full(this.uid, this.path, this.filename, this.link, this.category, this.sleeves, this.color, this.materials);
+
+  Clothing.clone(Clothing other) : this.full(other.uid, other.path, other.filename, other.link, other.category, other.sleeves, other.color, other.materials);
+
+  @override
+  bool operator==(Object other) =>
+    identical(this, other) || (
+      other is Clothing &&
+      uid == other.uid &&
+      path == other.path &&
+      filename == other.filename &&
+      link == other.link &&
+      category == other.category &&
+      sleeves == other.sleeves &&
+      color == other.color &&
+      materials == other.materials
+    );
+
+  @override
+  int get hashCode => uid.hashCode ^ path.hashCode ^ filename.hashCode ^
+    link.hashCode ^ category.hashCode ^ sleeves.hashCode ^ color.hashCode ^
+    materials.hashCode;
+
 /*
   Future<List<Clothing>> download() async {
     List<Clothing> result = <Clothing>[];
@@ -41,8 +67,6 @@ class Clothing {
   }*/
 
   Future<void> upload() async {
-    File image = File(path!);
-
     // Create your custom metadata.
     SettableMetadata metadata = SettableMetadata(
       customMetadata: <String, String>{
@@ -54,9 +78,20 @@ class Clothing {
     );
 
     try {
-      // Pass metadata to any file upload method e.g putFile.
-      filename = basename(path!);
-      UploadTask task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putFile(image, metadata);
+      UploadTask task;
+      if (filename != null) {
+        String newFilename = random.nextInt(4294967296).toString();
+        task = FirebaseStorage.instance.ref('clothes/$uid/$newFilename').putData(
+          (await FirebaseStorage.instance.ref('clothes/$uid/$filename').getData())!,
+          metadata,
+        );
+        FirebaseStorage.instance.ref('clothes/$uid/$filename').delete();
+        filename = newFilename;
+      } else {
+        File image = File(path!);
+        filename = random.nextInt(4294967296).toString();
+        task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putFile(image, metadata);
+      }
       (await task).ref.getDownloadURL().then((link) => {
         this.link = link
       });
