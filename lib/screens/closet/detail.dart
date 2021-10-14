@@ -13,11 +13,13 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  Clothing? unedited;
   Clothing? clothing;
 
   @override
   void initState() {
     super.initState();
+    unedited = Clothing.clone(widget.clothing);
     clothing = Clothing.clone(widget.clothing);
   }
 
@@ -92,9 +94,26 @@ class _DetailPageState extends State<DetailPage> {
                     primary: Colors.green,
                   ),
                   child: const Text('Save'),
-                  onPressed: clothing == widget.clothing
-                      ? null
-                      : () => {clothing!.upload()},
+                  onPressed: clothing == unedited ? null : () {
+                    clothing!.upload();
+                    setState(() {
+                      unedited = Clothing.clone(clothing!);
+                    });
+                  },
+                ),
+              ),
+              Container(
+                width: 10,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.red,
+                  ),
+                  child: const Text('Delete'),
+                  onPressed: () => {
+                    clothing!.delete()
+                  }
                 ),
               ),
             ],
