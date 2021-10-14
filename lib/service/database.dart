@@ -7,7 +7,7 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-  final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
+  //final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
   Future updateUserData(String name, String email) async{
     createClosetSpace(name);
     return await usersCollection.doc(uid).set({
@@ -18,7 +18,7 @@ class DatabaseService {
 
   }
 
-  Future updateUserCloset(Clothing item) async {
+  Future updateUserCloset(Clothing item, String location) async {
     //DocumentReference closet = closetCollection.doc(uid);
     CollectionReference closet = usersCollection.doc(uid).collection('closet');
     return await closet.doc().set({
@@ -26,7 +26,7 @@ class DatabaseService {
       'sleeves': item.sleeves,
       'color': item.color,
       'material': item.materials,
-      'imageURL': item.link,
+      'imageURL': location,
     });
   }
 
@@ -36,21 +36,25 @@ class DatabaseService {
   }
 
   Stream<List<Clothing>> get closet {
-    return usersCollection.doc(uid).collection('closet').snapshots().map(_clothingFromSnapshot);
-
+    return usersCollection
+        .doc(uid)
+        .collection('closet')
+        .snapshots()
+        .map((event) => event.docs.map(
+            (doc) => Clothing.usingLink(
+              uid,
+                doc['imageURL'] ?? '',
+                doc['category'] ?? '',
+                doc['sleeves'] ?? '',
+                doc['color'] ?? '',
+                doc['material'] ?? '')).toList());
   }
 
-  List<Clothing> _clothingFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc){
-      return Clothing(
-        uid,
-        doc['imageURL'] ?? '',
-        doc['category'] ?? '',
-        doc['sleeves'] ?? '',
-        doc['color'] ?? '',
-        doc['material'] ?? ''
-      );
-    }).toList();
+  Future getCloset() {
+    return FirebaseFirestore.instance
+        .collectionGroup('closet')
+        .where('uid', isEqualTo: uid)
+        .get();
   }
 
   Stream<MyUserData> get userData {

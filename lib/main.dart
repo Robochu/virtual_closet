@@ -1,15 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
-import 'package:virtual_closet/screens/closet/closet_watcher.dart';
 import 'package:weather/weather.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'service/fire_auth.dart';
 import 'screens/closet/closet.dart';
-import 'clothes.dart';
 import 'package:provider/provider.dart';
 import 'screens/wrapper.dart';
 
@@ -84,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
       'Home',
       style: optionStyle,
     ),
-    ClosetWatcher(),
+    Closet(),
     Text(
       'Laundry',
       style: optionStyle,
@@ -217,6 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(
                             builder: (context) =>
                                 ImageFromGalleryScreen('camera'))),
+
                   },
                 ),
                 ListTile(
