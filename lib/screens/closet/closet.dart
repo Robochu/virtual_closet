@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +15,27 @@ class Closet extends StatefulWidget {
 }
 
 class _ClosetState extends State<Closet> {
+/*
+  Future<List<Clothing>> download() async {
+    List<Clothing> result = <Clothing>[];
+    await FirebaseStorage.instance.ref().child('clothes/${widget.uid}/').listAll().then((res) async {
+      for (var ref in res.items) {
+        await ref.getDownloadURL().then((link) async {
+          await ref.getMetadata().then((metadata) => {
+            result.add(Clothing(widget.uid,
+              link,
+              metadata.customMetadata!['category']!,
+              metadata.customMetadata!['sleeves']!,
+              metadata.customMetadata!['color']!,
+              metadata.customMetadata!['materials']!,
+            ))
+          });
+        });
+      }
+    });
+    return result;
+  }
   List<Clothing> clothes = [];
-
   _ClosetState() {
     download().then((items) => {
       setState(() => {
@@ -23,32 +43,56 @@ class _ClosetState extends State<Closet> {
       })
     });
   }
-
-  Future<List<Clothing>> download() async {
-    List<Clothing> result = <Clothing>[];
-    await FirebaseStorage.instance.ref().child('clothes/eqvoYX1qLAM4L2eJd9m34UDxSM82/').listAll().then((res) async {
-      for (var ref in res.items) {
-        await ref.getDownloadURL().then((link) async {
-          await ref.getMetadata().then((metadata) {
-            result.add(Clothing.usingLink(widget.uid,
-              link,
-              metadata.customMetadata!['category']!,
-              metadata.customMetadata!['sleeves']!,
-              metadata.customMetadata!['color']!,
-              metadata.customMetadata!['materials']!,
-            ));
-          });
-        });
-      }
-    });
-    return result;
-  }
-
+*/
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<MyUser?>(context);
+    return StreamBuilder<List<Clothing>>(
+      stream: DatabaseService(uid: user!.uid).closet,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Clothing>? clothes = snapshot.data;
+          if(clothes == null || clothes.isEmpty) {
+            return const Center(
+              child: Text("Oops you don't have anything in here yet. "
+                  "Click the plus button to add more items.",
+                textAlign: TextAlign.center,
+              ),
+            );
+          } else {
+            return Scaffold(
+                body: GridView.count(
+                  // Create a grid with 2 columns. If you change the scrollDirection to
+                  // horizontal, this produces 2 rows.
+                  crossAxisCount: 2,
+                  // Generate 100 widgets that display their index in the List.
+                  children: List.generate(clothes.length, (index) {
+                    return InkWell(
+                      child: Card(
+                        child: Image (
+                          image: NetworkImage(clothes[index].imagePath),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      onTap: () => press(context),
+                    );
+                  }),
+                )
+            );
+            }
+        } else {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      }
+    );
+    /*
     //final clothes = Provider.of<List<Clothing>?>(context) ?? [];
 
-    if(clothes.isEmpty) {
+    if(clothes == null || clothes.isEmpty) {
       return const Center(
         child: Text("Oops you don't have anything in here yet. "
             "Click the plus button to add more items.",
@@ -67,15 +111,14 @@ class _ClosetState extends State<Closet> {
           return InkWell(
             child: Card(
               child: Image (
-                image: NetworkImage(clothes[index].link!),
-                fit: BoxFit.cover,
+                image: NetworkImage(clothes[index].imagePath),
               ),
             ),
-            onTap: () => press(context, clothes[index]),
+            onTap: () => press(context),
           );
         }),
       )
-    );
+    );*/
   }
 
   void press(BuildContext context, Clothing clothing) {
@@ -92,7 +135,6 @@ class DetailPage extends StatefulWidget {
   const DetailPage({Key? key, required this.title, required this.clothing}) : super(key: key);
 
   final String title;
-  final Clothing clothing;
 
   @override
   State<DetailPage> createState() => _DetailPageState();

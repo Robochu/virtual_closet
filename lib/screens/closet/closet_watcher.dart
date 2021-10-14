@@ -13,9 +13,7 @@ class ClosetWatcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<MyUser?>(context);
-    return Scaffold(
-        body: Closet(uid: user!.uid),
-      );
+    return Closet(uid: user!.uid);
   }
 
 }

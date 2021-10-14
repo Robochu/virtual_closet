@@ -7,7 +7,7 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-  final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
+  //final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
   Future updateUserData(String name, String email) async{
     createClosetSpace(name);
     return await usersCollection.doc(uid).set({
@@ -34,13 +34,41 @@ class DatabaseService {
     //return await closetCollection.doc(uid).set({});
     return await usersCollection.doc(uid).collection('closet').doc().set({});
   }
-
+/*
   Stream<List<Clothing>> get closet {
     return usersCollection.doc(uid).collection('closet').snapshots().map(_clothingFromSnapshot);
 
+  }*/
+
+  Stream<List<Clothing>> get closet {
+    return usersCollection
+        .doc(uid)
+        .collection('closet')
+        .snapshots()
+        .map((event) => event.docs.map(
+            (doc) => Clothing(
+              uid,
+                doc['imageURL'] ?? '',
+                doc['category'] ?? '',
+                doc['sleeves'] ?? '',
+                doc['color'] ?? '',
+                doc['material'] ?? '')).toList());
   }
 
-  List<Clothing> _clothingFromSnapshot(QuerySnapshot snapshot) {
+  Future getCloset() {
+    return FirebaseFirestore.instance
+        .collectionGroup('closet')
+        .where('uid', isEqualTo: uid)
+        .get();
+  }
+/*
+  void userSnapshot() {
+    final Query closet = FirebaseFirestore.instance.collectionGroup('closet').where('uid', isEqualTo: uid);
+    final Future<QuerySnapshot> querySnapshot = closet.get();
+    final List<Clothing> clothes = _clothingFromSnapshot(querySnapshot);
+  }
+
+  List<Clothing> _clothingFromSnapshot(Future<QuerySnapshot> snapshot) {
     return snapshot.docs.map((doc){
       return Clothing(
         uid,
@@ -51,7 +79,7 @@ class DatabaseService {
         doc['material'] ?? ''
       );
     }).toList();
-  }
+  }*/
 
   Stream<MyUserData> get userData {
     return usersCollection.doc(uid).snapshots().map(_dataFromSnapshot);
