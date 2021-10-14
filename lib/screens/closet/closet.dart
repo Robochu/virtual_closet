@@ -1,14 +1,11 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Closet extends StatefulWidget {
-  final String uid;
-  const Closet({Key? key, required this.uid}) : super(key: key);
+  const Closet({Key? key}) : super(key: key);
 
   @override
   State<Closet> createState() => _ClosetState();
@@ -89,36 +86,6 @@ class _ClosetState extends State<Closet> {
         }
       }
     );
-    /*
-    //final clothes = Provider.of<List<Clothing>?>(context) ?? [];
-
-    if(clothes == null || clothes.isEmpty) {
-      return const Center(
-        child: Text("Oops you don't have anything in here yet. "
-            "Click the plus button to add more items.",
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
-    return Scaffold(
-      body: GridView.count(
-        // Create a grid with 2 columns. If you change the scrollDirection to
-        // horizontal, this produces 2 rows.
-        crossAxisCount: 2,
-        // Generate 100 widgets that display their index in the List.
-        children: List.generate(clothes.length, (index) {
-          return InkWell(
-            child: Card(
-              child: Image (
-                image: NetworkImage(clothes[index].imagePath),
-              ),
-            ),
-            onTap: () => press(context),
-          );
-        }),
-      )
-    );*/
   }
 
   void press(BuildContext context, Clothing clothing) {

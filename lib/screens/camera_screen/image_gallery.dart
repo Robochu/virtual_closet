@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:virtual_closet/service/database.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 
@@ -47,8 +46,8 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
     }
     void up() async {
       Clothing item = Clothing(user!.uid, _image.path, '', '', '', '');
-      item.upload();
-      await DatabaseService(uid: user.uid).updateUserCloset(item);
+      await item.upload();
+      //await DatabaseService(uid: user.uid).updateUserCloset(item);
       Navigator.pop(context);
       print('\n\n\n\n');
     }
