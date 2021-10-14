@@ -70,11 +70,11 @@ class _ClosetState extends State<Closet> {
                     return InkWell(
                       child: Card(
                         child: Image (
-                          image: NetworkImage(clothes[index].imagePath),
+                          image: NetworkImage(clothes[index].link!),
                           fit: BoxFit.cover,
                         ),
                       ),
-                      onTap: () => press(context),
+                      onTap: () => press(context, clothes[index]),
                     );
                   }),
                 )
@@ -132,6 +132,8 @@ class _ClosetState extends State<Closet> {
 }
 
 class DetailPage extends StatefulWidget {
+  final Clothing clothing;
+
   const DetailPage({Key? key, required this.title, required this.clothing}) : super(key: key);
 
   final String title;
