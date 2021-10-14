@@ -45,7 +45,6 @@ class Clothing {
     link.hashCode ^ category.hashCode ^ sleeves.hashCode ^ color.hashCode ^
     materials.hashCode;
 
-
   Future<void> upload() async {
     // Create your custom metadata.
     SettableMetadata metadata = SettableMetadata(
@@ -59,14 +58,13 @@ class Clothing {
 
     try {
       UploadTask task;
-      if (filename != null) {
-        String newFilename = random.nextInt(4294967296).toString();
-        task = FirebaseStorage.instance.ref('clothes/$uid/$newFilename').putData(
-          (await FirebaseStorage.instance.ref('clothes/$uid/$filename').getData())!,
+      if (link != null) {
+        String filename = random.nextInt(4294967296).toString();
+        task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putData(
+          (await FirebaseStorage.instance.refFromURL(link!).getData())!,
           metadata,
         );
-        FirebaseStorage.instance.ref('clothes/$uid/$filename').delete();
-        filename = newFilename;
+        FirebaseStorage.instance.refFromURL(link!).delete();
       } else {
         File image = File(path!);
         filename = random.nextInt(4294967296).toString();
@@ -79,5 +77,9 @@ class Clothing {
       // e.g, e.code == 'canceled'
       print('If this ever gets printed, complain to Oleg.');
     }
+  }
+
+  Future<void> delete() async {
+    FirebaseStorage.instance.refFromURL(link!).delete();
   }
 }
