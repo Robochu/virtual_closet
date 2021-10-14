@@ -1,11 +1,9 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import 'detail.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Closet extends StatefulWidget {
   const Closet({Key? key}) : super(key: key);
@@ -20,7 +18,7 @@ class _ClosetState extends State<Closet> {
       context,
       MaterialPageRoute(
         builder: (context) =>
-            DetailPage(title: 'Placeholder', clothing: clothing),
+            DetailPage(clothing: clothing),
       ),
     );
   }

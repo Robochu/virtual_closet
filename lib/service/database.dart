@@ -7,9 +7,7 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-  //final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
   Future updateUserData(String name, String email) async{
-    //createClosetSpace(name);
     return await usersCollection.doc(uid).set({
       'name' : name,
       'email': email,
@@ -19,20 +17,22 @@ class DatabaseService {
   }
 
   Future updateUserCloset(Clothing item, String location) async {
-    //DocumentReference closet = closetCollection.doc(uid);
     CollectionReference closet = usersCollection.doc(uid).collection('closet');
-    return await closet.doc().set({
+    return await closet.doc(item.filename).set({
       'category': item.category,
       'sleeves': item.sleeves,
       'color': item.color,
       'material': item.materials,
       'imageURL': location,
       'fileName' : item.filename
-    });
+    }, SetOptions(merge: true));
+  }
+
+  Future deleteItemFromCloset(Clothing item) async {
+    return await usersCollection.doc(uid).collection('closet').doc(item.filename).delete();
   }
 
   Future createClosetSpace(String name) async {
-    //return await closetCollection.doc(uid).set({});
     return await usersCollection.doc(uid).collection('closet').doc().set({});
   }
 

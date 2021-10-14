@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
+import 'package:virtual_closet/screens/closet/detail.dart';
 
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;
@@ -45,10 +46,15 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       source = ImageSource.gallery;
     }
     void up() async {
-      Clothing item = Clothing(user!.uid, _image.path, 'Tops', '', '', '');
-      await item.upload();
-      //await DatabaseService(uid: user.uid).updateUserCloset(item);
-      Navigator.pop(context);
+
+      Clothing item = Clothing.full(user!.uid, _image.path, '', '', '', '', '', '');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+          DetailPage(clothing: item)));
+
+      //await item.upload();
+      //Navigator.pop(context);
       print('\n\n\n\n');
     }
 

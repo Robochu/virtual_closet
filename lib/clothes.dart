@@ -58,7 +58,7 @@ class Clothing {
 
     try {
       UploadTask task;
-      if (link != null) {
+      if (link != null && link != '') {
         String filename = random.nextInt(4294967296).toString();
         task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putData(
           (await FirebaseStorage.instance.refFromURL(link!).getData())!,
@@ -81,5 +81,6 @@ class Clothing {
 
   Future<void> delete() async {
     FirebaseStorage.instance.refFromURL(link!).delete();
+    await DatabaseService(uid:uid).deleteItemFromCloset(this);
   }
 }
