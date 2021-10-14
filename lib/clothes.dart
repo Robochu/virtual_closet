@@ -45,26 +45,6 @@ class Clothing {
     link.hashCode ^ category.hashCode ^ sleeves.hashCode ^ color.hashCode ^
     materials.hashCode;
 
-/*
-  Future<List<Clothing>> download() async {
-    List<Clothing> result = <Clothing>[];
-    await FirebaseStorage.instance.ref().child('clothes/$uid/').listAll().then((res) async {
-      for (var ref in res.items) {
-        await ref.getDownloadURL().then((link) async {
-          await ref.getMetadata().then((metadata) => {
-            result.add(Clothing(uid,
-              link,
-              metadata.customMetadata!['category']!,
-              metadata.customMetadata!['sleeves']!,
-              metadata.customMetadata!['color']!,
-              metadata.customMetadata!['materials']!,
-            ))
-          });
-        });
-      }
-    });
-    return result;
-  }*/
 
   Future<void> upload() async {
     // Create your custom metadata.
@@ -92,8 +72,8 @@ class Clothing {
         filename = random.nextInt(4294967296).toString();
         task = FirebaseStorage.instance.ref('clothes/$uid/$filename').putFile(image, metadata);
       }
-      (await task).ref.getDownloadURL().then((link) => {
-        this.link = link
+      (await task).ref.getDownloadURL().then((link) async => {
+        await DatabaseService(uid: uid).updateUserCloset(this, link)
       });
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'

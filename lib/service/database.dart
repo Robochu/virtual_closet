@@ -9,7 +9,7 @@ class DatabaseService {
   final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
   //final CollectionReference closetCollection = FirebaseFirestore.instance.collection('closets');
   Future updateUserData(String name, String email) async{
-    createClosetSpace(name);
+    //createClosetSpace(name);
     return await usersCollection.doc(uid).set({
       'name' : name,
       'email': email,
@@ -27,6 +27,7 @@ class DatabaseService {
       'color': item.color,
       'material': item.materials,
       'imageURL': location,
+      'fileName' : item.filename
     });
   }
 
@@ -42,7 +43,8 @@ class DatabaseService {
         .snapshots()
         .map((event) => event.docs.map(
             (doc) => Clothing.usingLink(
-              uid,
+                uid,
+                doc['fileName'] ?? '',
                 doc['imageURL'] ?? '',
                 doc['category'] ?? '',
                 doc['sleeves'] ?? '',
