@@ -24,11 +24,6 @@ class _ClosetState extends State<Closet> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final user = Provider.of<MyUser?>(context);
     return StreamBuilder<List<Clothing>>(
@@ -46,7 +41,7 @@ class _ClosetState extends State<Closet> {
               );
             } else {
               return Scaffold(
-                  body: GridView.count(
+                body: GridView.count(
                 // Create a grid with 2 columns. If you change the scrollDirection to
                 // horizontal, this produces 2 rows.
                 crossAxisCount: 2,
