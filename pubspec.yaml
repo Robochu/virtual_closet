@@ -42,6 +42,9 @@ dependencies:
   weather: ^2.0.1
   geolocator: ^7.7.0
   flutter_local_notifications: ^9.0.0
+  weather_icons: ^3.0.0
+  syncfusion_flutter_calendar: ^19.3.45
+  google_sign_in: ^5.1.1
 
 dev_dependencies:
   flutter_test:
