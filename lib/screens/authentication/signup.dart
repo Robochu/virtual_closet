@@ -267,6 +267,19 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () {
                       if ((nameText.text == null) || (nameText.text == "")) {
                         print("Please enter a name");
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Please enter a name")
+                        ));
+                      }
+                      else if (emailText.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Please enter an email")
+                        ));
+                      }
+                      else if (passwordText.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Please enter a password")
+                        ));
                       }
                       else {
                         if (passwordText.text == confirmPasswordText.text) {
@@ -274,7 +287,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               .registerWithEmailPassword(
                               name: nameText.text,
                               email: emailText.text,
-                              password: passwordText.text);
+                              password: passwordText.text,
+                              context: context);
                           user.then((value) async {
                             if ((value != null) && (value.uid != null)) {
                               Navigator.push(
@@ -289,11 +303,17 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                             else {
                               print("Null email; sign up failed");
+                              /*ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                  content: Text("Invalid email")
+                              ));*/
                             }
                           });
                         }
                         else {
                           print("Passwords must match");
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text("Passwords must match")
+                          ));
                         }
                       }
                     },

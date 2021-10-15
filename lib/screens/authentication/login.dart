@@ -68,9 +68,12 @@ class _LoginState extends State<Login> {
                     //print("Open forgot password screen");
                     if (emailText.text == "") {
                       print("Enter email");
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Enter email")
+                      ));
                     }
                     else {
-                      Authentication.forgotPassword(email: emailText.text);
+                      Authentication.forgotPassword(email: emailText.text, context: context);
                     }
                   },
                   style: TextButton.styleFrom(
@@ -87,11 +90,23 @@ class _LoginState extends State<Login> {
                     child: Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
-                      Future<MyUser?> user =
-                      Authentication.signInWithEmailPassword(
-                          email: emailText.text,
-                          password: passwordText.text,
-                          context: context);
+                      if (emailText.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Enter email")
+                        ));
+                      }
+                      else if (passwordText.text == "") {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Enter password")
+                        ));
+                      }
+                      else {
+                        Future<MyUser?> user =
+                        Authentication.signInWithEmailPassword(
+                            email: emailText.text,
+                            password: passwordText.text,
+                            context: context);
+                      }
                       /*user.then((value) async {
                         if (value?.email != null) {
                           print(value?.email);

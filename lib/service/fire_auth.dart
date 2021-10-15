@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'database.dart';
 import 'package:virtual_closet/models/user.dart';
 
@@ -22,6 +23,7 @@ class Authentication {
     required String name,
     required String email,
     required String password,
+    required BuildContext context,
   }) async {
     User? user;
     try {
@@ -41,10 +43,20 @@ class Authentication {
     } on FirebaseAuthException catch(e) {
       if (e.code == 'weak-password') {
         print('This password is too weak');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Password too weak")
+        ));
         return Future<Null>.value(null);
       } else if (e.code == 'email-already-in-use') {
         print('Account already exists for this email');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Account already exists for this email")
+        ));
         return Future<Null>.value(null);
+      } else if (e.code == 'invalid-email') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Please enter valid email")
+        ));
       }
     } catch(e) {
       print(e);
@@ -64,23 +76,35 @@ class Authentication {
     } on FirebaseAuthException catch(e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Account for this email does not exist")
+        ));
         return Future<Null>.value(null);
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided.');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Incorrect Password")
+        ));
         return Future<Null>.value(null);
       }
     }
     return _createUser(user);
   }
 
-  static void forgotPassword({required String email}) async {
+  static void forgotPassword({required String email, required BuildContext context}) async {
     try {
       auth.sendPasswordResetEmail(email: email);
       print("Sent password reset email!");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Sent password reset email")
+      ));
     }
     on FirebaseAuthException catch(e) {
       if (e.code == "auth/invalid-email") {
         print("Invalid email");
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Please enter valid email")
+        ));
       }
     }
   }
