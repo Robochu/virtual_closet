@@ -73,6 +73,18 @@ class Authentication {
     return _createUser(user);
   }
 
+  static void forgotPassword({required String email}) async {
+    try {
+      auth.sendPasswordResetEmail(email: email);
+      print("Sent password reset email!");
+    }
+    on FirebaseAuthException catch(e) {
+      if (e.code == "auth/invalid-email") {
+        print("Invalid email");
+      }
+    }
+  }
+
   Future signOut() async {
     try {
       return await auth.signOut();

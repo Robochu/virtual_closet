@@ -9,6 +9,7 @@ import 'service/fire_auth.dart';
 import 'screens/closet/closet.dart';
 import 'package:provider/provider.dart';
 import 'screens/wrapper.dart';
+import 'screens/account.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,11 +56,11 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
 }
 
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.user}) : super(key: key);
 
   final String title;
+  final MyUser user;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -71,6 +72,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String weatherText = '';
   double currentLongitude = 0.0;
   double currentLattitude = 0.0;
+
+
 
   //list of widgets - TEMPORARY for initial display only
   //list of widgets - TEMPORARY for initial display only
@@ -86,11 +89,49 @@ class _MyHomePageState extends State<MyHomePage> {
       'Laundry',
       style: optionStyle,
     ),
-    Text(
-      'Account',
-      style: optionStyle,
-    ),
+    AccountPage()
   ];
+
+  /*
+  ListView(children: <Widget>[
+      Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.all(10),
+          child: Text(
+            'Account',
+            style: optionStyle,
+          )),
+      Container(
+        padding: EdgeInsets.all(10),
+        child: Text(
+          widget.user.displayName != null?,
+        )
+      ),
+    ])
+
+  static const List<List<Widget>> _tabOptions = <List<Widget>>[
+    <Widget>[
+      Text(
+        'Home',
+        style: optionStyle,
+      ),
+    ],
+    <Widget>[
+      Closet(),
+    ],
+    <Widget>[
+      Text(
+        'Laundry',
+        style: optionStyle,
+      ),
+    ],
+    <Widget>[
+      Text(
+        'Account',
+        style: optionStyle,
+      )
+    ],
+  ];*/
 
   //Method to track index of tabs for the bottom navigation bar
   void _onItemTapped(int index) {

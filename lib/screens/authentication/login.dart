@@ -65,7 +65,13 @@ class _LoginState extends State<Login> {
               ),
               TextButton(
                   onPressed: () {
-                    print("Open forgot password screen");
+                    //print("Open forgot password screen");
+                    if (emailText.text == "") {
+                      print("Enter email");
+                    }
+                    else {
+                      Authentication.forgotPassword(email: emailText.text);
+                    }
                   },
                   style: TextButton.styleFrom(
                     primary: Colors.blue,
