@@ -49,7 +49,8 @@ class DatabaseService {
                 doc['category'] ?? '',
                 doc['sleeves'] ?? '',
                 doc['color'] ?? '',
-                doc['material'] ?? '')).toList());
+                doc['material'] ?? '',
+                doc['isLaundry'] ?? '')).toList());
   }
 
   Future getCloset() {

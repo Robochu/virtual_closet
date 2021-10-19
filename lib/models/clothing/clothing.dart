@@ -2,6 +2,7 @@ abstract class Clothing {
   String getType();
   int getSize();
   String getColor();
+  bool getLaundryStatus();
   @override
   String toString();
 }
@@ -10,7 +11,8 @@ abstract class UpperHalf implements Clothing {
   String type;
   int size;
   String color;
-  UpperHalf(this.type, this.size, this.color);
+  bool isLaundry;
+  UpperHalf(this.type, this.size, this.color, this.isLaundry);
 
   @override
   String getType() {
@@ -39,6 +41,13 @@ abstract class UpperHalf implements Clothing {
   }
 
   @override
+  bool getLaundryStatus() {
+    return this.isLaundry;
+  }
+
+  bool setLaundryStatus(bool isLaundry) => this.isLaundry = isLaundry;
+
+  @override
   String toString() {
     return 'Top: {type: ${this.type}, size: ${this.size}, color: ${this.color}';
   }
@@ -50,7 +59,8 @@ abstract class LowerHalf implements Clothing {
   int size;
   String color;
   String fit;
-  LowerHalf(this.type, this.size, this.color, this.fit);
+  bool isLaundry;
+  LowerHalf(this.type, this.size, this.color, this.fit, this.isLaundry);
   String getFit();
 }
 
