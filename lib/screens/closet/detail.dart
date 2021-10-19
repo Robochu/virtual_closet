@@ -114,6 +114,34 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     controller: materialController,
                   ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        filled: true,
+                        labelText: 'Add to laundry basket?',
+                      ),
+                      isExpanded: false,
+                      hint: const Text('Choose an option'),
+                      value: (clothing!.isLaundry != false)
+                          ? "Yes"
+                          : "No",
+                      onChanged: (String? status) {
+                        setState(() {
+                          (status == "Yes") ? clothing!.isLaundry = true : clothing!.isLaundry = false;
+                        });
+                      },
+                      items: <String>[
+                        'Yes',
+                        'No'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                   Row(
                     children: <Widget>[
                       Expanded(
