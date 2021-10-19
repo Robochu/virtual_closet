@@ -283,7 +283,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     builder: (context) =>
                                         MyHomePage(
                                           title: 'Virtual Closet Home',
-                                          user: value!,
+                                          user: value,
                                         )),
                               );
                             }
