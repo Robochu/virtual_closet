@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:virtual_closet/screens/home.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/main.dart';
@@ -277,7 +278,9 @@ class _SignUpPageState extends State<SignUpPage> {
                               password: passwordText.text);
                           user.then((value) async {
                             if ((value != null) && (value.uid != null)) {
-                              Navigator.push(
+                              //don't call navigator to prevent stacking up, auth_screen is taking care of navigate to home screen after signup/login
+
+                              /*Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
@@ -285,7 +288,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                           title: 'Virtual Closet Home',
                                           user: value,
                                         )),
-                              );
+                              );*/
                             }
                             else {
                               print("Null email; sign up failed");
