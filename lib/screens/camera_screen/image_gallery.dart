@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:virtual_closet/screens/closet/detail.dart';
+import 'package:virtual_closet/screens/detail.dart';
 
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;

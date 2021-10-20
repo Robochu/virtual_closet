@@ -5,6 +5,7 @@ import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
+import 'package:virtual_closet/screens/laundry/laundry.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:weather/weather.dart';
 import 'package:weather_icons/weather_icons.dart';
@@ -33,10 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     Closet(),
-    Text(
-      'Laundry',
-      style: optionStyle,
-    ),
+    Laundry(),
     AccountPage()
   ];
 

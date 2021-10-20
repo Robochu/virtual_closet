@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
-import 'detail.dart';
+import '../detail.dart';
 
 class Closet extends StatefulWidget {
   const Closet({Key? key}) : super(key: key);
