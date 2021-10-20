@@ -43,6 +43,7 @@ dependencies:
   syncfusion_flutter_calendar: ^19.3.45
   google_sign_in: ^5.1.1
   flutter_swipable:  ^1.2.1
+  toggle_switch: ^1.2.0
 
 dev_dependencies:
   flutter_test:
