@@ -23,6 +23,7 @@ class DatabaseService {
       'sleeves': item.sleeves,
       'color': item.color,
       'material': item.materials,
+      'isLaundry': item.isLaundry,
       'imageURL': location,
       'fileName' : item.filename
     }, SetOptions(merge: true));
