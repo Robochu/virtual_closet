@@ -55,6 +55,7 @@ class Clothing {
         'sleeves': sleeves,
         'color': color,
         'materials': materials,
+        'isLaundry': isLaundry ? "Yes" : "No",
       },
     );
 
