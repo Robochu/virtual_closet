@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/screens/authentication/auth_screen.dart';
-
-import '../main.dart';
+import 'package:virtual_closet/screens/home.dart';
 import '../models/user.dart';
 
+/*
+ * Class to handle switching between authentication and homepage.
+ * Provider.of<MyUser> automatically detects authentication status and call appropriate screen
+ */
 class Wrapper extends StatelessWidget {
 
   @override

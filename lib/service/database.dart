@@ -54,13 +54,6 @@ class DatabaseService {
                 doc['isLaundry'] ?? '')).toList());
   }
 
-  Future getCloset() {
-    return FirebaseFirestore.instance
-        .collectionGroup('closet')
-        .where('uid', isEqualTo: uid)
-        .get();
-  }
-
   Stream<MyUserData> get userData {
     return usersCollection.doc(uid).snapshots().map(_dataFromSnapshot);
   }
