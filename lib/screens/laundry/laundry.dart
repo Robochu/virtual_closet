@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
+import 'package:toggle_switch/toggle_switch.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import '../detail.dart';
