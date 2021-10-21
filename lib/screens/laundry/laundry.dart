@@ -58,6 +58,7 @@ class _LaundryState extends State<Laundry> {
                             onPressed: () {
                               for (int index = 0; index < laundryClothes.length; index++) {
                                 laundryClothes[index].isLaundry = false;
+                                laundryClothes[index].upload();
                               }
                             },
                             child: const Text('Empty Laundry Basket', style: TextStyle(fontSize: 20),),
