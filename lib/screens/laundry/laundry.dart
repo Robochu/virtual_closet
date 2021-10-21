@@ -48,24 +48,43 @@ class _LaundryState extends State<Laundry> {
                   laundryClothes.add(clothes[index]);
                 }
               }
+
               return Scaffold(
-                  body: GridView.count(
-                    // Create a grid with 2 columns. If you change the scrollDirection to
-                    // horizontal, this produces 2 rows.
-                    crossAxisCount: 2,
-                    // Generate 100 widgets that display their index in the List.
-                    children: List.generate(laundryClothes.length, (index) {
-                      return InkWell(
-                        child: Card(
-                          child: Image(
-                            image: NetworkImage(laundryClothes[index].link!),
-                            fit: BoxFit.cover,
-                          ),
+                  body:  Column(
+                      children: <Widget> [
+                        const SizedBox (height: 30,),
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              for (int index = 0; index < laundryClothes.length; index++) {
+                                laundryClothes[index].isLaundry = false;
+                              }
+                            },
+                            child: const Text('Empty Laundry Basket', style: TextStyle(fontSize: 20),),
+                            style: ElevatedButton.styleFrom(primary: Colors.teal,),
+                          )
                         ),
-                        onTap: () => press(context, laundryClothes[index]),
-                      );
-                    }),
-                  ));
+                        const SizedBox(height:30),
+                        Expanded ( child: GridView.count(
+                          // Create a grid with 2 columns. If you change the scrollDirection to
+                          // horizontal, this produces 2 rows.
+                          crossAxisCount: 2,
+                          // Generate 100 widgets that display their index in the List.
+                           children: List.generate(laundryClothes.length, (index) {
+                            return InkWell(
+                              child: Card(
+                                child: Image(
+                                  image: NetworkImage(laundryClothes[index].link!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              onTap: () => press(context, laundryClothes[index]),
+                            );
+                          }),
+                        ) )
+                      ]
+                  )
+              );
             }
           } else {
             return const Scaffold(
