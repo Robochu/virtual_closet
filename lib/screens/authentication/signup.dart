@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:virtual_closet/screens/home.dart';
+import 'package:virtual_closet/screens/home/home.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/main.dart';

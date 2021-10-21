@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/screens/authentication/auth_screen.dart';
-import 'package:virtual_closet/screens/home.dart';
+import 'package:virtual_closet/screens/home/home.dart';
 import '../models/user.dart';
 
 /*

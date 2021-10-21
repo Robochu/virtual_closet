@@ -5,6 +5,8 @@ import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
+import 'package:virtual_closet/screens/home/item_swipe.dart';
+import 'package:virtual_closet/screens/home/weather.dart';
 import 'package:virtual_closet/screens/laundry/laundry.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:weather/weather.dart';
@@ -32,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
-    HomePage(),
+    HomeView(),
     Closet(),
     Laundry(),
     AccountPage()
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
-            label: Text('TEMP logout'),
+            label: Text('logout'),
             onPressed: () async {
               await _auth.signOut();
             },
@@ -125,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               IconButton(
                   tooltip: "Home",
-                  icon: Icon(Icons.home, size: 35),
+                  icon: Icon(Icons.home, size: 35, color: _selectedIndex == 0 ? Colors.orange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(0);
                     // When user clicks on homebutton a call to weather API is made and refreshes weather data
@@ -133,20 +135,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   }),
               IconButton(
                   tooltip: "Closet",
-                  icon: Icon(Icons.auto_awesome_mosaic, size: 35),
+                  icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 1 ? Colors.orange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(1);
                   }),
               SizedBox(width: 40), //placeholder for FAB
               IconButton(
                   tooltip: "Laundry",
-                  icon: Icon(Icons.auto_awesome, size: 35),
+                  icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 2 ? Colors.orange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(2);
                   }),
               IconButton(
                   tooltip: "Account",
-                  icon: Icon(Icons.account_circle, size: 35),
+                  icon: Icon(Icons.account_circle, size: 35, color: _selectedIndex == 3 ? Colors.orange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(3);
                   }),
@@ -196,14 +198,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomeView extends StatefulWidget {
+  const HomeView({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
@@ -363,93 +365,8 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class WeatherSummary extends StatelessWidget {
-  final double? currTemp;
-  final double? feelLike;
-  final String weatherText;
-  final String weatherIconText;
 
-  const WeatherSummary(
-      {Key? key,
-      required this.weatherText,
-      required this.currTemp,
-      required this.feelLike,
-      required this.weatherIconText})
-      : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        margin: EdgeInsets.all(15.0),
-        color: Colors.blue,
-        height: 70,
-        width: 170,
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-          Column(
-            children: [
-              Text(
-                '${_formatTemperature(currTemp)}°F',
-                style: const TextStyle(
-                  fontSize: 30,
-                ),
-              ),
-              Text(
-                weatherText,
-                style: const TextStyle(fontSize: 11),
-              ),
-              Text('Feel like ${_formatTemperature(feelLike)}°F',
-                  style: const TextStyle(fontSize: 11))
-            ],
-          ),
-          Icon(
-              WeatherIcons.fromString(weatherIconText,
-                  fallback: WeatherIcons.na),
-              size: 40)
-        ]));
-  }
 
-  String _formatTemperature(double? t) {
-    var temp = (t == null ? '' : t.round().toString());
-    return temp;
-  }
-}
 
-class CalendarSummary extends StatelessWidget {
-  const CalendarSummary({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
-class ItemSwipe extends StatelessWidget {
-  const ItemSwipe({required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return Swipable(
-      child: Container(
-        height: 350,
-        width: 300,
-        padding: EdgeInsets.only(top: 50.0),
-        decoration: BoxDecoration(
-        color: Colors.grey,),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(
-              name,
-              style: TextStyle(
-                fontSize: 20.0,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
