@@ -35,29 +35,33 @@ class _ClosetState extends State<Closet> {
               return const Center(
                 child: Text(
                   "Oops you don't have anything in here yet. "
-                  "Click the plus button to add more items.",
+                      "Click the plus button to add more items.",
                   textAlign: TextAlign.center,
                 ),
               );
             } else {
               return Scaffold(
-                body: GridView.count(
-                // Create a grid with 2 columns. If you change the scrollDirection to
-                // horizontal, this produces 2 rows.
-                crossAxisCount: 2,
-                // Generate 100 widgets that display their index in the List.
-                children: List.generate(clothes.length, (index) {
-                  return InkWell(
-                    child: Card(
-                      child: Image(
-                        image: NetworkImage(clothes[index].link!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    onTap: () => press(context, clothes[index]),
-                  );
-                }),
-              ));
+                  body: GridView.count(
+                    // Create a grid with 2 columns. If you change the scrollDirection to
+                    // horizontal, this produces 2 rows.
+                    crossAxisCount: 2,
+                    // Generate 100 widgets that display their index in the List.
+                    children: List.generate(clothes.length, (index) {
+                      return InkWell(
+                        child: Padding (
+                            padding: EdgeInsets.all(15),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image(
+                                image: NetworkImage(clothes[index].link!),
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                        ),
+                        onTap: () => press(context, clothes[index]),
+                      );
+                    }),
+                  ));
             }
           } else {
             return const Scaffold(

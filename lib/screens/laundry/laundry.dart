@@ -112,7 +112,7 @@ class _LaundryState extends State<Laundry> {
                                   primary: Colors.teal,),
                               )
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 15),
                           Expanded(child: GridView.count(
                             // Create a grid with 2 columns. If you change the scrollDirection to
                             // horizontal, this produces 2 rows.
@@ -121,13 +121,15 @@ class _LaundryState extends State<Laundry> {
                             children: List.generate(
                                 laundryClothes.length, (index) {
                               return InkWell(
-                                child: Card(
-                                  child: Image(
-                                    image: NetworkImage(
-                                        laundryClothes[index].link!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+                                child: Padding (
+                                    padding: EdgeInsets.all(15),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image(
+                                        image: NetworkImage(laundryClothes[index].link!),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )),
                                 onTap: () =>
                                     press(context, laundryClothes[index]),
                               );
