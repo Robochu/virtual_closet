@@ -32,7 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     Closet(),
@@ -96,12 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('logout'),
-            onPressed: () async {
-              await _auth.signOut();
-            },
+          Card(
+            shape: RoundedRectangleBorder (borderRadius: BorderRadius.circular(10)),
+            color: Colors.lightBlueAccent,
+            child: FlatButton.icon(
+              icon: Icon(Icons.person),
+              label: Text('logout'),
+              onPressed: () async {
+                await _auth.signOut();
+              },
+            ),
           ),
         ],
       ),
@@ -227,7 +231,7 @@ class _HomeViewState extends State<HomeView> {
     // Get api weather key from website and use with api weather factory
     String weatherAPIKey = "f7f16d98c61e6bf232846a3016491357";
     WeatherFactory wf =
-        WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
+    WeatherFactory(weatherAPIKey, language: Language.ENGLISH);
 
     // Check if location services is on
     isServiceAvailable = await Geolocator.isLocationServiceEnabled();
@@ -259,7 +263,7 @@ class _HomeViewState extends State<HomeView> {
     currentLatitude = position.latitude;
     currentLongitude = position.longitude;
     Weather wlatlong =
-        await wf.currentWeatherByLocation(currentLatitude, currentLongitude);
+    await wf.currentWeatherByLocation(currentLatitude, currentLongitude);
 
     // Change weather text to text from api weather call
     setState(() {
@@ -340,28 +344,28 @@ class _HomeViewState extends State<HomeView> {
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
-      children: <Widget>[
-        Row(
-          children: [
-            Flexible(
-              flex: 2,
-              child: WeatherSummary(
-                weatherText: weatherText,
-                currTemp: currTemp,
-                feelLike: feelLike,
-                weatherIconText: weatherIconText,
-              ),
-            ),
-          ],
-        ),
-        Container(
-            height: 400.0,
-            padding: EdgeInsets.only(left: 50.0),
-            child: Stack(
-              children: items,
-            ))
-      ],
-    )));
+              children: <Widget>[
+                Row(
+                  children: [
+                    Flexible(
+                      flex: 2,
+                      child: WeatherSummary(
+                        weatherText: weatherText,
+                        currTemp: currTemp,
+                        feelLike: feelLike,
+                        weatherIconText: weatherIconText,
+                      ),
+                    ),
+                  ],
+                ),
+                Container(
+                    height: 400.0,
+                    padding: EdgeInsets.only(left: 50.0),
+                    child: Stack(
+                      children: items,
+                    ))
+              ],
+            )));
   }
 }
 
