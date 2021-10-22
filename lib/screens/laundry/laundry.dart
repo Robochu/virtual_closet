@@ -107,9 +107,13 @@ class _LaundryState extends State<Laundry> {
                                 onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
                                 child: const Text(
                                   'Empty Laundry Basket', style: TextStyle(
-                                    fontSize: 20),),
+                                    fontSize: 20)),
                                 style: ElevatedButton.styleFrom(
-                                  primary: Colors.teal,),
+                                  primary: Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)
+                                  )
+                                ),
                               )
                           ),
                           const SizedBox(height: 15),
