@@ -14,19 +14,60 @@ class Laundry extends StatefulWidget {
 }
 
 class _LaundryState extends State<Laundry> {
+  bool _showConfDialog = true;
+
   void press(BuildContext context, Clothing clothing) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            DetailPage(clothing: clothing),
+        builder: (context) => DetailPage(clothing: clothing),
       ),
+    );
+  }
+
+  void delete(BuildContext context, List<Clothing> clothes) {
+    showDialog(
+        context: context,
+        builder: (BuildContext cxt) {
+          return AlertDialog(
+            title: const Text("Please Confirm"),
+            content: const Text("Are you sure you want to empty the laundry basket?"),
+            actions: [
+              // Yes button
+              TextButton(
+                  onPressed: () {
+                    // Remove confirmation dialog from view
+                    setState(() {
+                      _showConfDialog = false;
+                    });
+                    // Set laundry status of clothes to false to remove from basket
+                    for (int index = 0; index < clothes.length; index++) {
+                      clothes[index].isLaundry = false;
+                      clothes[index].upload();
+                    }
+                    // Close confirmation dialog box
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Yes')
+              ),
+              // No button
+              TextButton(
+                onPressed: () {
+                  // Close confirmation dialog box
+                  Navigator.of(context).pop();
+                },
+                child: const Text('No'),
+              ),
+            ],
+          );
+        }
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<MyUser?>(context);
+
     return StreamBuilder<List<Clothing>>(
         stream: DatabaseService(uid: user!.uid).closet,
         builder: (context, snapshot) {
@@ -37,12 +78,12 @@ class _LaundryState extends State<Laundry> {
             if (clothes == null || clothes.isEmpty) {
               return const Center(
                 child: Text(
-                  "Oops you don't have anything in here yet. "
-                      "Add clothes to the laundry basket from the closet screen.",
+                  "Oops you don't have any clothes added to the closet yet. ",
                   textAlign: TextAlign.center,
                 ),
               );
             } else {
+              // Store clothes with laundry status true in a list
               for (int index = 0; index < clothes.length; index++) {
                 if (clothes[index].isLaundry) {
                   laundryClothes.add(clothes[index]);
@@ -54,16 +95,11 @@ class _LaundryState extends State<Laundry> {
                       children: <Widget> [
                         const SizedBox (height: 30,),
                         Center(
-                          child: ElevatedButton(
-                            onPressed: () {
-                              for (int index = 0; index < laundryClothes.length; index++) {
-                                laundryClothes[index].isLaundry = false;
-                                laundryClothes[index].upload();
-                              }
-                            },
-                            child: const Text('Empty Laundry Basket', style: TextStyle(fontSize: 20),),
-                            style: ElevatedButton.styleFrom(primary: Colors.teal,),
-                          )
+                            child: ElevatedButton(
+                              onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
+                              child: const Text('Empty Laundry Basket', style: TextStyle(fontSize: 20),),
+                              style: ElevatedButton.styleFrom(primary: Colors.teal,),
+                            )
                         ),
                         const SizedBox(height:30),
                         Expanded ( child: GridView.count(
@@ -71,7 +107,7 @@ class _LaundryState extends State<Laundry> {
                           // horizontal, this produces 2 rows.
                           crossAxisCount: 2,
                           // Generate 100 widgets that display their index in the List.
-                           children: List.generate(laundryClothes.length, (index) {
+                          children: List.generate(laundryClothes.length, (index) {
                             return InkWell(
                               child: Card(
                                 child: Image(
