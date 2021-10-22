@@ -46,7 +46,7 @@ class _LaundryState extends State<Laundry> {
                       clothes[index].upload();
                     }
                     // Close confirmation dialog box
-                    Navigator.of(context).pop();
+                    Navigator.of(cxt).pop();
                   },
                   child: const Text('Yes')
               ),
@@ -54,7 +54,7 @@ class _LaundryState extends State<Laundry> {
               TextButton(
                 onPressed: () {
                   // Close confirmation dialog box
-                  Navigator.of(context).pop();
+                  Navigator.of(cxt).pop();
                 },
                 child: const Text('No'),
               ),
