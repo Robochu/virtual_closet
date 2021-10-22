@@ -89,39 +89,54 @@ class _LaundryState extends State<Laundry> {
                   laundryClothes.add(clothes[index]);
                 }
               }
-
-              return Scaffold(
-                  body:  Column(
-                      children: <Widget> [
-                        const SizedBox (height: 30,),
-                        Center(
-                            child: ElevatedButton(
-                              onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
-                              child: const Text('Empty Laundry Basket', style: TextStyle(fontSize: 20),),
-                              style: ElevatedButton.styleFrom(primary: Colors.teal,),
-                            )
-                        ),
-                        const SizedBox(height:30),
-                        Expanded ( child: GridView.count(
-                          // Create a grid with 2 columns. If you change the scrollDirection to
-                          // horizontal, this produces 2 rows.
-                          crossAxisCount: 2,
-                          // Generate 100 widgets that display their index in the List.
-                          children: List.generate(laundryClothes.length, (index) {
-                            return InkWell(
-                              child: Card(
-                                child: Image(
-                                  image: NetworkImage(laundryClothes[index].link!),
-                                  fit: BoxFit.cover,
+              if (laundryClothes.isEmpty) {
+                return const Center(
+                  child: Text(
+                    "The laundry basket is currently empty.\n\n"
+                        "To add clothes here, change the laundry status from the closet screen.",
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              } else {
+                return Scaffold(
+                    body: Column(
+                        children: <Widget>[
+                          const SizedBox (height: 30,),
+                          Center(
+                              child: ElevatedButton(
+                                onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
+                                child: const Text(
+                                  'Empty Laundry Basket', style: TextStyle(
+                                    fontSize: 20),),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.teal,),
+                              )
+                          ),
+                          const SizedBox(height: 30),
+                          Expanded(child: GridView.count(
+                            // Create a grid with 2 columns. If you change the scrollDirection to
+                            // horizontal, this produces 2 rows.
+                            crossAxisCount: 2,
+                            // Generate 100 widgets that display their index in the List.
+                            children: List.generate(
+                                laundryClothes.length, (index) {
+                              return InkWell(
+                                child: Card(
+                                  child: Image(
+                                    image: NetworkImage(
+                                        laundryClothes[index].link!),
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
-                              ),
-                              onTap: () => press(context, laundryClothes[index]),
-                            );
-                          }),
-                        ) )
-                      ]
-                  )
-              );
+                                onTap: () =>
+                                    press(context, laundryClothes[index]),
+                              );
+                            }),
+                          ))
+                        ]
+                    )
+                );
+              }
             }
           } else {
             return const Scaffold(
