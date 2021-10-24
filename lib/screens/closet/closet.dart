@@ -25,12 +25,50 @@ class _ClosetState extends State<Closet> {
 
   @override
   Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 7,
+      child: Scaffold(
+        appBar: const TabBar(
+          isScrollable: true,
+          indicatorColor: Colors.blue,
+          unselectedLabelColor: Colors.grey,
+          labelColor: Colors.blue,
+          tabs: [
+            Tab(text: "All"),
+            Tab(text: "Tops"),
+            Tab(text: "Bottoms"),
+            Tab(text: "Outerwear"),
+            Tab(text: "Shoes"),
+            Tab(text: "Accessories"),
+            Tab(icon: Icon(Icons.search)),
+          ],
+        ),
+        body: TabBarView(
+          children: [
+            buildCloset(context, "All"),
+            buildCloset(context, "Tops"),
+            buildCloset(context, "Bottoms"),
+            buildCloset(context, "Outerwear"),
+            buildCloset(context, "Shoes"),
+            buildCloset(context, "Accessories"),
+            buildCloset(context, "All"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCloset(BuildContext context, String category) {
     final user = Provider.of<MyUser?>(context);
     return StreamBuilder<List<Clothing>>(
         stream: DatabaseService(uid: user!.uid).closet,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Clothing>? clothes = snapshot.data;
+            if (clothes != null && category != "All") {
+              clothes = clothes.where((item) => item.category == category).toList();
+            }
+
             if (clothes == null || clothes.isEmpty) {
               return const Center(
                 child: Text(
@@ -49,16 +87,16 @@ class _ClosetState extends State<Closet> {
                     children: List.generate(clothes.length, (index) {
                       return InkWell(
                         child: Padding (
-                            padding: EdgeInsets.all(15),
+                            padding: const EdgeInsets.all(15),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
                               child: Image(
-                                image: NetworkImage(clothes[index].link!),
+                                image: NetworkImage(clothes![index].link!),
                                 fit: BoxFit.cover,
                               ),
                             )
                         ),
-                        onTap: () => press(context, clothes[index]),
+                        onTap: () => press(context, clothes![index]),
                       );
                     }),
                   ));
