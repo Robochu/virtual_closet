@@ -222,6 +222,7 @@ class _HomeViewState extends State<HomeView> {
   String weatherIconText = '';
   double currentLongitude = 0.0;
   double currentLatitude = 0.0;
+  TimeOfDay selectedTime = TimeOfDay.now();
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
   Future<void> getWeatherInfo() async {
@@ -267,6 +268,7 @@ class _HomeViewState extends State<HomeView> {
 
     // Change weather text to text from api weather call
     setState(() {
+      print(wlatlong.toString());
       currTemp = wlatlong.temperature!.fahrenheit;
       Temperature? tempFeel = wlatlong.tempFeelsLike;
       feelLike = tempFeel!.fahrenheit;
@@ -276,9 +278,6 @@ class _HomeViewState extends State<HomeView> {
           " Farenheit";
       weatherText = weatherDescription;
       weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
-
-      print(weatherText);
-      print(weatherIconText);
     });
   }
 
@@ -300,7 +299,7 @@ class _HomeViewState extends State<HomeView> {
       weatherIconText = commonBrokenClouds;
     } else if (weatherIconText == '09d') {
       weatherIconText = commonShowerRain;
-    } else if (weatherIconText == '010d') {
+    } else if (weatherIconText == '10d') {
       weatherIconText = 'wi-day-rain';
     } else if (weatherIconText == '11d') {
       weatherIconText = commonThunderstorm;
@@ -320,7 +319,7 @@ class _HomeViewState extends State<HomeView> {
       weatherIconText = commonBrokenClouds;
     } else if (weatherIconText == '09n') {
       weatherIconText = commonShowerRain;
-    } else if (weatherIconText == '010n') {
+    } else if (weatherIconText == '10n') {
       weatherIconText = 'wi-night-rain';
     } else if (weatherIconText == '11n') {
       weatherIconText = commonThunderstorm;
@@ -329,9 +328,126 @@ class _HomeViewState extends State<HomeView> {
     } else if (weatherIconText == '50n') {
       weatherIconText = commonMist;
     }
-
     return weatherIconText;
   }
+
+  // Helper function to translate weather icon code to weather code
+  String weatherClothesFilter(String weatherIconText) 
+  {
+    String filterCategories = '';    
+
+    if (weatherIconText == '01d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '02d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '03d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '04d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '09d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '10d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '11d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '13d') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '50d') {
+      // Filter clothes based on this weather code
+    }
+    
+    if (weatherIconText == '01n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '02n'){
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '03n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '04n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '09n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '10n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '11n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '13n') {
+      // Filter clothes based on this weather code
+    } else if (weatherIconText == '50n') {
+      // Filter clothes based on this weather code
+    }
+    return filterCategories;
+  }
+
+  String calendarClothesFilter() 
+  {
+    String filterCategories = '';
+    // If key words in calendar events like "interview" or "lunch" then filter categories
+    return filterCategories;
+  }
+
+  String onlyTimeClothesFilter(TimeOfDay currentTime) 
+  {
+    String filterCategories = '';
+    // If user doesn't allow weather and has no google calendar hooked up then filter only using time
+    return filterCategories;
+  }
+
+  void getRecommendation()
+  {
+    // Get filters using helper functions
+    String weatherFilter = weatherClothesFilter(weatherIconText);
+    String calendarFilter = calendarClothesFilter();
+    String timeFilter = onlyTimeClothesFilter(TimeOfDay.now());
+
+    // If weather not allowed by user but caledar exists then use calendar and time
+    if (weatherFilter == '' && calendarFilter != '')
+    {
+      getClothesBasedOnFilters(calendarFilter + timeFilter);
+    }
+    // If weather allowed by user but caledar is not then use only weatherFilter
+    if (weatherFilter == '' && calendarFilter != '')
+    {
+      getClothesBasedOnFilters(weatherFilter);
+    } 
+    // If weather and calendar not used/allowed by user then use only time filter
+    if (weatherFilter != '' && calendarFilter != '')
+    {
+      getClothesBasedOnFilters(timeFilter);
+    }  
+  }
+
+  void getClothesBasedOnFilters(String filters) 
+  {
+    // Filter closet based on input filters
+    // Get clothes using chance system (with multipliers for liked pieces of clothing)
+    // Assign clothes to the proper widget in the outfit widget
+  }
+  
+  // Time picker widget
+  selectTime(BuildContext context) async {          
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+    if(timeOfDay != null && timeOfDay != selectedTime)
+    {
+      setState(() {
+        selectedTime = timeOfDay;
+      });
+    }
+  }
+
+  /*
+  Button to call time picker widget and show time selected
+  ElevatedButton(
+          onPressed: () {
+            selectTime(context);
+          },
+        child: const Text("Choose Notification Time"),
+        ),
+        Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period}"),
+  */
 
   List<ItemSwipe> items = [
     ItemSwipe(name: "Item1"),
