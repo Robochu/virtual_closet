@@ -45,28 +45,28 @@ class _ClosetState extends State<Closet> {
         ),
         body: TabBarView(
           children: [
-            buildCloset(context, "All"),
-            buildCloset(context, "Tops"),
-            buildCloset(context, "Bottoms"),
-            buildCloset(context, "Outerwear"),
-            buildCloset(context, "Shoes"),
-            buildCloset(context, "Accessories"),
-            buildCloset(context, "All"),
+            buildCloset(context, filterByCategory("All")),
+            buildCloset(context, filterByCategory("Tops")),
+            buildCloset(context, filterByCategory("Bottoms")),
+            buildCloset(context, filterByCategory("Outerwear")),
+            buildCloset(context, filterByCategory("Shoes")),
+            buildCloset(context, filterByCategory("Accessories")),
+            buildCloset(context, filterByCategory("All")),
           ],
         ),
       ),
     );
   }
 
-  Widget buildCloset(BuildContext context, String category) {
+  Widget buildCloset(BuildContext context, bool Function(Clothing) filter) {
     final user = Provider.of<MyUser?>(context);
     return StreamBuilder<List<Clothing>>(
         stream: DatabaseService(uid: user!.uid).closet,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Clothing>? clothes = snapshot.data;
-            if (clothes != null && category != "All") {
-              clothes = clothes.where((item) => item.category == category).toList();
+            if (clothes != null) {
+              clothes = clothes.where(filter).toList();
             }
 
             if (clothes == null || clothes.isEmpty) {
@@ -110,4 +110,8 @@ class _ClosetState extends State<Closet> {
           }
         });
   }
+}
+
+bool Function(Clothing) filterByCategory(String category) {
+  return (item) => category == "All" || item.category == category;
 }
