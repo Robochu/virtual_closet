@@ -120,6 +120,7 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                     controller: materialController,
                   ),
+                  (_isEditable) ?
                   Align(
                       alignment: Alignment.centerLeft,
                       child: DropdownButtonFormField<String>(
@@ -148,9 +149,21 @@ class _DetailPageState extends State<DetailPage> {
                           );
                         }).toList(),
                       )
-                  ),
-                  Container(
+                  ) : Container(
                     height: 10,
+                  ), Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        onPressed: null,
+                        child: (clothing!.isLaundry) ? const Text(
+                            'In Laundry') : const Text('In Closet'),
+                        style: ElevatedButton.styleFrom(
+                            primary: Colors.black,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30)
+                            )
+                        ),
+                      )
                   ),
                   if (_isEditable) Row(
                     children: <Widget>[
