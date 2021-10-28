@@ -25,6 +25,8 @@ class _DetailPageState extends State<DetailPage> {
   late final sleeveController;
   late final materialController;
 
+  bool _isEditable = false;
+
   @override
   void initState() {
     super.initState();
@@ -57,50 +59,53 @@ class _DetailPageState extends State<DetailPage> {
                 children: <Widget>[
                   (widget.clothing.link! != '')
                       ? Image(
-                          image: NetworkImage(widget.clothing.link!),
+                    image: NetworkImage(widget.clothing.link!),
 
-                        )
+                  )
                       : Image.file(File(widget.clothing.path!)),
 
                   Align(
-                    alignment: Alignment.centerLeft,
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        filled: true,
-                        labelText: 'Category',
-                      ),
-                      isExpanded: true,
-                      hint: const Text('Choose a category'),
-                      value: (clothing!.category != '')
-                          ? clothing!.category
-                          : 'Tops',
-                      onChanged: (String? value) {
-                        setState(() {
-                          clothing!.category = value!;
-                        });
-                      },
-                      items: <String>[
-                        'Tops',
-                        'Bottoms',
-                        'Outerwear',
-                        'Shoes',
-                        'Accessories'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          filled: true,
+                          labelText: 'Category',
+                        ),
+                        isExpanded: true,
+                        hint: const Text('Choose a category'),
+                        value: (clothing!.category != '')
+                            ? clothing!.category
+                            : 'Tops',
+                        onChanged: _isEditable ? (String? value) {
+                          setState(() {
+                            clothing!.category = value!;
+                          });
+                        } : null,
+                        items: <String>[
+                          'Tops',
+                          'Bottoms',
+                          'Outerwear',
+                          'Shoes',
+                          'Accessories'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
                   ),
                   TextFormField(
+                    enabled: _isEditable,
                     decoration: const InputDecoration(
-                      filled: true,
+                        filled: true,
                         labelText: 'Sleeve type',
                         hintText: 'Short-sleeve, long-sleeve, tank tops, etc.'),
                     controller: sleeveController,
                   ),
                   TextFormField(
+                    enabled: _isEditable,
                     decoration: const InputDecoration(
                       filled: true,
                       labelText: 'Color',
@@ -108,6 +113,7 @@ class _DetailPageState extends State<DetailPage> {
                     controller: colorController,
                   ),
                   TextFormField(
+                    enabled: _isEditable,
                     decoration: const InputDecoration(
                       filled: true,
                       labelText: 'Materials',
@@ -115,42 +121,52 @@ class _DetailPageState extends State<DetailPage> {
                     controller: materialController,
                   ),
                   Align(
-                    alignment: Alignment.centerLeft,
-                    child: DropdownButtonFormField<String>(
-                      decoration: InputDecoration(
-                        filled: true,
-                        labelText: 'Add to laundry basket?',
-                      ),
-                      isExpanded: false,
-                      hint: const Text('Choose an option'),
-                      value: (clothing!.isLaundry != false)
-                          ? "Yes"
-                          : "No",
-                      onChanged: (String? status) {
-                        setState(() {
-                          (status == "Yes") ? clothing!.isLaundry = true : clothing!.isLaundry = false;
-                        });
-                      },
-                      items: <String>[
-                        'Yes',
-                        'No'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          filled: true,
+                          labelText: 'Add to laundry basket?',
+                        ),
+                        isExpanded: false,
+                        hint: const Text('Choose an option'),
+                        value: (clothing!.isLaundry != false)
+                            ? "Yes"
+                            : "No",
+                        onChanged: _isEditable ?  (String? status) {
+                          setState(() {
+                            (status == "Yes") ? clothing!.isLaundry = true : clothing!.isLaundry = false;
+                          });
+                        } : null,
+                        items: <String>[
+                          'Yes',
+                          'No'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
                   ),
-                  Row(
+                  Container(
+                    height: 10,
+                  ),
+                  if (_isEditable) Row(
                     children: <Widget>[
+                      Container(
+                        width: 20,
+                      ),
                       Expanded(
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             primary: Colors.blue,
                           ),
                           child: const Text('Cancel'),
-                          onPressed: () => {Navigator.pop(context)},
+                          onPressed: () => {
+                            _isEditable = false,
+                            setState(() {})
+                          },
                         ),
                       ),
                       Container(
@@ -173,18 +189,18 @@ class _DetailPageState extends State<DetailPage> {
                             clothing == unedited
                                 ? null
                                 : () {
-                                    clothing!.upload();
-                                    setState(() {
-                                      unedited = Clothing.clone(clothing!);
-                                    });
-                                  };
+                              clothing!.upload();
+                              setState(() {
+                                unedited = Clothing.clone(clothing!);
+                              });
+                            };
                             Navigator.of(context)
                                 .popUntil((route) => route.isFirst);
                           },
                         ),
                       ),
                       Container(
-                        width: 10,
+                        width: 20,
                       ),
                       Expanded(
                         child: ElevatedButton(
@@ -193,9 +209,36 @@ class _DetailPageState extends State<DetailPage> {
                             ),
                             child: const Text('Delete'),
                             onPressed: () => {clothing!.delete(),
-                            Navigator.of(context).popUntil((route) => route.isFirst)}),
+                              Navigator.of(context).popUntil((route) => route.isFirst)}),
+                      ),
+                      Container(
+                        width: 20,
                       ),
                     ],
+                  ) else Row(
+                      children: <Widget>[
+                        Container(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.redAccent,
+                            ),
+                            child: const Text('Edit'),
+                            onPressed: () => {
+                              _isEditable = true,
+                              setState(() {})
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: 20,
+                        ),
+                      ]
+                  ),
+                  Container(
+                    height: 10,
                   ),
                 ],
               ),
