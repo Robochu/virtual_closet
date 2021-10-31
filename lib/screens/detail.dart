@@ -51,6 +51,7 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
         body: Form(
             key: _formKey,
             child: SingleChildScrollView(

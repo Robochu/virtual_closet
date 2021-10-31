@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipable/flutter_swipable.dart';
 
+import '../../clothes.dart';
+
 /*
 * Class to for each swipable card on the recommendation section
  */
@@ -9,16 +11,22 @@ class ItemSwipe extends StatelessWidget {
   const ItemSwipe({required this.name});
 
   final String name;
+  void updateLaundry() {
+    //call upload() function in clothes.dart to update this
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Swipable(
       child: Container(
-        height: 350,
-        width: 300,
-        padding: EdgeInsets.only(top: 50.0),
+        alignment: Alignment.center,
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery.of(context).size.width * 0.7,
+        //padding: EdgeInsets.only(top: 50.0),
         decoration: BoxDecoration(
-          color: Colors.grey,),
+          color: Colors.grey,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -31,6 +39,35 @@ class ItemSwipe extends StatelessWidget {
           ],
         ),
       ),
+      verticalSwipe: false,
+      onSwipeLeft: (offset) => {
+
+      },
+      onSwipeRight: (offset) => {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text("Hooray, you choose to wear this today!"),
+                  content: const Text("Do you want to add it to the laundry basket?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        updateLaundry();
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                      child: const Text("Yes please!"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                          Navigator.of(context, rootNavigator: true).pop();
+                      },
+                      child: const Text("No thanks"),
+                    ),
+                  ],
+                );
+              })
+      },
     );
   }
 }

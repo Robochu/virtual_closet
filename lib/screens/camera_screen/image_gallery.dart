@@ -52,9 +52,6 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
         MaterialPageRoute(builder: (context) =>
           DetailPage(clothing: item)));
 
-      //await item.upload();
-      //Navigator.pop(context);
-      print('\n\n\n\n');
     }
 
     return Scaffold(
@@ -73,7 +70,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
                     preferredCameraDevice: CameraDevice.front);
                 setState(() {
                   _image = File(image.path);
-                }); //TODO: handle Null Exception - user may click return without taking photo
+                });
               },
               child: Container(
                 width: 200,

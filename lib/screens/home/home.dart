@@ -31,8 +31,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     Closet(),
@@ -40,46 +38,6 @@ class _MyHomePageState extends State<MyHomePage> {
     AccountPage()
   ];
 
-  /*
-  ListView(children: <Widget>[
-      Container(
-          alignment: Alignment.center,
-          padding: EdgeInsets.all(10),
-          child: Text(
-            'Account',
-            style: optionStyle,
-          )),
-      Container(
-        padding: EdgeInsets.all(10),
-        child: Text(
-          widget.user.displayName != null?,
-        )
-      ),
-    ])
-
-  static const List<List<Widget>> _tabOptions = <List<Widget>>[
-    <Widget>[
-      Text(
-        'Home',
-        style: optionStyle,
-      ),
-    ],
-    <Widget>[
-      Closet(),
-    ],
-    <Widget>[
-      Text(
-        'Laundry',
-        style: optionStyle,
-      ),
-    ],
-    <Widget>[
-      Text(
-        'Account',
-        style: optionStyle,
-      )
-    ],
-  ];*/
 
   //Method to track index of tabs for the bottom navigation bar
   void _onItemTapped(int index) {
@@ -101,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.lightBlueAccent,
             child: FlatButton.icon(
               icon: Icon(Icons.person),
-              label: Text('logout'),
+              label: Text('Logout'),
               onPressed: () async {
                 await _auth.signOut();
               },
@@ -110,7 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+        child: IndexedStack(
+          index: _selectedIndex,
+          children: _widgetOptions,
+        ),
       ),
       floatingActionButton: Container(
         height: 75,
@@ -328,13 +289,14 @@ class _HomeViewState extends State<HomeView> {
     } else if (weatherIconText == '50n') {
       weatherIconText = commonMist;
     }
+
     return weatherIconText;
   }
 
   // Helper function to translate weather icon code to weather code
-  String weatherClothesFilter(String weatherIconText) 
+  String weatherClothesFilter(String weatherIconText)
   {
-    String filterCategories = '';    
+    String filterCategories = '';
 
     if (weatherIconText == '01d') {
       // Filter clothes based on this weather code
@@ -355,7 +317,7 @@ class _HomeViewState extends State<HomeView> {
     } else if (weatherIconText == '50d') {
       // Filter clothes based on this weather code
     }
-    
+
     if (weatherIconText == '01n') {
       // Filter clothes based on this weather code
     } else if (weatherIconText == '02n'){
@@ -378,14 +340,14 @@ class _HomeViewState extends State<HomeView> {
     return filterCategories;
   }
 
-  String calendarClothesFilter() 
+  String calendarClothesFilter()
   {
     String filterCategories = '';
     // If key words in calendar events like "interview" or "lunch" then filter categories
     return filterCategories;
   }
 
-  String onlyTimeClothesFilter(TimeOfDay currentTime) 
+  String onlyTimeClothesFilter(TimeOfDay currentTime)
   {
     String filterCategories = '';
     // If user doesn't allow weather and has no google calendar hooked up then filter only using time
@@ -408,23 +370,23 @@ class _HomeViewState extends State<HomeView> {
     if (weatherFilter == '' && calendarFilter != '')
     {
       getClothesBasedOnFilters(weatherFilter);
-    } 
+    }
     // If weather and calendar not used/allowed by user then use only time filter
     if (weatherFilter != '' && calendarFilter != '')
     {
       getClothesBasedOnFilters(timeFilter);
-    }  
+    }
   }
 
-  void getClothesBasedOnFilters(String filters) 
+  void getClothesBasedOnFilters(String filters)
   {
     // Filter closet based on input filters
     // Get clothes using chance system (with multipliers for liked pieces of clothing)
     // Assign clothes to the proper widget in the outfit widget
   }
-  
+
   // Time picker widget
-  selectTime(BuildContext context) async {          
+  selectTime(BuildContext context) async {
     final TimeOfDay? timeOfDay = await showTimePicker(
       context: context,
       initialTime: selectedTime,
@@ -449,6 +411,7 @@ class _HomeViewState extends State<HomeView> {
         Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period}"),
   */
 
+ //placeholder, list of recommended items goes here
   List<ItemSwipe> items = [
     ItemSwipe(name: "Item1"),
     ItemSwipe(name: "Item2"),
@@ -462,7 +425,7 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               children: <Widget>[
                 Row(
-                  children: [
+                  children: [ //call WeatherSummary and CalendarSummary here to display info
                     Flexible(
                       flex: 2,
                       child: WeatherSummary(
@@ -475,8 +438,9 @@ class _HomeViewState extends State<HomeView> {
                   ],
                 ),
                 Container(
+                    alignment: Alignment.center,
                     height: 400.0,
-                    padding: EdgeInsets.only(left: 50.0),
+                    padding: EdgeInsets.only(left: 60.0),
                     child: Stack(
                       children: items,
                     ))
