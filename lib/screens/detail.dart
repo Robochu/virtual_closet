@@ -208,6 +208,7 @@ class _DetailPageState extends State<DetailPage> {
                                 unedited = Clothing.clone(clothing!);
                               });
                             };
+                            //exit out of detail page
                             Navigator.of(context)
                                 .popUntil((route) => route.isFirst);
                           },

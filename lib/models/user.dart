@@ -7,8 +7,8 @@ class MyUser {
 
 class MyUserData {
   final String? uid;
-  final String name;
-  final CollectionReference userCloset;
-
-  MyUserData(this.uid, this.name, this.userCloset);
+  String name;
+  String? lastName;
+  DateTime dob;
+  MyUserData({this.uid, required this.name, this.lastName, required this.dob});
 }

@@ -92,25 +92,10 @@ class _LoginState extends State<Login> {
                           email: emailText.text,
                           password: passwordText.text,
                           context: context);
-                      /*user.then((value) async {
-                        if (value?.email != null) {
-                          print(value?.email);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MyHomePage(
-                                      title: 'Virtual Closet Home',
-                                      user: value!,
-                                    )),
-                          );
-                        }
-                        else {
-                          print("Null email; login failed");
-                        }
-                      });*/
+
                     },
                   )),
+
               Container(
                   child: Row(
                     children: <Widget>[
@@ -125,10 +110,7 @@ class _LoginState extends State<Login> {
                           ),
                           onPressed: () => {
                             widget.toggleView(),
-                            /*
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),*/
+
                           })
                     ],
                     mainAxisAlignment: MainAxisAlignment.center,

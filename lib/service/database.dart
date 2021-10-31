@@ -60,9 +60,10 @@ class DatabaseService {
 
   MyUserData _dataFromSnapshot(DocumentSnapshot snapshot) {
     return MyUserData(
-        this.uid,
-        snapshot['name'],
-        usersCollection.doc(uid).collection('closet')
+        uid: this.uid,
+        name: snapshot['name'] ?? '',
+        lastName: snapshot['lastName'] ?? '',
+        dob: snapshot['dob'] ?? DateTime.now(),
     );
   }
 }
