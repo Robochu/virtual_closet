@@ -7,11 +7,13 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-  Future updateUserData(String name, String email) async{
+  Future updateUserData(MyUserData user) async{
     return await usersCollection.doc(uid).set({
-      'name' : name,
-      'email': email,
-      'uid': this.uid
+      'name' : user.name,
+      'email': user.email,
+      'uid': this.uid,
+      'lastName': user.lastName,
+      'dob': user.dob,
     });
 
   }
@@ -61,9 +63,10 @@ class DatabaseService {
   MyUserData _dataFromSnapshot(DocumentSnapshot snapshot) {
     return MyUserData(
         uid: this.uid,
+        email: snapshot['email'],
         name: snapshot['name'] ?? '',
         lastName: snapshot['lastName'] ?? '',
-        dob: snapshot['dob'] ?? DateTime.now(),
+        dob: snapshot['dob'] ?? '',
     );
   }
 }

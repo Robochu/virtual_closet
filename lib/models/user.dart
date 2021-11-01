@@ -7,8 +7,9 @@ class MyUser {
 
 class MyUserData {
   final String? uid;
+  String email;
   String name;
   String? lastName;
-  DateTime dob;
-  MyUserData({this.uid, required this.name, this.lastName, required this.dob});
+  String dob;
+  MyUserData({this.uid,required this.email, required this.name, this.lastName, required this.dob});
 }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'database.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -36,7 +37,8 @@ class Authentication {
 
       //create a document for this user in database
       if (user != null) {
-        await DatabaseService(uid: user.uid).updateUserData(name, email);
+        MyUserData? myUser = MyUserData(lastName: '', name: name, dob: '', email: email);
+        await DatabaseService(uid: user.uid).updateUserData(myUser);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
