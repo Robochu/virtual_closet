@@ -13,6 +13,21 @@ class Closet extends StatefulWidget {
 }
 
 class _ClosetState extends State<Closet> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late TextEditingController searchController;
+
+  @override
+  void initState() {
+    searchController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+  }
+
   void press(BuildContext context, Clothing clothing) {
     Navigator.push(
       context,
@@ -51,9 +66,31 @@ class _ClosetState extends State<Closet> {
             buildCloset(context, filterByCategory("Outerwear")),
             buildCloset(context, filterByCategory("Shoes")),
             buildCloset(context, filterByCategory("Accessories")),
-            buildCloset(context, filterByCategory("All")),
+            buildSearch(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildSearch(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          TextFormField(
+            decoration: const InputDecoration(
+              filled: true,
+              labelText: "Search",
+            ),
+            controller: searchController,
+            onChanged: (text) => setState(() {}),
+          ),
+
+          Expanded(
+            child: buildCloset(context, filterByTerms(searchController.text.split(" "), false))
+          ),
+        ],
       ),
     );
   }
@@ -113,5 +150,38 @@ class _ClosetState extends State<Closet> {
 }
 
 bool Function(Clothing) filterByCategory(String category) {
-  return (item) => category == "All" || item.category == category;
+  return (item) => category == "All" || category == item.category;
+}
+
+bool Function(Clothing) filterByTerms(List<String> terms, bool isLaundry) {
+  return (item) {
+    for (String term in terms) {
+      bool found = false;
+      for (String result in item.category.split(" ")) {
+        if (term == result) {
+          found = true;
+        }
+      }
+      for (String result in item.sleeves.split(" ")) {
+        if (term == result) {
+          found = true;
+        }
+      }
+      for (String result in item.materials.split(" ")) {
+        if (term == result) {
+          found = true;
+        }
+      }
+      for (String result in item.color.split(" ")) {
+        if (term == result) {
+          found = true;
+        }
+      }
+
+      if (!found) {
+        return false;
+      }
+    }
+    return isLaundry == item.isLaundry;
+  };
 }
