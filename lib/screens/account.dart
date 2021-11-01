@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +20,7 @@ class _AccountPageState extends State<AccountPage> {
     return Scaffold(
         body: ListView(children: <Widget>[
       ListTile(
-        trailing: Icon(Icons.arrow_forward_rounded),
+        trailing: const Icon(Icons.arrow_forward_rounded),
         title: const Text("Account"),
         onTap: () {
           Navigator.push(
@@ -45,23 +47,42 @@ class _ProfilePageState extends State<ProfilePage> {
   static final FirebaseAuth auth = FirebaseAuth.instance;
 
   User? user;
+  late MyUserData data;
   bool _isEditable = false;
   String? name;
   String? email;
   late final nameController;
   late final lastNameController;
+  late final dobController;
   late String dob;
   final DateFormat dateFormat = DateFormat("MM/dd/yyyy");
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     user = auth.currentUser;
     email = user?.email;
+    dob = '';
     nameController = TextEditingController();
     lastNameController = TextEditingController();
+    dobController = TextEditingController();
+    _setData();
   }
+
+  _setData() async {
+    DatabaseService(uid: user!.uid).userData.then((result) {
+      setState(() {
+        data = result;
+        dob = data.dob;
+        nameController.text = data.name;
+        lastNameController.text = data.lastName;
+        dobController.text = data.dob;
+      });
+    });
+  }
+
   final _formKey1 = GlobalKey<FormState>();
+
   @override
   void dispose() {
     super.dispose();
@@ -82,28 +103,19 @@ class _ProfilePageState extends State<ProfilePage> {
           title: const Text("My Account"),
         ),
         body: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
             child: SingleChildScrollView(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                   buildPersonalDetails(context),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   buildPrivacy(context),
                 ]))));
   }
 
   Widget buildPersonalDetails(BuildContext context) {
-
-    return StreamBuilder<MyUserData>(
-        stream: DatabaseService(uid: user!.uid).userData,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            MyUserData? data = snapshot.data;
-            nameController.text = data!.name;
-            lastNameController.text = data.lastName;
-            dob = data.dob;
-            return Container(
+    return Container(
                 height: 320,
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -112,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 1,
                     )),
                 child: Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                     child: Form(
                         key: _formKey1,
                         child: Column(children: <Widget>[
@@ -131,12 +143,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ? const Icon(Icons.check)
                                         : const Icon(Icons.edit),
                                     onPressed: () async {
+                                      if(_isEditable) {
                                       if (_formKey1.currentState!.validate()) {
                                           data.name = nameController.text;
-                                          data.lastName = nameController.text;
+                                          data.lastName = lastNameController.text;
+                                          data.dob = dobController.text;
                                           await DatabaseService(uid: user!.uid)
                                               .updateUserData(data);
-
+                                        }
                                       }
                                       setState(() {
                                         _isEditable = !_isEditable;
@@ -146,8 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                           TextFormField(
-
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                             decoration: const InputDecoration(
                               labelText: "Email",
                               //contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
@@ -157,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           TextFormField(
                             autofocus: true,
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                             decoration: const InputDecoration(
                                 labelText: "First name",
                                 labelStyle: TextStyle(fontSize: 15)),
@@ -166,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           TextFormField(
                             autofocus: true,
-                            style: TextStyle(fontSize: 15),
+                            style: const TextStyle(fontSize: 15),
                             decoration: const InputDecoration(
                                 labelText: "Last name",
                                 labelStyle: TextStyle(fontSize: 15)),
@@ -175,17 +188,18 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           TextFormField(
                               autofocus: true,
-                              style: TextStyle(fontSize: 15),
+                              style: const TextStyle(fontSize: 15),
                               decoration: const InputDecoration(
                                   labelText: "Date of birth",
                                   labelStyle: TextStyle(fontSize: 15)),
-                              initialValue: dob,
+                              controller: dobController,
                               enabled: _isEditable,
                               onTap: () {
+                                FocusScope.of(context).requestFocus(FocusNode());
                                 showModalBottomSheet(
                                     context: context,
-                                    builder: (context) => Container(
-                                        height: 150,
+                                    builder: (context) => SizedBox(
+                                      height: 400,
                                         child: Column(children: [
                                           TextButton(
                                               style: TextButton.styleFrom(
@@ -194,14 +208,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   alignment:
                                                       Alignment.topRight),
                                               onPressed: () {
+                                                dobController.text = dob;
                                                 Navigator.pop(context);
                                               },
                                               child: const Text("Save")),
                                           Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  3,
+                                              height: 300,
                                               child: CupertinoDatePicker(
                                                   initialDateTime:
                                                       DateTime.now(),
@@ -210,26 +222,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   mode: CupertinoDatePickerMode
                                                       .date,
                                                   onDateTimeChanged:
-                                                      (DateTime newdate) {
-                                                    setState(() {
+                                                      (DateTime newDate) {
                                                       dob = dateFormat
-                                                          .format(newdate);
-                                                    });
+                                                          .format(newDate);
                                                   }))
                                         ])));
                               }),
                         ]))));
-          } else {
-            return Center(
-                child: Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                      width: 2,
-                    )),
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    width: MediaQuery.of(context).size.width * 0.9));
-          }
-        });
+
   }
 
   Widget buildPrivacy(BuildContext context) {
@@ -243,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 1,
             )),
         child: Padding(
-          padding: EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+          padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
           child: Wrap(
             direction: Axis.vertical,
             spacing: -5,

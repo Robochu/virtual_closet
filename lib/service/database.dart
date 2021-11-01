@@ -56,8 +56,8 @@ class DatabaseService {
                 doc['isLaundry'] ?? '')).toList());
   }
 
-  Stream<MyUserData> get userData {
-    return usersCollection.doc(uid).snapshots().map(_dataFromSnapshot);
+  Future<MyUserData> get userData {
+    return usersCollection.doc(uid).get().then(_dataFromSnapshot);
   }
 
   MyUserData _dataFromSnapshot(DocumentSnapshot snapshot) {

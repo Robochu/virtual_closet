@@ -9,7 +9,7 @@ class MyUserData {
   final String? uid;
   String email;
   String name;
-  String? lastName;
+  String lastName;
   String dob;
-  MyUserData({this.uid,required this.email, required this.name, this.lastName, required this.dob});
+  MyUserData({this.uid,required this.email, required this.name, required this.lastName, required this.dob});
 }
