@@ -47,6 +47,9 @@ dependencies:
   toggle_switch: ^1.2.0
   get: ^4.3.8
   intl:
+  googleapis: ^7.0.0
+  googleapis_auth: ^1.2.0
+  url_launcher: ^6.0.12
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -23,6 +23,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _selectedIndex = 0;
+
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     Closet(),
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () {
                     _onItemTapped(0);
                     // When user clicks on homebutton a call to weather API is made and refreshes weather data
-                    //getWeatherInfo();
+                    //_HomeViewState().getWeatherInfo();
                   }),
               IconButton(
                   tooltip: "Closet",
@@ -164,13 +166,14 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class HomeView extends StatefulWidget {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({Key? key,}) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
+
   @override
   void initState() {
     super.initState();
@@ -400,16 +403,6 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  /*
-  Button to call time picker widget and show time selected
-  ElevatedButton(
-          onPressed: () {
-            selectTime(context);
-          },
-        child: const Text("Choose Notification Time"),
-        ),
-        Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period}"),
-  */
 
  //placeholder, list of recommended items goes here
   List<ItemSwipe> items = [
@@ -425,7 +418,8 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               children: <Widget>[
                 Row(
-                  children: [ //call WeatherSummary and CalendarSummary here to display info
+                  children: [ 
+                    //call WeatherSummary and CalendarSummary here to display info
                     Flexible(
                       flex: 2,
                       child: WeatherSummary(
@@ -443,7 +437,14 @@ class _HomeViewState extends State<HomeView> {
                     padding: EdgeInsets.only(left: 60.0),
                     child: Stack(
                       children: items,
-                    ))
+                    )),
+                ElevatedButton(
+                    onPressed: () {
+                      selectTime(context);
+                    },
+                    child: const Text("Choose Notification Time"),
+                    ),
+                    Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period.toString().substring(10,12)}"),
               ],
             )));
   }
