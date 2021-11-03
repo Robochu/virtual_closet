@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipable/flutter_swipable.dart';
 import 'package:geolocator/geolocator.dart';
@@ -48,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final Authentication _auth = Authentication();
+  final Authentication _auth = Authentication(auth: FirebaseAuth.instance);
 
   @override
   Widget build(BuildContext context) {

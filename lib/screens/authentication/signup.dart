@@ -116,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       }
                       else {
                         if (passwordText.text == confirmPasswordText.text) {
-                          Future<MyUser?> user = Authentication
+                          Future<MyUser?> user = Authentication(auth: FirebaseAuth.instance)
                               .registerWithEmailPassword(
                               name: nameText.text,
                               email: emailText.text,

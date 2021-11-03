@@ -58,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
   final DateFormat dateFormat = DateFormat("MM/dd/yyyy");
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     user = auth.currentUser;
     email = user?.email;
@@ -116,120 +116,114 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget buildPersonalDetails(BuildContext context) {
     return Container(
-                height: 320,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.black,
-                      width: 1,
-                    )),
-                child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Form(
-                        key: _formKey1,
-                        child: Column(children: <Widget>[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              const Text("Personal details",
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              Align(
-                                  alignment: Alignment.topRight,
-                                  child: IconButton(
-                                    iconSize: 18,
-                                    icon: _isEditable
-                                        ? const Icon(Icons.check)
-                                        : const Icon(Icons.edit),
-                                    onPressed: () async {
-                                      if(_isEditable) {
-                                      if (_formKey1.currentState!.validate()) {
-                                          data.name = nameController.text;
-                                          data.lastName = lastNameController.text;
-                                          data.dob = dobController.text;
-                                          await DatabaseService(uid: user!.uid)
-                                              .updateUserData(data);
-                                        }
-                                      }
-                                      setState(() {
-                                        _isEditable = !_isEditable;
-                                      });
-                                    },
-                                  )),
-                            ],
-                          ),
-                          TextFormField(
-                            style: const TextStyle(fontSize: 15),
-                            decoration: const InputDecoration(
-                              labelText: "Email",
-                              //contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
-                            ),
-                            enabled: false,
-                            initialValue: email,
-                          ),
-                          TextFormField(
-                            autofocus: true,
-                            style: const TextStyle(fontSize: 15),
-                            decoration: const InputDecoration(
-                                labelText: "First name",
-                                labelStyle: TextStyle(fontSize: 15)),
-                            enabled: _isEditable,
-                            controller: nameController,
-                          ),
-                          TextFormField(
-                            autofocus: true,
-                            style: const TextStyle(fontSize: 15),
-                            decoration: const InputDecoration(
-                                labelText: "Last name",
-                                labelStyle: TextStyle(fontSize: 15)),
-                            enabled: _isEditable,
-                            controller: lastNameController,
-                          ),
-                          TextFormField(
-                              autofocus: true,
-                              style: const TextStyle(fontSize: 15),
-                              decoration: const InputDecoration(
-                                  labelText: "Date of birth",
-                                  labelStyle: TextStyle(fontSize: 15)),
-                              controller: dobController,
-                              enabled: _isEditable,
-                              onTap: () {
-                                FocusScope.of(context).requestFocus(FocusNode());
-                                showModalBottomSheet(
-                                    context: context,
-                                    builder: (context) => SizedBox(
-                                      height: 400,
-                                        child: Column(children: [
-                                          TextButton(
-                                              style: TextButton.styleFrom(
-                                                  minimumSize: Size.zero,
-                                                  padding: EdgeInsets.zero,
-                                                  alignment:
-                                                      Alignment.topRight),
-                                              onPressed: () {
-                                                dobController.text = dob;
-                                                Navigator.pop(context);
-                                              },
-                                              child: const Text("Save")),
-                                          Container(
-                                              height: 300,
-                                              child: CupertinoDatePicker(
-                                                  initialDateTime:
-                                                      DateTime.now(),
-                                                  maximumYear: 2030,
-                                                  minimumYear: 1970,
-                                                  mode: CupertinoDatePickerMode
-                                                      .date,
-                                                  onDateTimeChanged:
-                                                      (DateTime newDate) {
-                                                      dob = dateFormat
-                                                          .format(newDate);
-                                                  }))
-                                        ])));
-                              }),
-                        ]))));
-
+        height: 320,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: Colors.black,
+              width: 1,
+            )),
+        child: Padding(
+            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+            child: Form(
+                key: _formKey1,
+                child: Column(children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const Text("Personal details",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Align(
+                          alignment: Alignment.topRight,
+                          child: IconButton(
+                            iconSize: 18,
+                            icon: _isEditable
+                                ? const Icon(Icons.check)
+                                : const Icon(Icons.edit),
+                            onPressed: () async {
+                              if (_isEditable) {
+                                if (_formKey1.currentState!.validate()) {
+                                  data.name = nameController.text;
+                                  data.lastName = lastNameController.text;
+                                  data.dob = dobController.text;
+                                  await DatabaseService(uid: user!.uid)
+                                      .updateUserData(data);
+                                }
+                              }
+                              setState(() {
+                                _isEditable = !_isEditable;
+                              });
+                            },
+                          )),
+                    ],
+                  ),
+                  TextFormField(
+                    style: const TextStyle(fontSize: 15),
+                    decoration: const InputDecoration(
+                      labelText: "Email",
+                      //contentPadding: EdgeInsets.symmetric(vertical: 25.0, horizontal: 10.0)
+                    ),
+                    enabled: false,
+                    initialValue: email,
+                  ),
+                  TextFormField(
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 15),
+                    decoration: const InputDecoration(
+                        labelText: "First name",
+                        labelStyle: TextStyle(fontSize: 15)),
+                    enabled: _isEditable,
+                    controller: nameController,
+                  ),
+                  TextFormField(
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 15),
+                    decoration: const InputDecoration(
+                        labelText: "Last name",
+                        labelStyle: TextStyle(fontSize: 15)),
+                    enabled: _isEditable,
+                    controller: lastNameController,
+                  ),
+                  TextFormField(
+                      autofocus: true,
+                      style: const TextStyle(fontSize: 15),
+                      decoration: const InputDecoration(
+                          labelText: "Date of birth",
+                          labelStyle: TextStyle(fontSize: 15)),
+                      controller: dobController,
+                      enabled: _isEditable,
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        showModalBottomSheet(
+                            context: context,
+                            builder: (context) => SizedBox(
+                                height: 400,
+                                child: Column(children: [
+                                  TextButton(
+                                      style: TextButton.styleFrom(
+                                          minimumSize: Size.zero,
+                                          padding: EdgeInsets.zero,
+                                          alignment: Alignment.topRight),
+                                      onPressed: () {
+                                        dobController.text = dob;
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text("Save")),
+                                  Container(
+                                      height: 300,
+                                      child: CupertinoDatePicker(
+                                          initialDateTime: DateTime.now(),
+                                          maximumYear: 2030,
+                                          minimumYear: 1970,
+                                          mode: CupertinoDatePickerMode.date,
+                                          onDateTimeChanged:
+                                              (DateTime newDate) {
+                                            dob = dateFormat.format(newDate);
+                                          }))
+                                ])));
+                      }),
+                ]))));
   }
 
   Widget buildPrivacy(BuildContext context) {

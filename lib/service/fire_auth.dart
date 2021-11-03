@@ -6,7 +6,8 @@ import 'package:virtual_closet/models/user.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Authentication {
-  static final FirebaseAuth auth = FirebaseAuth.instance;
+  Authentication({required this.auth});
+  final FirebaseAuth auth;
 
   static MyUser? _createUser(User? user) {
     if (user != null) {
@@ -14,13 +15,15 @@ class Authentication {
     }
     return null;
   }
-
+  MyUser? get currentUser {
+    return _createUser(auth.currentUser);
+  }
   //create a stream to listen to authentication status changes
   Stream<MyUser?> get user {
     return auth.authStateChanges().map(_createUser);
   }
 
-  static Future<MyUser?> registerWithEmailPassword({
+  Future<MyUser?> registerWithEmailPassword({
     required String name,
     required String email,
     required String password,
@@ -54,10 +57,9 @@ class Authentication {
     return _createUser(user);
   }
 
-  static Future<MyUser?> signInWithEmailPassword({
+  Future<MyUser?> signInWithEmailPassword({
     required String email,
     required String password,
-    required BuildContext context,
   }) async {
     User? user;
     try {
@@ -76,7 +78,7 @@ class Authentication {
     return _createUser(user);
   }
 
-  static void forgotPassword({required String email}) async {
+  void forgotPassword({required String email}) async {
     try {
       auth.sendPasswordResetEmail(email: email);
       print("Sent password reset email!");

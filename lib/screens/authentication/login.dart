@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
@@ -70,7 +71,7 @@ class _LoginState extends State<Login> {
                       print("Enter email");
                     }
                     else {
-                      Authentication.forgotPassword(email: emailText.text);
+                      Authentication(auth: FirebaseAuth.instance).forgotPassword(email: emailText.text);
                     }
                   },
                   style: TextButton.styleFrom(
@@ -88,10 +89,9 @@ class _LoginState extends State<Login> {
                     onPressed: () {
                       print("Login functionality here");
                       Future<MyUser?> user =
-                      Authentication.signInWithEmailPassword(
+                      Authentication(auth: FirebaseAuth.instance).signInWithEmailPassword(
                           email: emailText.text,
-                          password: passwordText.text,
-                          context: context);
+                          password: passwordText.text);
 
                     },
                   )),
