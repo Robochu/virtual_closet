@@ -15,31 +15,32 @@ class Closet extends StatefulWidget {
 class _ClosetState extends State<Closet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController searchController;
+  late TextEditingController materialsController;
 
   String categoryFilter = "";
   String sleevesFilter = "";
   String colorFilter = "";
-  String materialsFilter = "";
   String itemFilter = "";
 
   @override
   void initState() {
     super.initState();
     searchController = TextEditingController();
+    materialsController = TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
     searchController.dispose();
+    materialsController.dispose();
   }
 
   void press(BuildContext context, Clothing clothing) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            DetailPage(clothing: clothing),
+        builder: (context) => DetailPage(clothing: clothing),
       ),
     );
   }
@@ -92,7 +93,7 @@ class _ClosetState extends State<Closet> {
             controller: searchController,
             onChanged: (text) => setState(() {}),
           ),
-          Expanded(
+          Flexible(
             child: GridView.count(
               crossAxisCount: 2,
               children: [
@@ -105,7 +106,9 @@ class _ClosetState extends State<Closet> {
                   isExpanded: true,
                   hint: const Text('Choose a category'),
                   value: categoryFilter,
-                  onChanged: (text) => setState(() {}),
+                  onChanged: (text) => setState(() {
+                    categoryFilter = text!;
+                  }),
                   items: <String>[
                     '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
                   ].map<DropdownMenuItem<String>>((String value) {
@@ -124,7 +127,9 @@ class _ClosetState extends State<Closet> {
                   isExpanded: true,
                   hint: const Text('What exactly is it?'),
                   value: itemFilter,
-                  onChanged: (text) => setState(() {}),
+                  onChanged: (text) => setState(() {
+                    itemFilter = text!;
+                  }),
                   items: <String>[
                     '', 'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt', 'Other'
                   ].map<DropdownMenuItem<String>>((String value) {
@@ -133,6 +138,59 @@ class _ClosetState extends State<Closet> {
                       child: Text(value),
                     );
                   }).toList(),
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                    filled: true,
+                    labelText: 'Color',
+                  ),
+                  isExpanded: true,
+                  hint: const Text('Choose a color'),
+                  value: colorFilter,
+                  onChanged: (text) => setState(() {
+                    colorFilter = text!;
+                  }),
+                  items: <String>[
+                    '', 'Black', 'Blue', 'Brown', 'Grey', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                    filled: true,
+                    labelText: 'Length',
+                  ),
+                  isExpanded: true,
+                  hint: const Text('How long is it?'),
+                  value: sleevesFilter,
+                  onChanged: (text) => setState(() {
+                    sleevesFilter = text!;
+                  }),
+                  items: <String>[
+                    '',
+                    'Short',
+                    'Long',
+                    'N/A'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    filled: true,
+                    labelText: "Materials",
+                  ),
+                  controller: searchController,
+                  onChanged: (text) => setState(() {}),
                 ),
               ],
             ),
@@ -143,7 +201,7 @@ class _ClosetState extends State<Closet> {
               categoryFilter,
               sleevesFilter,
               colorFilter,
-              materialsFilter,
+              materialsController.text.split(" "),
               itemFilter,
               false,
             )),
@@ -212,15 +270,25 @@ bool Function(Clothing) filterByCategory(String category) {
 }
 
 bool Function(Clothing) filterByEverything(List<String> terms, String category,
-  String sleeves, String color, String materials, String type, bool? isLaundry) {
+  String sleeves, String color, List<String> materials, String type, bool? isLaundry) {
   return (item) {
     for (String term in terms) {
-      if (!(item.category.contains(term) || item.sleeves.contains(term) ||
-        item.color.contains(term) || item.materials.contains(term) ||
-        item.item.contains(term))) {
+      if (!(item.category.toLowerCase().contains(term) ||
+        item.sleeves.toLowerCase().contains(term) ||
+        item.color.toLowerCase().contains(term) ||
+        item.materials.toLowerCase().contains(term) ||
+        item.item.toLowerCase().contains(term))) {
         return false;
       }
     }
-    return (category.isEmpty || category == item.category) && (sleeves.isEmpty || sleeves == item.sleeves) && (color.isEmpty || color == item.color) && (materials.isEmpty || materials == item.materials) && (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
+    for (String term in materials) {
+      if (!item.materials.toLowerCase().contains(term)) {
+        return false;
+      }
+    }
+    return (category.isEmpty || category == item.category) &&
+      (sleeves.isEmpty || sleeves == item.sleeves) &&
+      (color.isEmpty || color == item.color) &&
+      (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
   };
 }
