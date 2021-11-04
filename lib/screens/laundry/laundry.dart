@@ -97,6 +97,7 @@ class _LaundryState extends State<Laundry> {
                   ),
                 );
               } else {
+                _showConfDialog = true;
                 return Scaffold(
                     body: Column(
                         children: <Widget>[
