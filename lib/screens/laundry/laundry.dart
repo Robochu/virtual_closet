@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import '../detail.dart';
@@ -78,7 +77,7 @@ class _LaundryState extends State<Laundry> {
             if (clothes == null || clothes.isEmpty) {
               return const Center(
                 child: Text(
-                  "Oops you don't have any clothes added to the closet yet. ",
+                  "Oops you don't have any clothes added to the closet yet.",
                   textAlign: TextAlign.center,
                 ),
               );
