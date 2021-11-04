@@ -21,9 +21,11 @@ class _DetailPageState extends State<DetailPage> {
   late String initMaterials;
   late String initColor;
   final _formKey = GlobalKey<FormState>();
+  /*
   late final colorController;
-  late final sleeveController;
+  late final sleeveController;*/
   late final materialController;
+
 
   bool _isEditable = false;
 
@@ -35,16 +37,18 @@ class _DetailPageState extends State<DetailPage> {
     initSleeves = clothing!.sleeves;
     initColor = clothing!.color;
     initMaterials = clothing!.materials;
+    /*
     colorController = TextEditingController(text: initColor);
-    sleeveController = TextEditingController(text: initSleeves);
+    sleeveController = TextEditingController(text: initSleeves);*/
     materialController = TextEditingController(text: initMaterials);
   }
 
   @override
   void dispose() {
     super.dispose();
+    /*
     colorController.dispose();
-    sleeveController.dispose();
+    sleeveController.dispose();*/
     materialController.dispose();
   }
 
@@ -97,6 +101,96 @@ class _DetailPageState extends State<DetailPage> {
                         }).toList(),
                       )
                   ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          filled: true,
+                          labelText: 'Clothing item',
+                        ),
+                        isExpanded: true,
+                        hint: const Text('What exactly is it?'),
+                        value: (clothing!.item != '')
+                            ? clothing!.item
+                            : 'T-shirt',
+                        onChanged: _isEditable ? (String? value) {
+                          setState(() {
+                            clothing!.item = value!;
+                          });
+                        } : null,
+                        items: <String>[
+                          'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                  ),
+                  //DropDown for colors, length
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          filled: true,
+                          labelText: 'Color',
+                        ),
+                        isExpanded: true,
+                        hint: const Text('Choose a color'),
+                        value: (clothing!.color != '')
+                            ? clothing!.color
+                            : 'Black',
+                        onChanged: _isEditable ? (String? value) {
+                          setState(() {
+                            clothing!.color = value!;
+                          });
+                        } : null,
+                        items: <String>[
+                          'Black', 'Blue', 'Brown', 'Grey', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                          filled: true,
+                          labelText: 'Length',
+                        ),
+                        isExpanded: true,
+                        hint: const Text('How long is it?'),
+                        value: (clothing!.sleeves != '')
+                            ? clothing!.sleeves
+                            : 'Short',
+                        onChanged: _isEditable ? (String? value) {
+                          setState(() {
+                            clothing!.sleeves = value!;
+                          });
+                        } : null,
+                        items: <String>[
+                          'Short',
+                          'Long',
+                          'N/A'
+                        ].map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      )
+                  ),
+
+                  //comment out TextFormField below, don't delete until we're set with everything
+                  /*
                   TextFormField(
                     enabled: _isEditable,
                     decoration: const InputDecoration(
@@ -112,7 +206,9 @@ class _DetailPageState extends State<DetailPage> {
                       labelText: 'Color',
                     ),
                     controller: colorController,
-                  ),
+                  ),*/
+
+                  //keep Materials as text field
                   TextFormField(
                     enabled: _isEditable,
                     decoration: const InputDecoration(
@@ -194,9 +290,9 @@ class _DetailPageState extends State<DetailPage> {
                           child: const Text('Save'),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              print("Taking input from user");
+                              /*
                               clothing!.color = colorController.text;
-                              clothing!.sleeves = sleeveController.text;
+                              clothing!.sleeves = sleeveController.text;*/
                               clothing!.materials = materialController.text;
                               clothing!.upload();
                             }
