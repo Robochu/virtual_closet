@@ -16,10 +16,16 @@ class _ClosetState extends State<Closet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController searchController;
 
+  String categoryFilter = "";
+  String sleevesFilter = "";
+  String colorFilter = "";
+  String materialsFilter = "";
+  String itemFilter = "";
+
   @override
   void initState() {
-    searchController = TextEditingController();
     super.initState();
+    searchController = TextEditingController();
   }
 
   @override
@@ -86,9 +92,61 @@ class _ClosetState extends State<Closet> {
             controller: searchController,
             onChanged: (text) => setState(() {}),
           ),
-
           Expanded(
-            child: buildCloset(context, filterByTerms(searchController.text.split(" "), false))
+            child: GridView.count(
+              crossAxisCount: 2,
+              children: [
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                    filled: true,
+                    labelText: 'Category',
+                  ),
+                  isExpanded: true,
+                  hint: const Text('Choose a category'),
+                  value: categoryFilter,
+                  onChanged: (text) => setState(() {}),
+                  items: <String>[
+                    '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                    filled: true,
+                    labelText: 'Clothing item',
+                  ),
+                  isExpanded: true,
+                  hint: const Text('What exactly is it?'),
+                  value: itemFilter,
+                  onChanged: (text) => setState(() {}),
+                  items: <String>[
+                    '', 'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt', 'Other'
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: buildCloset(context, filterByEverything(
+              searchController.text.split(" "),
+              categoryFilter,
+              sleevesFilter,
+              colorFilter,
+              materialsFilter,
+              itemFilter,
+              false,
+            )),
           ),
         ],
       ),
@@ -153,35 +211,16 @@ bool Function(Clothing) filterByCategory(String category) {
   return (item) => category == "All" || category == item.category;
 }
 
-bool Function(Clothing) filterByTerms(List<String> terms, bool isLaundry) {
+bool Function(Clothing) filterByEverything(List<String> terms, String category,
+  String sleeves, String color, String materials, String type, bool? isLaundry) {
   return (item) {
     for (String term in terms) {
-      bool found = false;
-      for (String result in item.category.split(" ")) {
-        if (term == result) {
-          found = true;
-        }
-      }
-      for (String result in item.sleeves.split(" ")) {
-        if (term == result) {
-          found = true;
-        }
-      }
-      for (String result in item.materials.split(" ")) {
-        if (term == result) {
-          found = true;
-        }
-      }
-      for (String result in item.color.split(" ")) {
-        if (term == result) {
-          found = true;
-        }
-      }
-
-      if (!found) {
+      if (!(item.category.contains(term) || item.sleeves.contains(term) ||
+        item.color.contains(term) || item.materials.contains(term) ||
+        item.item.contains(term))) {
         return false;
       }
     }
-    return isLaundry == item.isLaundry;
+    return (category.isEmpty || category == item.category) && (sleeves.isEmpty || sleeves == item.sleeves) && (color.isEmpty || color == item.color) && (materials.isEmpty || materials == item.materials) && (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
   };
 }

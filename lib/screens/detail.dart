@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import '../clothes.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({Key? key,  required this.clothing})
+  const DetailPage({Key? key, required this.clothing, this.editable = false})
       : super(key: key);
 
   final Clothing clothing;
+  final bool editable;
 
   @override
   State<DetailPage> createState() => _DetailPageState();
@@ -27,7 +28,7 @@ class _DetailPageState extends State<DetailPage> {
   late final materialController;
 
 
-  bool _isEditable = false;
+  late bool _isEditable;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _DetailPageState extends State<DetailPage> {
     colorController = TextEditingController(text: initColor);
     sleeveController = TextEditingController(text: initSleeves);*/
     materialController = TextEditingController(text: initMaterials);
+    _isEditable = widget.editable;
   }
 
   @override
@@ -120,7 +122,7 @@ class _DetailPageState extends State<DetailPage> {
                           });
                         } : null,
                         items: <String>[
-                          'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt'
+                          'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt', 'Other'
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
                             value: value,

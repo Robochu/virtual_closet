@@ -46,11 +46,11 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       source = ImageSource.gallery;
     }
     void up() async {
-      Clothing item = Clothing.full(user!.uid, _image.path, '', '', 'Tops', '', '', '', '', false);
+      Clothing item = Clothing.full(user!.uid, _image.path, '', '', '', '', '', '', '', false);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) =>
-          DetailPage(clothing: item)));
+          DetailPage(clothing: item, editable: true)));
 
     }
 
