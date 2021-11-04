@@ -5,26 +5,32 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
+import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:virtual_closet/main.dart';
+import 'package:virtual_closet/screens/account.dart';
+final tUser = MockUser(
+  isAnonymous: false,
+  uid: 'T3STU1D',
+  email: 'testing.unit@gmail.com',
+  displayName: 'UnitTest',
+);
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('shows user info', (WidgetTester tester) async {
+    final firestore = FakeFirebaseFirestore();
+    await firestore.collection('user').doc(tUser.uid).set({
+      'name': 'Unit',
+      'lastName': 'Test',
+      'uid': tUser.uid,
+      'email': tUser.email,
+      'dob': '11/03/2021'
+    });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    //Render the widget
+    await tester.pumpWidget(ProfilePage());
   });
 }

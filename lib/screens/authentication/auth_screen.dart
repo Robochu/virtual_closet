@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:virtual_closet/screens/authentication/login.dart';
 import 'package:virtual_closet/screens/authentication/signup.dart';
-
 class AuthenticateScreen extends StatefulWidget {
   @override
   _AuthenticateScreenState createState() => _AuthenticateScreenState();

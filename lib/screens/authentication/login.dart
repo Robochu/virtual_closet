@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
@@ -68,12 +69,9 @@ class _LoginState extends State<Login> {
                     //print("Open forgot password screen");
                     if (emailText.text == "") {
                       print("Enter email");
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Enter email")
-                      ));
                     }
                     else {
-                      Authentication.forgotPassword(email: emailText.text, context: context);
+                      Authentication(auth: FirebaseAuth.instance).forgotPassword(email: emailText.text);
                     }
                   },
                   style: TextButton.styleFrom(
@@ -90,42 +88,14 @@ class _LoginState extends State<Login> {
                     child: Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
-                      if (emailText.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Enter email")
-                        ));
-                      }
-                      else if (passwordText.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text("Enter password")
-                        ));
-                      }
-                      else {
-                        Future<MyUser?> user =
-                        Authentication.signInWithEmailPassword(
-                            email: emailText.text,
-                            password: passwordText.text,
-                            context: context);
-                      }
-                      /*user.then((value) async {
-                        if (value?.email != null) {
-                          print(value?.email);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    MyHomePage(
-                                      title: 'Virtual Closet Home',
-                                      user: value!,
-                                    )),
-                          );
-                        }
-                        else {
-                          print("Null email; login failed");
-                        }
-                      });*/
+                      Future<MyUser?> user =
+                      Authentication(auth: FirebaseAuth.instance).signInWithEmailPassword(
+                          email: emailText.text,
+                          password: passwordText.text);
+
                     },
                   )),
+
               Container(
                   child: Row(
                     children: <Widget>[
@@ -140,10 +110,7 @@ class _LoginState extends State<Login> {
                           ),
                           onPressed: () => {
                             widget.toggleView(),
-                            /*
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => SignUpPage()),*/
+
                           })
                     ],
                     mainAxisAlignment: MainAxisAlignment.center,

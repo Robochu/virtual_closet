@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:virtual_closet/screens/closet/detail.dart';
+import 'package:virtual_closet/screens/detail.dart';
 
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;
@@ -46,16 +46,12 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       source = ImageSource.gallery;
     }
     void up() async {
-
-      Clothing item = Clothing.full(user!.uid, _image.path, '', '', '', '', '', '');
+      Clothing item = Clothing.full(user!.uid, _image.path, '', '', 'Tops', '', '', '', false);
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) =>
           DetailPage(clothing: item)));
 
-      //await item.upload();
-      //Navigator.pop(context);
-      print('\n\n\n\n');
     }
 
     return Scaffold(
@@ -74,7 +70,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
                     preferredCameraDevice: CameraDevice.front);
                 setState(() {
                   _image = File(image.path);
-                }); //TODO: handle Null Exception - user may click return without taking photo
+                });
               },
               child: Container(
                 width: 200,
