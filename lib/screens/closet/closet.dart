@@ -267,7 +267,7 @@ class _ClosetState extends State<Closet> {
                                             )
                                           ]
                                       )
-                                  ) : null
+                                  ) : null,
                                 )
                             )
                         ),
