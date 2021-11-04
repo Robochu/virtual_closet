@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'laundry/toggle.dart';
 import '../clothes.dart';
 
 class DetailPage extends StatefulWidget {
@@ -57,7 +58,6 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
         body: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -221,48 +221,35 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                   (_isEditable) ?
                   Align(
-                      alignment: Alignment.centerLeft,
-                      child: DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                          filled: true,
-                          labelText: 'Add to laundry basket?',
-                        ),
-                        isExpanded: false,
-                        hint: const Text('Choose an option'),
-                        value: (clothing!.isLaundry != false)
-                            ? "Yes"
-                            : "No",
-                        onChanged: _isEditable ?  (String? status) {
-                          setState(() {
-                            (status == "Yes") ? clothing!.isLaundry = true : clothing!.isLaundry = false;
-                          });
-                        } : null,
-                        items: <String>[
-                          'Yes',
-                          'No'
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+                      alignment: Alignment.center,
+                      child: AnimatedToggle(
+                          values: const ['Closet', 'Laundry'],
+                          preSet: clothing!.isLaundry,
+                          onToggleCallback: (value) {
+                            setState(() {
+                              (value == 1) ? clothing!.isLaundry = true : clothing!.isLaundry = false;
+                            });
+                          }
                       )
-                  ) : Container(
-                    height: 10,
-                  ), Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ElevatedButton(
-                        onPressed: null,
-                        child: (clothing!.isLaundry) ? const Text(
-                            'In Laundry') : const Text('In Closet'),
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.black,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30)
+                  ) : Column (
+                      children: <Widget> [
+                        Container(
+                          height: 10,
+                        ), Align(
+                            alignment: Alignment.bottomCenter,
+                            child: ElevatedButton(
+                              onPressed: null,
+                              child: (clothing!.isLaundry) ? const Text(
+                                  'In Laundry') : const Text('In Closet'),
+                              style: ElevatedButton.styleFrom(
+                                  primary: Colors.black,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30)
+                                  )
+                              ),
                             )
-                        ),
-                      )
+                        )
+                      ]
                   ),
                   if (_isEditable) Row(
                     children: <Widget>[
