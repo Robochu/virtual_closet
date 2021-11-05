@@ -137,10 +137,14 @@ void main() {
     });
 
     test('get userData returns a MyUserData with empty fields except uid when document not found', () async {
+      instance.collection('users').doc(tUser.uid).delete();
       MyUserData realUserData = await databaseService.userData;
-      expect(realUserData, isNot(tUserData));
+
       expect(realUserData.uid, tUserData.uid);
       expect(realUserData.email, '');
+      expect(realUserData.name, '');
+      expect(realUserData.dob, '');
+      expect(realUserData.lastName, '');
     });
   });
 }

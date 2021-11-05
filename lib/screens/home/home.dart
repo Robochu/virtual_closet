@@ -547,6 +547,7 @@ class _HomeViewState extends State<HomeView> {
     var topOutfit = filterByItem(top);
     var bottomOutfit = filterByItem(bottom);
     var shoesOutfit = filterByItem(shoes);
+    print(top.toString());
 
     globals.item1 = "Item " + getRandomInt().toString() + " of " + top;
     globals.item2 = "Item " + getRandomInt().toString() + " of " + bottom;
