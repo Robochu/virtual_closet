@@ -21,7 +21,7 @@ class CalendarSummary extends StatefulWidget {
 
 class _CalendarSummaryState extends State<CalendarSummary> {
   
-  int numberOfTodayEvents = 0;
+  int numberOfTodayEvents = -1;
   List<Event>? listOfTodayEvents;
   String todaysEventsAsString = "";
   String displayAllEvents = "";
@@ -81,12 +81,12 @@ class _CalendarSummaryState extends State<CalendarSummary> {
         );
         calEvents.then((Events events) {
           listOfTodayEvents = events.items!;
-          //globals.EVENTSOFTODAY = listOfTodayEvents.toString();
           for (var event in events.items!) 
           {
             EventDateTime? start = event.start;
             print(event.summary! + " " + start!.date.toString());
             todaysEventsAsString += event.summary! + "\n";
+            globals.EVENTSOFTODAY += event.summary! + "\n";
           }
           print('access token: ' + client.credentials.accessToken.data);
           print('refresh token ' + client.credentials.refreshToken.toString());
@@ -156,7 +156,10 @@ class _CalendarSummaryState extends State<CalendarSummary> {
   @override
   Widget build(BuildContext context) {
 
-    getEvents();
+    if (numberOfTodayEvents == -1)
+    {
+      getEvents();
+    }
 
     return InkWell(
         onTap: () {
