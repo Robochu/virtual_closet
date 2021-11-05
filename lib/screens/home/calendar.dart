@@ -1,19 +1,40 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import "package:googleapis_auth/auth_io.dart";
 import 'package:googleapis/calendar/v3.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:virtual_closet/screens/home/globals.dart' as globals;
 
 
 /*
 * Stateless widget to give a summary of the user's calendar
  */
-class CalendarSummary extends StatelessWidget {
-  const CalendarSummary({Key? key}) : super(key: key);
+class CalendarSummary extends StatefulWidget {
+  CalendarSummary({Key? key}) : super(key: key);
 
-  void getEvents()
-  {
+  @override
+  _CalendarSummaryState createState() => _CalendarSummaryState();
+} 
+
+class _CalendarSummaryState extends State<CalendarSummary> {
+  
+  int numberOfTodayEvents = 0;
+  List<Event>? listOfTodayEvents;
+  final storage = new FlutterSecureStorage();
+
+  Future<void> doBlankCredentials()
+  async {
+    await storage.write(key: 'accessToken', value: '');
+    await storage.write(key: 'refreshToken', value: '');
+  }
+
+  Future<void> getEvents()
+  async {
     var _scopes = [CalendarApi.calendarEventsReadonlyScope];
     var _credentials;
+
 
     if (Platform.isAndroid) {
       _credentials = ClientId(
@@ -26,24 +47,127 @@ class CalendarSummary extends StatelessWidget {
           "");
     }
 
-    clientViaServiceAccount(_credentials, _scopes).then((client) {
-      var calendar = CalendarApi(client);
-      var calEvents = calendar.events.list("primary");
-      calEvents.then((Events events) {
-        for (var event in events.items!) 
-        {
-          print(event.summary);
-        }
-      });
-    });
+    try 
+    {
+      clientViaUserConsent(_credentials, _scopes, prompt).then((AuthClient client) {
+        var calendar = CalendarApi(client);
 
+        DateTime start = DateTime.now().subtract( 
+          Duration(
+            hours: DateTime.now().hour, minutes: DateTime.now().minute, seconds: DateTime.now().minute
+          )
+        );
+        DateTime end = DateTime.now().add( 
+          Duration(
+            hours: 24 - DateTime.now().hour, minutes: 60 - DateTime.now().minute, seconds: 60 - DateTime.now().minute
+          )
+        );
+
+        var calEvents = calendar.events.list("primary",
+          timeMin: start,
+          timeMax: end,
+        );
+        calEvents.then((Events events) {
+          listOfTodayEvents = events.items!;
+          globals.EVENTSOFTODAY = listOfTodayEvents.toString();
+          for (var event in events.items!) 
+          {
+            EventDateTime? start = event.start;
+            //print(event.summary! + " " + start!.date.toString());
+          }
+          print('access token: ' + client.credentials.accessToken.data);
+          print('refresh token ' + client.credentials.refreshToken.toString());
+          setTodayEvents(events.items!.length);
+        });
+      });
+    } 
+    catch (e) 
+    {
+      log('Error getting events $e');
+    }
   }
 
+  void setTodayEvents(int numberOfEvents)
+  {
+    setState(() {
+        numberOfTodayEvents = numberOfEvents;
+    });
+  }
 
+  void prompt(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+
+    // Get events on initilization
+    if (listOfTodayEvents == null)
+    {
+      getEvents();
+    }
+
+    // List of events as widget
+    List<Widget> getList() {
+      List<Widget> children = [];
+      children.add(
+        const Text(
+          "Today's Events \n",
+          style: TextStyle(fontSize: 22),
+        ));
+        for (var i = 0; i < numberOfTodayEvents; i++) {
+          children.add(
+            Text(
+              listOfTodayEvents!.elementAt(i).summary!,
+              style: TextStyle(fontSize: 16),
+          ));
+        }
+        children.add(
+          Expanded(
+            child: Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton(
+                      onPressed: getEvents,
+                      tooltip: 'New joke',
+                      child: const Icon(Icons.refresh),
+                    ),
+          )),
+        );
+      return children;
+}
+
+    // Popup dialog to display events
+    Dialog showEvents = Dialog(
+      child: SizedBox(
+        height: 300.0,
+        width: 360.0,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: getList()
+        ),
+      ),
+    );
+    
+
+    // Button to refresh calendar and show events
+    return ElevatedButton(
+            onPressed: () {
+              [
+                if (listOfTodayEvents == null)
+                {
+                  getEvents()
+                },
+                showDialog(
+                      context: context,
+                      builder: (BuildContext context) => showEvents),
+              ];
+            },
+            child: Text("Today's Events: $numberOfTodayEvents \n Click to view"),
+            );
     throw UnimplementedError();
   }
 }

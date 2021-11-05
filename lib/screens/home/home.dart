@@ -1,17 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_swipable/flutter_swipable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
 import 'package:virtual_closet/screens/home/weather.dart';
+import 'package:virtual_closet/screens/home/calendar.dart';
+import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
+import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:virtual_closet/screens/laundry/laundry.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:weather/weather.dart';
-import 'package:weather_icons/weather_icons.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title, required this.user})
@@ -33,6 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   int _selectedIndex = 0;
+  HomeView homepage = const HomeView();
 
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
@@ -98,8 +104,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   icon: Icon(Icons.home, size: 35, color: _selectedIndex == 0 ? Colors.orange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(0);
-                    // When user clicks on homebutton a call to weather API is made and refreshes weather data
-                    //_HomeViewState().getWeatherInfo();
                   }),
               IconButton(
                   tooltip: "Closet",
@@ -179,6 +183,8 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     getWeatherInfo();
+    getNotificationTime();
+    getNotificationOnOff();
   }
 
   String weatherText = '';
@@ -188,6 +194,35 @@ class _HomeViewState extends State<HomeView> {
   double currentLongitude = 0.0;
   double currentLatitude = 0.0;
   TimeOfDay selectedTime = TimeOfDay.now();
+  bool isNotificatinOnOff = true;
+
+
+  Future<void> getNotificationTime()
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    final notificationHour = prefs.getInt('notificationHour') ?? 0;
+    final notificationMinute = prefs.getInt('notificationMinute') ?? 0;
+
+    if (notificationHour != 0 && notificationMinute != 0)
+    {
+      selectedTime = TimeOfDay(hour: notificationHour, minute: notificationMinute);
+    }
+  }
+
+  Future<void> getNotificationOnOff()
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    final notificationOnoFF = prefs.getBool('notificationOnOff') ?? 0;
+
+    if (notificationOnoFF == 0)
+    {
+      isNotificatinOnOff = false;
+    }
+    else
+    {
+      isNotificatinOnOff = notificationOnoFF as bool;
+    }
+  }
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
   Future<void> getWeatherInfo() async {
@@ -232,7 +267,9 @@ class _HomeViewState extends State<HomeView> {
     await wf.currentWeatherByLocation(currentLatitude, currentLongitude);
 
     // Change weather text to text from api weather call
-    setState(() {
+    if (this.mounted)
+    {
+      setState(() {
       print(wlatlong.toString());
       currTemp = wlatlong.temperature!.fahrenheit;
       Temperature? tempFeel = wlatlong.tempFeelsLike;
@@ -244,6 +281,7 @@ class _HomeViewState extends State<HomeView> {
       weatherText = weatherDescription;
       weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
     });
+    }
   }
 
   String transformWeatherIconText(String weatherIconText) {
@@ -391,21 +429,42 @@ class _HomeViewState extends State<HomeView> {
 
   // Time picker widget
   selectTime(BuildContext context) async {
-    final TimeOfDay? timeOfDay = await showTimePicker(
+    final prefs = await SharedPreferences.getInstance();
+    final TimeOfDay? timeChosen = await showTimePicker(
       context: context,
       initialTime: selectedTime,
       initialEntryMode: TimePickerEntryMode.dial,
     );
-    if(timeOfDay != null && timeOfDay != selectedTime)
+    if(timeChosen != null && timeChosen != selectedTime)
     {
       setState(() {
-        selectedTime = timeOfDay;
+        selectedTime = timeChosen;
       });
+    }
+    prefs.setInt('notificationHour', selectedTime.hour);
+    prefs.setInt('notificationMinute', selectedTime.minute);
+  }
+
+  Future<void> setNotificationOnoFF(bool value)
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationOnOff', value);
+    String currentDateTime = DateTime.now().toString();
+    String userInputTime = (
+      currentDateTime.substring(0, 11) + 
+      selectedTime.hour.toString()) + ":" +
+      selectedTime.minute.toString() + ":" +
+      "00.000000"
+    ;
+    if (value == true)
+    {
+      //notifs.NotificationService().scheduleNotification(DateTime.parse(userInputTime), "message");
+      print(DateTime.now().toString());
+      print(userInputTime);
     }
   }
 
-
- //placeholder, list of recommended items goes here
+  //placeholder, list of recommended items goes here
   List<ItemSwipe> items = [
     ItemSwipe(name: "Item1"),
     ItemSwipe(name: "Item2"),
@@ -414,6 +473,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
@@ -430,6 +490,7 @@ class _HomeViewState extends State<HomeView> {
                         weatherIconText: weatherIconText,
                       ),
                     ),
+                    CalendarSummary(),
                   ],
                 ),
                 Container(
@@ -439,13 +500,26 @@ class _HomeViewState extends State<HomeView> {
                     child: Stack(
                       children: items,
                     )),
-                ElevatedButton(
-                    onPressed: () {
-                      selectTime(context);
-                    },
-                    child: const Text("Choose Notification Time"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        selectTime(context);
+                      },
+                      child: Text("Notification Time: " + selectedTime.hourOfPeriod.toString() + selectedTime.toString().substring(12, 15) + " " + selectedTime.period.toString().substring(10,12)),
+                      ),
+                    Switch(
+                      value: isNotificatinOnOff,
+                      onChanged: (value) {
+                        setState(() {
+                          setNotificationOnoFF(value);
+                          isNotificatinOnOff = value;
+                        });
+                      }
                     ),
-                    Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period.toString().substring(10,12)}"),
+                  ],
+                )
               ],
             )));
   }

@@ -50,6 +50,9 @@ dependencies:
   googleapis: ^7.0.0
   googleapis_auth: ^1.2.0
   url_launcher: ^6.0.12
+  shared_preferences: ^2.0.8
+  flutter_secure_storage: ^4.2.1
+  observable: ^0.23.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

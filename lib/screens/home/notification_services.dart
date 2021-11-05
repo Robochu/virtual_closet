@@ -19,6 +19,7 @@ class NotificationService {
   Future<void> init() async {
 
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('iconNotif');
+    const IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
 
     const InitializationSettings initializationSettings =
         InitializationSettings(
