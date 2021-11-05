@@ -21,6 +21,7 @@ class _ClosetState extends State<Closet> {
   String sleevesFilter = "";
   String colorFilter = "";
   String itemFilter = "";
+  String laundryFilter = "";
 
   @override
   void initState() {
@@ -93,107 +94,151 @@ class _ClosetState extends State<Closet> {
             controller: searchController,
             onChanged: (text) => setState(() {}),
           ),
-          Flexible(
-            child: GridView.count(
-              crossAxisCount: 2,
-              children: [
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    filled: true,
-                    labelText: 'Category',
+          Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        filled: true,
+                        labelText: 'Category',
+                      ),
+                      isExpanded: true,
+                      hint: const Text('Choose a category'),
+                      value: categoryFilter,
+                      onChanged: (text) => setState(() {
+                        categoryFilter = text!;
+                      }),
+                      items: <String>[
+                        '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  isExpanded: true,
-                  hint: const Text('Choose a category'),
-                  value: categoryFilter,
-                  onChanged: (text) => setState(() {
-                    categoryFilter = text!;
-                  }),
-                  items: <String>[
-                    '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    filled: true,
-                    labelText: 'Clothing item',
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        filled: true,
+                        labelText: 'Clothing item',
+                      ),
+                      isExpanded: true,
+                      hint: const Text('What exactly is it?'),
+                      value: itemFilter,
+                      onChanged: (text) => setState(() {
+                        itemFilter = text!;
+                      }),
+                      items: <String>[
+                        '', 'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt', 'Other'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  isExpanded: true,
-                  hint: const Text('What exactly is it?'),
-                  value: itemFilter,
-                  onChanged: (text) => setState(() {
-                    itemFilter = text!;
-                  }),
-                  items: <String>[
-                    '', 'Hat', 'Jacket', 'Pants', 'Shoes', 'Shorts', 'Suit', 'T-shirt', 'Other'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    filled: true,
-                    labelText: 'Color',
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        filled: true,
+                        labelText: 'Color',
+                      ),
+                      isExpanded: true,
+                      hint: const Text('Choose a color'),
+                      value: colorFilter,
+                      onChanged: (text) => setState(() {
+                        colorFilter = text!;
+                      }),
+                      items: <String>[
+                        '', 'Black', 'Blue', 'Brown', 'Grey', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  isExpanded: true,
-                  hint: const Text('Choose a color'),
-                  value: colorFilter,
-                  onChanged: (text) => setState(() {
-                    colorFilter = text!;
-                  }),
-                  items: <String>[
-                    '', 'Black', 'Blue', 'Brown', 'Grey', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                    filled: true,
-                    labelText: 'Length',
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        filled: true,
+                        labelText: 'Length',
+                      ),
+                      isExpanded: true,
+                      hint: const Text('How long is it?'),
+                      value: sleevesFilter,
+                      onChanged: (text) => setState(() {
+                        sleevesFilter = text!;
+                      }),
+                      items: <String>[
+                        '',
+                        'Short',
+                        'Long',
+                        'N/A'
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                  isExpanded: true,
-                  hint: const Text('How long is it?'),
-                  value: sleevesFilter,
-                  onChanged: (text) => setState(() {
-                    sleevesFilter = text!;
-                  }),
-                  items: <String>[
-                    '',
-                    'Short',
-                    'Long',
-                    'N/A'
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                    filled: true,
-                    labelText: "Materials",
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                        filled: true,
+                        labelText: "Materials",
+                      ),
+                      controller: materialsController,
+                      onChanged: (text) => setState(() {}),
+                    ),
                   ),
-                  controller: searchController,
-                  onChanged: (text) => setState(() {}),
-                ),
-              ],
-            ),
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                        filled: true,
+                        labelText: 'Laundry status',
+                      ),
+                      isExpanded: true,
+                      hint: const Text('Is the item in laundry?'),
+                      value: laundryFilter,
+                      onChanged: (text) => setState(() {
+                        laundryFilter = text!;
+                      }),
+                      items: <String>[
+                        '',
+                        'In closet',
+                        'In laundry',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           Expanded(
             child: buildCloset(context, filterByEverything(
@@ -203,7 +248,7 @@ class _ClosetState extends State<Closet> {
               colorFilter,
               materialsController.text.split(" "),
               itemFilter,
-              false,
+              laundryFilter.isEmpty ? null : laundryFilter == 'In laundry',
             )),
           ),
         ],
@@ -219,41 +264,43 @@ class _ClosetState extends State<Closet> {
           if (snapshot.hasData) {
             List<Clothing>? clothes = snapshot.data;
             if (clothes != null) {
+              bool empty = clothes.isEmpty;
               clothes = clothes.where(filter).toList();
+              if (clothes.isEmpty) {
+                return Center(
+                  child: Text(
+                    empty ? "Oops you don't have anything in here yet. "
+                      "Click the plus button to add more items." :
+                      "No items found!",
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              }
             }
 
-            if (clothes == null || clothes.isEmpty) {
-              return const Center(
-                child: Text(
-                  "Oops you don't have anything in here yet. "
-                      "Click the plus button to add more items.",
-                  textAlign: TextAlign.center,
-                ),
-              );
-            } else {
-              return Scaffold(
-                  body: GridView.count(
-                    // Create a grid with 2 columns. If you change the scrollDirection to
-                    // horizontal, this produces 2 rows.
-                    crossAxisCount: 2,
-                    // Generate 100 widgets that display their index in the List.
-                    children: List.generate(clothes.length, (index) {
-                      return InkWell(
-                        child: Padding (
-                            padding: const EdgeInsets.all(15),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: Image(
-                                image: NetworkImage(clothes![index].link!),
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                        ),
-                        onTap: () => press(context, clothes![index]),
-                      );
-                    }),
-                  ));
-            }
+            return Scaffold(
+              body: GridView.count(
+                // Create a grid with 2 columns. If you change the scrollDirection to
+                // horizontal, this produces 2 rows.
+                crossAxisCount: 2,
+                // Generate 100 widgets that display their index in the List.
+                children: List.generate(clothes!.length, (index) {
+                  return InkWell(
+                    child: Padding (
+                        padding: const EdgeInsets.all(15),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image(
+                            image: NetworkImage(clothes![index].link!),
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                    ),
+                    onTap: () => press(context, clothes![index]),
+                  );
+                }),
+              ),
+            );
           } else {
             return const Scaffold(
               body: Center(
@@ -289,6 +336,7 @@ bool Function(Clothing) filterByEverything(List<String> terms, String category,
     return (category.isEmpty || category == item.category) &&
       (sleeves.isEmpty || sleeves == item.sleeves) &&
       (color.isEmpty || color == item.color) &&
-      (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
+      (type.isEmpty || type == item.item) &&
+      (isLaundry == null || isLaundry == item.isLaundry);
   };
 }
