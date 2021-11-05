@@ -337,6 +337,10 @@ bool Function(Clothing) filterByCategory(String category) {
   return (item) => category == "All" || category == item.category;
 }
 
+bool Function(Clothing) filterByItem(String itemType) {
+  return (item) => itemType == item.item;
+}
+
 bool Function(Clothing) filterByEverything(List<String> terms, String category,
     String sleeves, String color, List<String> materials, String type, bool? isLaundry) {
   return (item) {

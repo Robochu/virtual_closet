@@ -36,6 +36,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
   Future<void> getEvents()
   async {
     todaysEventsAsString = "";
+    globals.numOfEvents = -1;
     var _scopes = [CalendarApi.calendarEventsReadonlyScope];
     var _credentials;
 
@@ -129,7 +130,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
           Padding(
             padding: EdgeInsets.all(5.0),
             child: Text(
-              displayAllEvents,
+              "${displayAllEvents}",
               style:
               TextStyle(color: Colors.black, fontSize: 18.0),
             ),

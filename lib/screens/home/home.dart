@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -200,6 +202,7 @@ class _HomeViewState extends State<HomeView> {
   double currentLatitude = 0.0;
   TimeOfDay selectedTime = TimeOfDay.now();
   bool isNotificatinOnOff = true;
+  String actualIconCode = '';
   String top = '';
   String bottom = '';
   String shoes = '';
@@ -288,6 +291,7 @@ class _HomeViewState extends State<HomeView> {
           tempFeel.fahrenheit!.toStringAsPrecision(3) +
           " Farenheit";
       weatherText = weatherDescription;
+      actualIconCode = wlatlong.weatherIcon!;
       weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
     });
     }
@@ -348,157 +352,205 @@ class _HomeViewState extends State<HomeView> {
   {
     for (int i = 0; i < toThat.length; i++)
     {
-      if (toThat.matchAsPrefix(addThis, i) != null)
+      if (addThis.matchAsPrefix(toThat, i) != null)
       {
         return toThat;
       }
     }
-    return toThat += addThis + ";";
+    return toThat += addThis;
   }
 
   // Helper function to translate weather icon code to weather code
-  void weatherClothesFilter()
+  void weatherClothesFilter(String weatherIconText)
   {
     if (weatherIconText == '')
     {
       return;
     }
 
-    print(weatherIconText);
     if (weatherIconText == '01d') 
     {
-      top = addIfNotThere("t-shirts", top);
-      bottom = addIfNotThere("shorts", bottom);
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
     } 
     else if (weatherIconText == '02d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '03d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '04d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '09d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '10d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '11d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '13d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '50d') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
     }
 
     if (weatherIconText == '01n') 
     {
-      top = addIfNotThere("t-shirts", top);
-      bottom = addIfNotThere("shorts", bottom);
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
     } 
     else if (weatherIconText == '02n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '03n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '04n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '09n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     } 
     else if (weatherIconText == '10n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '11n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '13n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     } 
     else if (weatherIconText == '50n') 
     {
-      top = addIfNotThere("shirts", top);
-      bottom = addIfNotThere("pants", bottom);
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
     }
   }
 
   void calendarClothesFilter()
   {
-    // If key words in calendar events like "interview" or "lunch" then filter categories
-    print(globals.EVENTSOFTODAY);
-    
+    // If key words in calendar events like "interview" or "lunch" then replace categories
+    String events = globals.EVENTSOFTODAY;
+    for (int i = 0; i < events.length; i++)
+    {
+      if ('interview'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'Suit';
+        bottom = 'Pants';
+        shoes = 'Shoes';
+      }
+      else if ('lunch'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'Shirts';
+        bottom = 'Pants';
+        shoes = 'shoes';
+      }
+      else if ('flight'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'T-shirt';
+        bottom = 'Shorts';
+        shoes = 'sneakers';
+      }
+    }
   }
 
-  void onlyTimeClothesFilter(TimeOfDay currentTime)
+  void timeClothesFilter(TimeOfDay currentTime, weatherIConCode)
   {
+    if (weatherIConCode != '' || globals.EVENTSOFTODAY != '')
+    {
+      return;
+    }
     // If user doesn't allow weather and has no google calendar hooked up then filter only using time
-    print(currentTime.period);
+    if (currentTime.period.toString().substring(10, 12) == 'am')
+    {
+        top = addIfNotThere("T-shirt", top);
+        bottom = addIfNotThere("Shorts", bottom);
+        shoes = addIfNotThere("closed-toed-shoes", shoes);
+        return;
+    }
+    if (currentTime.period.toString().substring(10, 12) == 'pm')
+    {
+        top = addIfNotThere("Shirts", top);
+        bottom = addIfNotThere("Pants", bottom);
+        shoes = addIfNotThere("closed-toed-shoes", shoes);
+        return;
+    }
+  }
+
+  int getRandomInt()
+  {
+    var randomGenerator = new Random();
+    return randomGenerator.nextInt(50);
   }
 
   void getRecommendation()
   {
     // Get filters using helper functions
-    weatherClothesFilter();
+    weatherClothesFilter(actualIconCode);
     calendarClothesFilter();
-    onlyTimeClothesFilter(TimeOfDay.now());
+    timeClothesFilter(TimeOfDay.now(), actualIconCode);
+    //shoes = 'Shoes';
 
-    print(top);
-    print(bottom);
-    print(shoes);
+    // TODO get clothes from actual database with filtering
+    var topOutfit = filterByItem(top);
+    var bottomOutfit = filterByItem(bottom);
+    var shoesOutfit = filterByItem(shoes);
+
+    globals.item1 = "Item " + getRandomInt().toString() + " of " + top;
+    globals.item2 = "Item " + getRandomInt().toString() + " of " + bottom;
+    globals.item3 = "Item " + getRandomInt().toString() + " of " + shoes;
   }
 
   // Time picker widget
@@ -538,15 +590,23 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  //placeholder, list of recommended items goes here
-  List<ItemSwipe> items = [
-    ItemSwipe(name: "Item1"),
-    ItemSwipe(name: "Item2"),
-    ItemSwipe(name: "Item3"),
-  ];
 
   @override
   Widget build(BuildContext context) {
+
+    if (globals.recommendationOnOff == 0)
+    {
+      //getRecommendation();
+      globals.recommendationOnOff = 1;
+    }
+
+    //placeholder, list of recommended items goes here
+    List<ItemSwipe> items = [
+      ItemSwipe(name: globals.item3),
+      ItemSwipe(name: globals.item2),
+      ItemSwipe(name: globals.item1),
+    ];
+
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
