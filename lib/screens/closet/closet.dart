@@ -341,16 +341,16 @@ bool Function(Clothing) filterByEverything(List<String> terms, String category,
     String sleeves, String color, List<String> materials, String type, bool? isLaundry) {
   return (item) {
     for (String term in terms) {
-      if (!(item.category.toLowerCase().contains(term) ||
-          item.sleeves.toLowerCase().contains(term) ||
-          item.color.toLowerCase().contains(term) ||
-          item.materials.toLowerCase().contains(term) ||
-          item.item.toLowerCase().contains(term))) {
+      if (!(item.category.toLowerCase().contains(term.toLowerCase()) ||
+          item.sleeves.toLowerCase().contains(term.toLowerCase()) ||
+          item.color.toLowerCase().contains(term.toLowerCase()) ||
+          item.materials.toLowerCase().contains(term.toLowerCase()) ||
+          item.item.toLowerCase().contains(term.toLowerCase()))) {
         return false;
       }
     }
     for (String term in materials) {
-      if (!item.materials.toLowerCase().contains(term)) {
+      if (!item.materials.toLowerCase().contains(term.toLowerCase())) {
         return false;
       }
     }
