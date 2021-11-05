@@ -30,7 +30,8 @@ class DatabaseService {
       'material': item.materials,
       'isLaundry': item.isLaundry,
       'imageURL': location,
-      'fileName' : item.filename
+      'fileName' : item.filename,
+      'item': item.item,
     }, SetOptions(merge: true));
   }
 
@@ -59,6 +60,7 @@ class DatabaseService {
                 doc['sleeves'] ?? '',
                 doc['color'] ?? '',
                 doc['material'] ?? '',
+                doc['item'] ?? '',
                 doc['isLaundry'] ?? '')).toList());
   }
 

@@ -7,6 +7,7 @@ class AnimatedToggle extends StatefulWidget {
   final Color backgroundColor;
   final Color buttonColor;
   final Color textColor;
+  final bool preSet;
 
   AnimatedToggle({
     required this.values,
@@ -14,13 +15,13 @@ class AnimatedToggle extends StatefulWidget {
     this.buttonColor = Colors.blueAccent,
     this.backgroundColor = Colors.blueGrey,
     this.textColor = Colors.white,
+    required this.preSet,
   });
   @override
   _AnimatedToggleState createState() => _AnimatedToggleState();
 }
 
 class _AnimatedToggleState extends State<AnimatedToggle> {
-  bool initialPosition = true;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,9 +32,8 @@ class _AnimatedToggleState extends State<AnimatedToggle> {
         children: <Widget>[
           GestureDetector(
             onTap: () {
-              initialPosition = !initialPosition;
               var index = 0;
-              if (!initialPosition) {
+              if (!widget.preSet) {
                 index = 1;
               }
               widget.onToggleCallback(index);
@@ -72,7 +72,7 @@ class _AnimatedToggleState extends State<AnimatedToggle> {
             duration: const Duration(milliseconds: 250),
             curve: Curves.decelerate,
             alignment:
-            initialPosition ? Alignment.centerLeft : Alignment.centerRight,
+            widget.preSet ? Alignment.centerRight : Alignment.centerLeft,
             child: Container(
               width: Get.width * 0.33,
               height: Get.width * 0.13,
@@ -83,7 +83,7 @@ class _AnimatedToggleState extends State<AnimatedToggle> {
                 ),
               ),
               child: Text(
-                initialPosition ? widget.values[0] : widget.values[1],
+                widget.preSet ? widget.values[1] : widget.values[0],
                 style: TextStyle(
                   fontFamily: 'Rubik',
                   fontSize: Get.width * 0.045,

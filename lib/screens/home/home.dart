@@ -1,13 +1,17 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_swipable/flutter_swipable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:googleapis/calendar/v3.dart' hide Colors;
+import 'package:googleapis_auth/auth_io.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
+import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
 import 'package:virtual_closet/screens/home/weather.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
@@ -223,6 +227,7 @@ class _HomeViewState extends State<HomeView> {
       isNotificatinOnOff = notificationOnoFF as bool;
     }
   }
+
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
   Future<void> getWeatherInfo() async {
@@ -490,7 +495,10 @@ class _HomeViewState extends State<HomeView> {
                         weatherIconText: weatherIconText,
                       ),
                     ),
-                    CalendarSummary(),
+                    Flexible(
+                      flex: 2,
+                      child: CalendarSummary()
+                    )
                   ],
                 ),
                 Container(
