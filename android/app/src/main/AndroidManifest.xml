@@ -2,6 +2,7 @@
     package="com.example.virtual_closet">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
    <application
         android:label="virtual_closet"
         android:icon="@mipmap/ic_launcher">
