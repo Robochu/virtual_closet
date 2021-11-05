@@ -355,15 +355,9 @@ bool Function(Clothing) filterByEverything(List<String> terms, String category,
       }
     }
     return (category.isEmpty || category == item.category) &&
-<<<<<<< HEAD
       (sleeves.isEmpty || sleeves == item.sleeves) &&
       (color.isEmpty || color == item.color) &&
       (type.isEmpty || type == item.item) &&
       (isLaundry == null || isLaundry == item.isLaundry);
-=======
-        (sleeves.isEmpty || sleeves == item.sleeves) &&
-        (color.isEmpty || color == item.color) &&
-        (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
->>>>>>> fc3deb47373caf747c7165f3eb83660fa092df4d
   };
 }
