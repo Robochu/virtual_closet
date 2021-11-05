@@ -289,18 +289,39 @@ class _ClosetState extends State<Closet> {
                     child: Padding (
                         padding: const EdgeInsets.all(15),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image(
-                            image: NetworkImage(clothes![index].link!),
-                            fit: BoxFit.cover,
-                          ),
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              constraints: const BoxConstraints.expand(
+                                height: 200.0,
+                              ),
+                              alignment: Alignment.bottomLeft,
+                              padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: NetworkImage(clothes![index].link!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: (clothes[index].isLaundry) ? const Text('In Laundry',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow (
+                                            blurRadius: 10.0,
+                                            color: Colors.black
+                                        )
+                                      ]
+                                  )
+                              ) : null,
+                            )
                         )
                     ),
                     onTap: () => press(context, clothes![index]),
                   );
                 }),
-              ),
-            );
+              ));
           } else {
             return const Scaffold(
               body: Center(
@@ -317,14 +338,14 @@ bool Function(Clothing) filterByCategory(String category) {
 }
 
 bool Function(Clothing) filterByEverything(List<String> terms, String category,
-  String sleeves, String color, List<String> materials, String type, bool? isLaundry) {
+    String sleeves, String color, List<String> materials, String type, bool? isLaundry) {
   return (item) {
     for (String term in terms) {
       if (!(item.category.toLowerCase().contains(term) ||
-        item.sleeves.toLowerCase().contains(term) ||
-        item.color.toLowerCase().contains(term) ||
-        item.materials.toLowerCase().contains(term) ||
-        item.item.toLowerCase().contains(term))) {
+          item.sleeves.toLowerCase().contains(term) ||
+          item.color.toLowerCase().contains(term) ||
+          item.materials.toLowerCase().contains(term) ||
+          item.item.toLowerCase().contains(term))) {
         return false;
       }
     }
@@ -334,9 +355,15 @@ bool Function(Clothing) filterByEverything(List<String> terms, String category,
       }
     }
     return (category.isEmpty || category == item.category) &&
+<<<<<<< HEAD
       (sleeves.isEmpty || sleeves == item.sleeves) &&
       (color.isEmpty || color == item.color) &&
       (type.isEmpty || type == item.item) &&
       (isLaundry == null || isLaundry == item.isLaundry);
+=======
+        (sleeves.isEmpty || sleeves == item.sleeves) &&
+        (color.isEmpty || color == item.color) &&
+        (type.isEmpty || type == item.item) && isLaundry! == item.isLaundry;
+>>>>>>> fc3deb47373caf747c7165f3eb83660fa092df4d
   };
 }
