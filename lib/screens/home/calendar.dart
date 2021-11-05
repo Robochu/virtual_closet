@@ -26,6 +26,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
   String todaysEventsAsString = "";
   String displayAllEvents = "";
   final storage = new FlutterSecureStorage();
+  DateFormat dateFormat = DateFormat("E, MMMM d");
 
   Future<void> doBlankCredentials()
   async {
@@ -111,7 +112,8 @@ class _CalendarSummaryState extends State<CalendarSummary> {
 
   void prompt(String url) async {
     if (await canLaunch(url)) {
-      await launch(url);
+      print(url);
+      //await launch(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -181,7 +183,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                DateTime.now().month.toString() + "/" + DateTime.now().day.toString(),
+                dateFormat.format(DateTime.now()),
                 style: const TextStyle(
                   fontSize: 12,
 

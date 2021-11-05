@@ -602,9 +602,9 @@ class _HomeViewState extends State<HomeView> {
 
     //placeholder, list of recommended items goes here
     List<ItemSwipe> items = [
-      ItemSwipe(name: globals.item3),
-      ItemSwipe(name: globals.item2),
-      ItemSwipe(name: globals.item1),
+      ItemSwipe(name: "T-shirt"),
+      ItemSwipe(name: "Long pants"),
+      //ItemSwipe(name: globals.item1),
     ];
 
     return Scaffold(
