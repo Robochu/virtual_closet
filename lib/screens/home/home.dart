@@ -656,10 +656,9 @@ class _HomeViewState extends State<HomeView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<Clothing>? recommendations = snapshot.data;
-          print(recommendations!.length);
+          print("Recommendation queue has: ${recommendations!.length}");
           List<ItemSwipe> items = <ItemSwipe>[];
           recommendations.forEach((element) {
-
             items.add(ItemSwipe(item: element));
           });
           return Container(
