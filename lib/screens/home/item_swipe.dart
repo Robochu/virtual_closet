@@ -8,11 +8,13 @@ import '../../clothes.dart';
  */
 
 class ItemSwipe extends StatelessWidget {
-  const ItemSwipe({required this.name});
+  const ItemSwipe({required this.item});
 
-  final String name;
+  //final String name;
+  final Clothing item;
   void updateLaundry() {
-    //call upload() function in clothes.dart to update this
+    item.isLaundry = true;
+    item.upload();
 
   }
 
@@ -30,11 +32,15 @@ class ItemSwipe extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(
+            /*Text(
               name,
               style: TextStyle(
                 fontSize: 20.0,
               ),
+            )*/
+            Image(
+              image: NetworkImage(item.link!),
+              fit: BoxFit.fitWidth
             )
           ],
         ),

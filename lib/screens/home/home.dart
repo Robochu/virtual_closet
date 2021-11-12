@@ -1,17 +1,12 @@
 import 'dart:io';
 import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:googleapis/calendar/v3.dart' hide Colors;
-import 'package:googleapis/spanner/v1.dart';
-import 'package:googleapis_auth/auth_io.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:virtual_closet/screens/account.dart';
+import 'package:virtual_closet/account/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
@@ -21,6 +16,7 @@ import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
 import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:virtual_closet/screens/laundry/laundry.dart';
+import 'package:virtual_closet/service/database.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:weather/weather.dart';
 
@@ -268,7 +264,7 @@ class _HomeViewState extends State<HomeView> {
       return Future.error('App cannot request permissions.');
     }
 
-    // If app can use current location get current lattitude and longitude to get weather for current location
+    // If app can use current location get current latitude and longitude to get weather for current location
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
 
@@ -287,9 +283,6 @@ class _HomeViewState extends State<HomeView> {
       Temperature? tempFeel = wlatlong.tempFeelsLike;
       feelLike = tempFeel!.fahrenheit;
       String weatherDescription = wlatlong.weatherDescription!;
-      String tempFeelLike = "\nFeels Like: " +
-          tempFeel.fahrenheit!.toStringAsPrecision(3) +
-          " Farenheit";
       weatherText = weatherDescription;
       actualIconCode = wlatlong.weatherIcon!;
       weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
@@ -547,7 +540,7 @@ class _HomeViewState extends State<HomeView> {
     var topOutfit = filterByItem(top);
     var bottomOutfit = filterByItem(bottom);
     var shoesOutfit = filterByItem(shoes);
-    print(top.toString());
+
 
     globals.item1 = "Item " + getRandomInt().toString() + " of " + top;
     globals.item2 = "Item " + getRandomInt().toString() + " of " + bottom;
@@ -602,11 +595,12 @@ class _HomeViewState extends State<HomeView> {
     }
 
     //placeholder, list of recommended items goes here
+    /*
     List<ItemSwipe> items = [
-      ItemSwipe(name: "T-shirt"),
-      ItemSwipe(name: "Long pants"),
-      //ItemSwipe(name: globals.item1),
-    ];
+      ItemSwipe(name: globals.item3),
+      ItemSwipe(name: globals.item2),
+      ItemSwipe(name: globals.item1),
+    ];*/
 
     return Scaffold(
         body: SingleChildScrollView(
@@ -630,13 +624,7 @@ class _HomeViewState extends State<HomeView> {
                     )
                   ],
                 ),
-                Container(
-                    alignment: Alignment.center,
-                    height: 400.0,
-                    padding: EdgeInsets.only(left: 60.0),
-                    child: Stack(
-                      children: items,
-                    )),
+                buildRecommendation(context),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -660,6 +648,35 @@ class _HomeViewState extends State<HomeView> {
                 )
               ],
             )));
+  }
+  
+  Widget buildRecommendation(BuildContext context) {
+    return StreamBuilder<List<Clothing>>(
+      stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getFilteredItem(top),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Clothing>? recommendations = snapshot.data;
+          print(recommendations!.length);
+          List<ItemSwipe> items = <ItemSwipe>[];
+          recommendations.forEach((element) {
+
+            items.add(ItemSwipe(item: element));
+          });
+          return Container(
+              alignment: Alignment.center,
+              height: 400.0,
+              padding: EdgeInsets.only(left: 60.0),
+              child: Stack(
+                children: items,
+              ));
+        } else {
+          return Container(
+              alignment: Alignment.center,
+              height: 400.0,
+              padding: EdgeInsets.only(left: 20.0),
+        child: Text("There is no recommendation right now :("));
+        }
+      });
   }
 }
 

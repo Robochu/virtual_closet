@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:virtual_closet/main.dart';
-import 'package:virtual_closet/screens/account.dart';
+import 'package:virtual_closet/account/account.dart';
 final tUser = MockUser(
   isAnonymous: false,
   uid: 'T3STU1D',
@@ -31,6 +31,5 @@ void main() {
     });
 
     //Render the widget
-    await tester.pumpWidget(ProfilePage());
   });
 }

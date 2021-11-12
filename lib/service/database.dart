@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 
@@ -62,6 +63,25 @@ class DatabaseService {
                 doc['material'] ?? '',
                 doc['item'] ?? '',
                 doc['isLaundry'] ?? '')).toList());
+  }
+
+  Stream<List<Clothing>> getFilteredItem(String itemType) {
+    itemType = "T-shirt"; //for testing
+    return FirebaseFirestore.instance.collection('users')
+        .doc(uid)
+        .collection('closet')
+        .where("item", isEqualTo: itemType).snapshots()
+        .map((event) => event.docs.map(
+            (doc) => Clothing.usingLink(
+            uid,
+            doc['fileName'] ?? '',
+            doc['imageURL'] ?? '',
+            doc['category'] ?? '',
+            doc['sleeves'] ?? '',
+            doc['color'] ?? '',
+            doc['material'] ?? '',
+            doc['item'] ?? '',
+            doc['isLaundry'] ?? '')).toList());
   }
 
   Future<MyUserData> get userData {

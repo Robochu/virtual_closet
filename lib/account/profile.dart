@@ -1,42 +1,9 @@
-import 'dart:async';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:virtual_closet/service/database.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-class AccountPage extends StatefulWidget {
-  const AccountPage({Key? key}) : super(key: key);
-
-  @override
-  State<AccountPage> createState() => _AccountPageState();
-}
-
-class _AccountPageState extends State<AccountPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(children: <Widget>[
-      ListTile(
-        trailing: const Icon(Icons.arrow_forward_rounded),
-        title: const Text("Account"),
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ProfilePage()));
-        },
-      ),
-      const ListTile(
-        trailing: Icon(Icons.arrow_forward_rounded),
-        title: Text("Preferences"),
-      ),
-      const ListTile(
-          trailing: Icon(Icons.arrow_forward_rounded),
-          title: Text("Connect to Google"))
-    ]));
-  }
-}
+import 'package:virtual_closet/service/database.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -108,10 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                  buildPersonalDetails(context),
-                  const SizedBox(height: 20),
-                  buildPrivacy(context),
-                ]))));
+                      buildPersonalDetails(context),
+                      const SizedBox(height: 20),
+                      buildPrivacy(context),
+                    ]))));
   }
 
   Widget buildPersonalDetails(BuildContext context) {

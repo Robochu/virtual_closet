@@ -7,6 +7,7 @@ import 'package:googleapis/calendar/v3.dart' hide Colors;
 import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:virtual_closet/secrets.dart' as secret;
 
 
 /*
@@ -40,26 +41,9 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     globals.numOfEvents = -1;
     var _scopes = [CalendarApi.calendarEventsReadonlyScope];
     var _credentials;
-
-
-    if (Platform.isAndroid) {
-      _credentials = ClientId(
-          "154107775948-4remimlnem5cfdmgsb8rchrsfb7tm7am.apps.googleusercontent.com",
-          "");
-    }
-    else if (Platform.isIOS) {
-      _credentials = ClientId(
-          "154107775948-ps9jbbrsv56gc7qcrr7fansaa7botlp9.apps.googleusercontent.com",
-          "");
-    }
-
-    /*
-    clientViaUserConsent(_credentials, _scopes, prompt)
-    .then((client) async {
-      var calendar = CalendarApi(client);
-      calEvents = calendar.events.list("primary");
-    });*/
-    //Comment out for now
+    _credentials = ClientId(
+        secret.calendarKey,
+        "");
 
     try 
     {
@@ -112,7 +96,6 @@ class _CalendarSummaryState extends State<CalendarSummary> {
 
   void prompt(String url) async {
     if (await canLaunch(url)) {
-      print(url);
       //await launch(url);
     } else {
       throw 'Could not launch $url';
@@ -193,7 +176,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
                 listOfTodayEvents != null
                 ? "Events Today: " + numberOfTodayEvents.toString()
                 : "No events",
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 15),
               ),
             ],
           ),
