@@ -594,14 +594,6 @@ class _HomeViewState extends State<HomeView> {
       globals.recommendationOnOff = 1;
     }
 
-    //placeholder, list of recommended items goes here
-    /*
-    List<ItemSwipe> items = [
-      ItemSwipe(name: globals.item3),
-      ItemSwipe(name: globals.item2),
-      ItemSwipe(name: globals.item1),
-    ];*/
-
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
@@ -656,7 +648,13 @@ class _HomeViewState extends State<HomeView> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<Clothing>? recommendations = snapshot.data;
-          print("Recommendation queue has: ${recommendations!.length}");
+          if(recommendations!.length == 0) {
+            return Container(
+                alignment: Alignment.center,
+                height: 400.0,
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text("There is no recommendation right now :("));
+          }
           List<ItemSwipe> items = <ItemSwipe>[];
           recommendations.forEach((element) {
             items.add(ItemSwipe(item: element));
