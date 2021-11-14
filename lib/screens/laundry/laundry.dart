@@ -101,7 +101,7 @@ class _LaundryState extends State<Laundry> {
                 return Scaffold(
                     body: Column(
                         children: <Widget>[
-                          const SizedBox (height: 30,),
+                          const SizedBox (height: 30),
                           Center(
                               child: ElevatedButton(
                                 onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,

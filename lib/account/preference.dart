@@ -1,7 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class PreferencePage extends StatefulWidget {
   @override
@@ -10,7 +8,7 @@ class PreferencePage extends StatefulWidget {
 
 class _PreferencePageState extends State<PreferencePage> {
   bool laundrySwitch = false;
-  var laundryFreq = 7;
+  double laundryFreq = 7;
   TextEditingController laundryFreq_controller = TextEditingController(text: "7");
 
   @override
@@ -26,72 +24,71 @@ class _PreferencePageState extends State<PreferencePage> {
           title: const Text("Preferences"),
         ),
         body: Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0.0),
+            padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 0.0),
             child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ListView(shrinkWrap: true,
                     children: <Widget>[
-                      buildLaundryPreferences(context),
-                      const SizedBox(height: 20),
-                    ]))));
+                      const ListTile(
+                        dense: true,
+                          visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                        contentPadding: EdgeInsets.only(left: 1.0),
+                        tileColor: Colors.transparent,
+                          leading: Text("Laundry preferences",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),)),
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+
+                          )
+                        ),
+                          child:ListTile(
+                          dense: true,
+                          visualDensity: VisualDensity(horizontal: 0, vertical: 0),
+                         title: const Text(
+                                "Enable laundry notifications from the app",
+                                style: const TextStyle(fontSize: 13)),
+                            trailing: Transform.scale(
+                                scale: 0.6,
+                                child: CupertinoSwitch(
+                                    value: laundrySwitch,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        laundrySwitch = value;
+                                      });
+                                    },
+                                    activeColor: Colors.lightGreen)
+                            ))),
+                      Container(
+                          decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(),
+                            left: BorderSide(),
+                            right: BorderSide()
+                          )
+                      ),
+                          child: ListTileTheme(
+                        dense: true,
+                        child: ExpansionTile(
+                          title: Text("I want to do laundry every ${laundryFreq.toStringAsFixed(0)} days",
+                              style: const TextStyle(fontSize: 13)),
+                          children: [
+                            Slider(
+                                value: laundryFreq,
+                                min: 1,
+                                max: 100,
+                                onChanged: (value) {
+                                  setState(() {
+                                    laundryFreq = value;
+                                  });
+                                }
+                            )]))),
+                    ],
+                ),
+
+            )
+        ));
   }
 
-  Widget buildLaundryPreferences(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: Colors.black,
-              width: 1,
-            )),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const Text("Laundry preferences",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    const Text(
-                      "Enable laundry notifications from the app",
-                      style: TextStyle(fontSize: 12)),
-                  Transform.scale(
-                    scale: 0.6,
-                      child: CupertinoSwitch(
-                      value: laundrySwitch,
-                      onChanged: (bool value) {
-                        setState(() {
-                          laundrySwitch = value;
-                        });
-                      },
-                      activeColor: Colors.lightGreen)
-              )]),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  const Text("I want to wash my clothes every  ",
-                      style: TextStyle(fontSize: 12)),
-                 Container(
-                    width: 35,
-                      height: 15,
-                      child: TextFormField(
-                          style: const TextStyle(fontSize: 15),
-                    controller: laundryFreq_controller,
-                    keyboardType: TextInputType.numberWithOptions(decimal: false, signed: false),
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly]
-                  )),
 
-                  const Text(" days", style: TextStyle(fontSize: 12))
-                ],
-              )
-            ],
-          ),
-
-        )
-    );
-  }
 }
