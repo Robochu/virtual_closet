@@ -17,7 +17,6 @@ import 'package:virtual_closet/screens/home/notification_services.dart' as notif
 import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:virtual_closet/screens/laundry/laundry.dart';
 import 'package:virtual_closet/service/database.dart';
-import 'package:virtual_closet/service/fire_auth.dart';
 import 'package:weather/weather.dart';
 
 
@@ -44,10 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
   HomeView homepage = const HomeView();
 
   static const List<Widget> _widgetOptions = <Widget>[
+    AccountPage(),
     HomeView(),
     Closet(),
     Laundry(),
-    AccountPage()
   ];
 
 
@@ -58,24 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final Authentication _auth = Authentication(auth: FirebaseAuth.instance);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          Card(
-            shape: RoundedRectangleBorder (borderRadius: BorderRadius.circular(10)),
-            color: Colors.lightBlueAccent,
-            child: FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Logout'),
-              onPressed: () async {
-                await _auth.signOut();
-              },
-            ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
+              child: IconButton(
+                  tooltip: "Account",
+                  icon: Icon(Icons.account_circle, size: 35, color: _selectedIndex == 0 ? Colors.lightBlueAccent : Colors.black54),
+                  onPressed: () {
+                    _onItemTapped(0);
+                  })
           ),
         ],
       ),
@@ -85,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: _widgetOptions,
         ),
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         height: 75,
         width: 75,
         child: FittedBox(
@@ -96,36 +91,36 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        child: Container(
+        shape: const CircularNotchedRectangle(),
+        child: SizedBox(
           height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               IconButton(
                   tooltip: "Home",
-                  icon: Icon(Icons.home, size: 35, color: _selectedIndex == 0 ? Colors.orange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(0);
-                  }),
-              IconButton(
-                  tooltip: "Closet",
-                  icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 1 ? Colors.orange : Colors.black87),
+                  icon: Icon(Icons.home, size: 35, color: _selectedIndex == 1 ? Colors.deepOrange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(1);
                   }),
-              SizedBox(width: 40), //placeholder for FAB
               IconButton(
-                  tooltip: "Laundry",
-                  icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 2 ? Colors.orange : Colors.black87),
+                  tooltip: "Closet",
+                  icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 2 ? Colors.deepOrange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(2);
                   }),
+              const SizedBox(width: 40), //placeholder for FAB
               IconButton(
-                  tooltip: "Account",
-                  icon: Icon(Icons.account_circle, size: 35, color: _selectedIndex == 3 ? Colors.orange : Colors.black87),
+                  tooltip: "Laundry",
+                  icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 3 ? Colors.deepOrange : Colors.black87),
                   onPressed: () {
                     _onItemTapped(3);
+                  }),
+              IconButton(
+                  tooltip: "Combinations",
+                  icon: Icon(Icons.auto_fix_high, size: 35, color: _selectedIndex == 4 ? Colors.deepOrange : Colors.black87),
+                  onPressed: () {
+                    _onItemTapped(4);
                   }),
             ],
           ),
@@ -278,15 +273,15 @@ class _HomeViewState extends State<HomeView> {
     if (this.mounted)
     {
       setState(() {
-      print(wlatlong.toString());
-      currTemp = wlatlong.temperature!.fahrenheit;
-      Temperature? tempFeel = wlatlong.tempFeelsLike;
-      feelLike = tempFeel!.fahrenheit;
-      String weatherDescription = wlatlong.weatherDescription!;
-      weatherText = weatherDescription;
-      actualIconCode = wlatlong.weatherIcon!;
-      weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
-    });
+        print(wlatlong.toString());
+        currTemp = wlatlong.temperature!.fahrenheit;
+        Temperature? tempFeel = wlatlong.tempFeelsLike;
+        feelLike = tempFeel!.fahrenheit;
+        String weatherDescription = wlatlong.weatherDescription!;
+        weatherText = weatherDescription;
+        actualIconCode = wlatlong.weatherIcon!;
+        weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
+      });
     }
   }
 
@@ -361,110 +356,110 @@ class _HomeViewState extends State<HomeView> {
       return;
     }
 
-    if (weatherIconText == '01d') 
+    if (weatherIconText == '01d')
     {
       top = addIfNotThere("T-shirt", top);
       bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '02d') 
+    }
+    else if (weatherIconText == '02d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '03d') 
+    }
+    else if (weatherIconText == '03d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '04d') 
+    }
+    else if (weatherIconText == '04d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '09d') 
+    }
+    else if (weatherIconText == '09d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '10d') 
+    }
+    else if (weatherIconText == '10d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '11d') 
+    }
+    else if (weatherIconText == '11d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '13d') 
+    }
+    else if (weatherIconText == '13d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '50d') 
+    }
+    else if (weatherIconText == '50d')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
     }
 
-    if (weatherIconText == '01n') 
+    if (weatherIconText == '01n')
     {
       top = addIfNotThere("T-shirt", top);
       bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '02n') 
+    }
+    else if (weatherIconText == '02n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '03n') 
+    }
+    else if (weatherIconText == '03n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '04n') 
+    }
+    else if (weatherIconText == '04n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '09n') 
+    }
+    else if (weatherIconText == '09n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
-    } 
-    else if (weatherIconText == '10n') 
+    }
+    else if (weatherIconText == '10n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '11n') 
+    }
+    else if (weatherIconText == '11n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '13n') 
+    }
+    else if (weatherIconText == '13n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
-    } 
-    else if (weatherIconText == '50n') 
+    }
+    else if (weatherIconText == '50n')
     {
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
@@ -508,17 +503,17 @@ class _HomeViewState extends State<HomeView> {
     // If user doesn't allow weather and has no google calendar hooked up then filter only using time
     if (currentTime.period.toString().substring(10, 12) == 'am')
     {
-        top = addIfNotThere("T-shirt", top);
-        bottom = addIfNotThere("Shorts", bottom);
-        shoes = addIfNotThere("closed-toed-shoes", shoes);
-        return;
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+      return;
     }
     if (currentTime.period.toString().substring(10, 12) == 'pm')
     {
-        top = addIfNotThere("Shirts", top);
-        bottom = addIfNotThere("Pants", bottom);
-        shoes = addIfNotThere("closed-toed-shoes", shoes);
-        return;
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+      return;
     }
   }
 
@@ -571,10 +566,10 @@ class _HomeViewState extends State<HomeView> {
     prefs.setBool('notificationOnOff', value);
     String currentDateTime = DateTime.now().toString();
     String userInputTime = (
-      currentDateTime.substring(0, 11) + 
-      selectedTime.hour.toString()) + ":" +
-      selectedTime.minute.toString() + ":" +
-      "00.000000"
+        currentDateTime.substring(0, 11) +
+            selectedTime.hour.toString()) + ":" +
+        selectedTime.minute.toString() + ":" +
+        "00.000000"
     ;
     if (value == true)
     {
@@ -599,7 +594,7 @@ class _HomeViewState extends State<HomeView> {
             child: Column(
               children: <Widget>[
                 Row(
-                  children: [ 
+                  children: [
                     //call WeatherSummary and CalendarSummary here to display info
                     Flexible(
                       flex: 2,
@@ -611,8 +606,8 @@ class _HomeViewState extends State<HomeView> {
                       ),
                     ),
                     Flexible(
-                      flex: 2,
-                      child: CalendarSummary()
+                        flex: 2,
+                        child: CalendarSummary()
                     )
                   ],
                 ),
@@ -625,55 +620,55 @@ class _HomeViewState extends State<HomeView> {
                         selectTime(context);
                       },
                       child: Text("Notification Time: " + selectedTime.hourOfPeriod.toString() + selectedTime.toString().substring(12, 15) + " " + selectedTime.period.toString().substring(10,12)),
-                      ),
+                    ),
                     Switch(
-                      value: isNotificatinOnOff,
-                      onChanged: (value) {
-                        setState(() {
-                          setNotificationOnoFF(value);
-                          isNotificatinOnOff = value;
-                          getRecommendation();
-                        });
-                      }
+                        value: isNotificatinOnOff,
+                        onChanged: (value) {
+                          setState(() {
+                            setNotificationOnoFF(value);
+                            isNotificatinOnOff = value;
+                            getRecommendation();
+                          });
+                        }
                     ),
                   ],
                 )
               ],
             )));
   }
-  
+
   Widget buildRecommendation(BuildContext context) {
     return StreamBuilder<List<Clothing>>(
-      stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getFilteredItem(top),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Clothing>? recommendations = snapshot.data;
-          if(recommendations!.length == 0) {
+        stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getFilteredItem(top),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Clothing>? recommendations = snapshot.data;
+            if(recommendations!.length == 0) {
+              return Container(
+                  alignment: Alignment.center,
+                  height: 400.0,
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Text("There is no recommendation right now :("));
+            }
+            List<ItemSwipe> items = <ItemSwipe>[];
+            recommendations.forEach((element) {
+              items.add(ItemSwipe(item: element));
+            });
+            return Container(
+                alignment: Alignment.center,
+                height: 400.0,
+                padding: EdgeInsets.only(left: 60.0),
+                child: Stack(
+                  children: items,
+                ));
+          } else {
             return Container(
                 alignment: Alignment.center,
                 height: 400.0,
                 padding: EdgeInsets.only(left: 20.0),
                 child: Text("There is no recommendation right now :("));
           }
-          List<ItemSwipe> items = <ItemSwipe>[];
-          recommendations.forEach((element) {
-            items.add(ItemSwipe(item: element));
-          });
-          return Container(
-              alignment: Alignment.center,
-              height: 400.0,
-              padding: EdgeInsets.only(left: 60.0),
-              child: Stack(
-                children: items,
-              ));
-        } else {
-          return Container(
-              alignment: Alignment.center,
-              height: 400.0,
-              padding: EdgeInsets.only(left: 20.0),
-        child: Text("There is no recommendation right now :("));
-        }
-      });
+        });
   }
 }
 
