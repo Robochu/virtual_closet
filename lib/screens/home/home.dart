@@ -37,10 +37,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = 0;
+    _selectedIndex = 1;
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
   HomeView homepage = const HomeView();
 
   static const List<Widget> _widgetOptions = <Widget>[
