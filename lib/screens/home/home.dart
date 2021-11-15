@@ -16,6 +16,7 @@ import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
 import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:virtual_closet/screens/laundry/laundry.dart';
+import 'package:virtual_closet/screens/combinations/combo.dart';
 import 'package:virtual_closet/service/database.dart';
 import 'package:weather/weather.dart';
 
@@ -47,6 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomeView(),
     Closet(),
     Laundry(),
+    Combo(),
   ];
 
 
