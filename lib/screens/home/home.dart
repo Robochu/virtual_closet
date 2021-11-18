@@ -95,35 +95,61 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomAppBar(
         shape: const CircularNotchedRectangle(),
         child: SizedBox(
-          height: 60,
+          height: 70,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              IconButton(
-                  tooltip: "Home",
-                  icon: Icon(Icons.home, size: 35, color: _selectedIndex == 1 ? Colors.deepOrange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(1);
-                  }),
-              IconButton(
-                  tooltip: "Closet",
-                  icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 2 ? Colors.deepOrange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(2);
-                  }),
-              const SizedBox(width: 40), //placeholder for FAB
-              IconButton(
-                  tooltip: "Laundry",
-                  icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 3 ? Colors.deepOrange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(3);
-                  }),
-              IconButton(
-                  tooltip: "Combinations",
-                  icon: Icon(Icons.auto_fix_high, size: 35, color: _selectedIndex == 4 ? Colors.deepOrange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(4);
-                  }),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      tooltip: "Home",
+                      icon: Icon(Icons.home, size: 35, color: _selectedIndex == 1 ? Colors.deepOrange : Colors.black87),
+                      onPressed: () {
+                        _onItemTapped(1);
+                      }),
+                  const Text("Home")
+                ]
+              ),
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Closet",
+                        icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 2 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(2);
+                        }),
+                    const Text("Closet")
+                  ]
+              ),
+
+              const SizedBox(width: 40), //placeholder for
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Laundry",
+                        icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 3 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(3);
+                        }),
+                    const Text("Laundry")
+                  ]
+              ),// FAB
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Outfits",
+                        icon: Icon(Icons.auto_fix_high, size: 35, color: _selectedIndex == 4 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(4);
+                        }),
+                    const Text("Outfits")
+                  ]
+              ),//
+
             ],
           ),
         ),
