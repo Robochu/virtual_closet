@@ -48,8 +48,8 @@ class _SignUpPageState extends State<SignUpPage> {
               ),*/
               Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.all(10),
-                  child: Text(
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
                     'Virtual Closet',
                     style: TextStyle(
                         color: Colors.blue,
@@ -61,7 +61,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 padding: EdgeInsets.all(10),
                 child: TextField(
                   controller: nameText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter Name',
                   ),
@@ -69,10 +69,10 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: emailText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter Email',
                   ),
@@ -80,10 +80,10 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: passwordText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter Password',
                   ),
@@ -92,10 +92,10 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: confirmPasswordText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Enter Password Again',
                   ),
@@ -104,14 +104,14 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               Container(
                   height: 50,
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
                     ),
-                    child: Text('Done'),
+                    child: const Text('Done'),
                     onPressed: () {
-                      if ((nameText.text == null) || (nameText.text == "")) {
+                      if ((nameText.text == "")) {
                         print("Please enter a name");
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text("Please enter a name")
@@ -136,7 +136,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               password: passwordText.text,
                               context: context);
                           user.then((value) async {
-                            if ((value != null) && (value.uid != null)) {
+                            if (value != null) {
                               //don't call navigator to prevent stacking up, auth_screen is taking care of navigate to home screen after signup/login
 
                             }
@@ -160,12 +160,12 @@ class _SignUpPageState extends State<SignUpPage> {
               Container(
                   child: Row(
                     children: <Widget>[
-                      Text('Have an account?'),
+                      const Text('Have an account?'),
                       TextButton(
                           style: TextButton.styleFrom(
                             primary: Colors.blue,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Login here',
                             style: TextStyle(fontSize: 20),
                           ),

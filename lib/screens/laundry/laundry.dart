@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:toggle_switch/toggle_switch.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import '../detail.dart';
@@ -43,6 +43,7 @@ class _LaundryState extends State<Laundry> {
                     // Set laundry status of clothes to false to remove from basket
                     for (int index = 0; index < clothes.length; index++) {
                       clothes[index].isLaundry = false;
+                      clothes[index].inLaundryFor = '';
                       clothes[index].upload();
                     }
                     // Close confirmation dialog box
@@ -78,7 +79,7 @@ class _LaundryState extends State<Laundry> {
             if (clothes == null || clothes.isEmpty) {
               return const Center(
                 child: Text(
-                  "Oops you don't have any clothes added to the closet yet. ",
+                  "Oops you don't have any clothes added to the closet yet.",
                   textAlign: TextAlign.center,
                 ),
               );
@@ -98,10 +99,11 @@ class _LaundryState extends State<Laundry> {
                   ),
                 );
               } else {
+                _showConfDialog = true;
                 return Scaffold(
                     body: Column(
                         children: <Widget>[
-                          const SizedBox (height: 30,),
+                          const SizedBox (height: 30),
                           Center(
                               child: ElevatedButton(
                                 onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,

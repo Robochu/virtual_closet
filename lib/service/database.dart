@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 
@@ -30,7 +31,18 @@ class DatabaseService {
       'material': item.materials,
       'isLaundry': item.isLaundry,
       'imageURL': location,
-      'fileName' : item.filename
+      'fileName' : item.filename,
+      'item': item.item,
+      'inLaundryFor': item.inLaundryFor
+    }, SetOptions(merge: true));
+  }
+
+  Future updateLaundryDetail(Clothing item, DateTime date) async {
+    DateFormat dateFormat = DateFormat.yMd();
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    CollectionReference closet = usersCollection.doc(uid).collection('closet');
+    return await closet.doc(item.filename).set({
+      'inLaundryFor': dateFormat.format(date)
     }, SetOptions(merge: true));
   }
 
@@ -59,7 +71,29 @@ class DatabaseService {
                 doc['sleeves'] ?? '',
                 doc['color'] ?? '',
                 doc['material'] ?? '',
-                doc['isLaundry'] ?? '')).toList());
+                doc['item'] ?? '',
+                doc['isLaundry'] ?? '',
+                doc['inLaundryFor'] ?? '')).toList());
+  }
+
+  Stream<List<Clothing>> getFilteredItem(String itemType) {
+    itemType = "T-shirt"; //for testing
+    return FirebaseFirestore.instance.collection('users')
+        .doc(uid)
+        .collection('closet')
+        .where("item", isEqualTo: itemType).snapshots()
+        .map((event) => event.docs.map(
+            (doc) => Clothing.usingLink(
+            uid,
+            doc['fileName'] ?? '',
+            doc['imageURL'] ?? '',
+            doc['category'] ?? '',
+            doc['sleeves'] ?? '',
+            doc['color'] ?? '',
+            doc['material'] ?? '',
+            doc['item'] ?? '',
+            doc['isLaundry'] ?? '',
+            doc['inLaundryFor'] ?? '')).toList());
   }
 
   Future<MyUserData> get userData {

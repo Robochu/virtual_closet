@@ -17,15 +17,17 @@ class Clothing {
   String sleeves;
   String color;
   String materials;
+  String item;
   bool isLaundry;
+  String? inLaundryFor;
 
-  Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials, this.isLaundry);
+  Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials, this.item, this.isLaundry);
 
-  Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials, this.isLaundry);
+  Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor);
 
-  Clothing.full(this.uid, this.path, this.filename, this.link, this.category, this.sleeves, this.color, this.materials, this.isLaundry);
+  Clothing.full(this.uid, this.path, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor);
 
-  Clothing.clone(Clothing other) : this.full(other.uid, other.path, other.filename, other.link, other.category, other.sleeves, other.color, other.materials, other.isLaundry);
+  Clothing.clone(Clothing other) : this.full(other.uid, other.path, other.filename, other.link, other.category, other.sleeves, other.color, other.materials, other.item, other.isLaundry, other.inLaundryFor);
 
   @override
   bool operator==(Object other) =>
@@ -39,13 +41,14 @@ class Clothing {
       sleeves == other.sleeves &&
       color == other.color &&
       materials == other.materials &&
+          item == other.item &&
       isLaundry == other.isLaundry
     );
 
   @override
   int get hashCode => uid.hashCode ^ path.hashCode ^ filename.hashCode ^
     link.hashCode ^ category.hashCode ^ sleeves.hashCode ^ color.hashCode ^
-    materials.hashCode;
+    materials.hashCode ^ item.hashCode;
 
   Future<void> upload() async {
     // Create your custom metadata.
@@ -55,6 +58,7 @@ class Clothing {
         'sleeves': sleeves,
         'color': color,
         'materials': materials,
+        'item': item,
         'isLaundry': isLaundry ? "Yes" : "No",
       },
     );

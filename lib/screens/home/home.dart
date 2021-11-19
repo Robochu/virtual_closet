@@ -1,17 +1,25 @@
+import 'dart:io';
+import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swipable/flutter_swipable.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:virtual_closet/screens/account.dart';
+import 'package:virtual_closet/account/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
+import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
 import 'package:virtual_closet/screens/home/weather.dart';
+import 'package:virtual_closet/screens/home/calendar.dart';
+import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
+import 'package:virtual_closet/screens/home/globals.dart' as globals;
 import 'package:virtual_closet/screens/laundry/laundry.dart';
-import 'package:virtual_closet/service/fire_auth.dart';
+import 'package:virtual_closet/screens/combinations/combo.dart';
+import 'package:virtual_closet/service/database.dart';
 import 'package:weather/weather.dart';
-import 'package:weather_icons/weather_icons.dart';
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title, required this.user})
@@ -29,16 +37,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = 0;
+    _selectedIndex = 1;
   }
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
+  HomeView homepage = const HomeView();
 
   static const List<Widget> _widgetOptions = <Widget>[
+    AccountPage(),
     HomeView(),
     Closet(),
     Laundry(),
-    AccountPage()
+    Combo(),
   ];
 
 
@@ -49,24 +59,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  final Authentication _auth = Authentication(auth: FirebaseAuth.instance);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: <Widget>[
-          Card(
-            shape: RoundedRectangleBorder (borderRadius: BorderRadius.circular(10)),
-            color: Colors.lightBlueAccent,
-            child: FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Logout'),
-              onPressed: () async {
-                await _auth.signOut();
-              },
-            ),
+          Padding(
+              padding: const EdgeInsets.fromLTRB(5.0, 0.0, 10.0, 0.0),
+              child: IconButton(
+                  tooltip: "Account",
+                  icon: Icon(Icons.account_circle, size: 35, color: _selectedIndex == 0 ? Colors.lightBlueAccent : Colors.black54),
+                  onPressed: () {
+                    _onItemTapped(0);
+                  })
           ),
         ],
       ),
@@ -76,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: _widgetOptions,
         ),
       ),
-      floatingActionButton: Container(
+      floatingActionButton: SizedBox(
         height: 75,
         width: 75,
         child: FittedBox(
@@ -87,39 +93,63 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        child: Container(
-          height: 60,
+        shape: const CircularNotchedRectangle(),
+        child: SizedBox(
+          height: 70,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              IconButton(
-                  tooltip: "Home",
-                  icon: Icon(Icons.home, size: 35, color: _selectedIndex == 0 ? Colors.orange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(0);
-                    // When user clicks on homebutton a call to weather API is made and refreshes weather data
-                    //_HomeViewState().getWeatherInfo();
-                  }),
-              IconButton(
-                  tooltip: "Closet",
-                  icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 1 ? Colors.orange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(1);
-                  }),
-              SizedBox(width: 40), //placeholder for FAB
-              IconButton(
-                  tooltip: "Laundry",
-                  icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 2 ? Colors.orange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(2);
-                  }),
-              IconButton(
-                  tooltip: "Account",
-                  icon: Icon(Icons.account_circle, size: 35, color: _selectedIndex == 3 ? Colors.orange : Colors.black87),
-                  onPressed: () {
-                    _onItemTapped(3);
-                  }),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      tooltip: "Home",
+                      icon: Icon(Icons.home, size: 35, color: _selectedIndex == 1 ? Colors.deepOrange : Colors.black87),
+                      onPressed: () {
+                        _onItemTapped(1);
+                      }),
+                  const Text("Home")
+                ]
+              ),
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Closet",
+                        icon: Icon(Icons.auto_awesome_mosaic, size: 35, color: _selectedIndex == 2 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(2);
+                        }),
+                    const Text("Closet")
+                  ]
+              ),
+
+              const SizedBox(width: 40), //placeholder for
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Laundry",
+                        icon: Icon(Icons.auto_awesome, size: 35, color: _selectedIndex == 3 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(3);
+                        }),
+                    const Text("Laundry")
+                  ]
+              ),// FAB
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        tooltip: "Outfits",
+                        icon: Icon(Icons.auto_fix_high, size: 35, color: _selectedIndex == 4 ? Colors.deepOrange : Colors.black87),
+                        onPressed: () {
+                          _onItemTapped(4);
+                        }),
+                    const Text("Outfits")
+                  ]
+              ),//
+
             ],
           ),
         ),
@@ -179,6 +209,8 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     getWeatherInfo();
+    getNotificationTime();
+    getNotificationOnOff();
   }
 
   String weatherText = '';
@@ -188,6 +220,40 @@ class _HomeViewState extends State<HomeView> {
   double currentLongitude = 0.0;
   double currentLatitude = 0.0;
   TimeOfDay selectedTime = TimeOfDay.now();
+  bool isNotificatinOnOff = true;
+  String actualIconCode = '';
+  String top = '';
+  String bottom = '';
+  String shoes = '';
+
+
+  Future<void> getNotificationTime()
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    final notificationHour = prefs.getInt('notificationHour') ?? 0;
+    final notificationMinute = prefs.getInt('notificationMinute') ?? 0;
+
+    if (notificationHour != 0 && notificationMinute != 0)
+    {
+      selectedTime = TimeOfDay(hour: notificationHour, minute: notificationMinute);
+    }
+  }
+
+  Future<void> getNotificationOnOff()
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    final notificationOnoFF = prefs.getBool('notificationOnOff') ?? 0;
+
+    if (notificationOnoFF == 0)
+    {
+      isNotificatinOnOff = false;
+    }
+    else
+    {
+      isNotificatinOnOff = notificationOnoFF as bool;
+    }
+  }
+
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
   Future<void> getWeatherInfo() async {
@@ -221,7 +287,7 @@ class _HomeViewState extends State<HomeView> {
       return Future.error('App cannot request permissions.');
     }
 
-    // If app can use current location get current lattitude and longitude to get weather for current location
+    // If app can use current location get current latitude and longitude to get weather for current location
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
 
@@ -232,18 +298,19 @@ class _HomeViewState extends State<HomeView> {
     await wf.currentWeatherByLocation(currentLatitude, currentLongitude);
 
     // Change weather text to text from api weather call
-    setState(() {
-      print(wlatlong.toString());
-      currTemp = wlatlong.temperature!.fahrenheit;
-      Temperature? tempFeel = wlatlong.tempFeelsLike;
-      feelLike = tempFeel!.fahrenheit;
-      String weatherDescription = wlatlong.weatherDescription!;
-      String tempFeelLike = "\nFeels Like: " +
-          tempFeel.fahrenheit!.toStringAsPrecision(3) +
-          " Farenheit";
-      weatherText = weatherDescription;
-      weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
-    });
+    if (this.mounted)
+    {
+      setState(() {
+        print(wlatlong.toString());
+        currTemp = wlatlong.temperature!.fahrenheit;
+        Temperature? tempFeel = wlatlong.tempFeelsLike;
+        feelLike = tempFeel!.fahrenheit;
+        String weatherDescription = wlatlong.weatherDescription!;
+        weatherText = weatherDescription;
+        actualIconCode = wlatlong.weatherIcon!;
+        weatherIconText = transformWeatherIconText(wlatlong.weatherIcon!);
+      });
+    }
   }
 
   String transformWeatherIconText(String weatherIconText) {
@@ -297,129 +364,265 @@ class _HomeViewState extends State<HomeView> {
     return weatherIconText;
   }
 
+  String addIfNotThere(String addThis, String toThat)
+  {
+    for (int i = 0; i < toThat.length; i++)
+    {
+      if (addThis.matchAsPrefix(toThat, i) != null)
+      {
+        return toThat;
+      }
+    }
+    return toThat += addThis;
+  }
+
   // Helper function to translate weather icon code to weather code
-  String weatherClothesFilter(String weatherIconText)
+  void weatherClothesFilter(String weatherIconText)
   {
-    String filterCategories = '';
-
-    if (weatherIconText == '01d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '02d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '03d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '04d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '09d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '10d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '11d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '13d') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '50d') {
-      // Filter clothes based on this weather code
+    if (weatherIconText == '')
+    {
+      return;
     }
 
-    if (weatherIconText == '01n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '02n'){
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '03n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '04n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '09n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '10n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '11n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '13n') {
-      // Filter clothes based on this weather code
-    } else if (weatherIconText == '50n') {
-      // Filter clothes based on this weather code
+    if (weatherIconText == '01d')
+    {
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
+      shoes = addIfNotThere("open-toed-shoes", shoes);
     }
-    return filterCategories;
+    else if (weatherIconText == '02d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '03d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '04d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '09d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '10d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '11d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '13d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '50d')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toe-shoes", shoes);
+    }
+
+    if (weatherIconText == '01n')
+    {
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
+      shoes = addIfNotThere("open-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '02n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '03n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '04n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '09n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+    }
+    else if (weatherIconText == '10n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '11n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '13n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("boots", shoes);
+    }
+    else if (weatherIconText == '50n')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toe-shoes", shoes);
+    }
   }
 
-  String calendarClothesFilter()
+  void calendarClothesFilter()
   {
-    String filterCategories = '';
-    // If key words in calendar events like "interview" or "lunch" then filter categories
-    return filterCategories;
+    // If key words in calendar events like "interview" or "lunch" then replace categories
+    String events = globals.EVENTSOFTODAY;
+    for (int i = 0; i < events.length; i++)
+    {
+      if ('interview'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'Suit';
+        bottom = 'Pants';
+        shoes = 'Shoes';
+      }
+      else if ('lunch'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'Shirts';
+        bottom = 'Pants';
+        shoes = 'shoes';
+      }
+      else if ('flight'.matchAsPrefix(events.toLowerCase(), i) != null)
+      {
+        top = 'T-shirt';
+        bottom = 'Shorts';
+        shoes = 'sneakers';
+      }
+    }
   }
 
-  String onlyTimeClothesFilter(TimeOfDay currentTime)
+  void timeClothesFilter(TimeOfDay currentTime, weatherIConCode)
   {
-    String filterCategories = '';
+    if (weatherIConCode != '' || globals.EVENTSOFTODAY != '')
+    {
+      return;
+    }
     // If user doesn't allow weather and has no google calendar hooked up then filter only using time
-    return filterCategories;
+    if (currentTime.period.toString().substring(10, 12) == 'am')
+    {
+      top = addIfNotThere("T-shirt", top);
+      bottom = addIfNotThere("Shorts", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+      return;
+    }
+    if (currentTime.period.toString().substring(10, 12) == 'pm')
+    {
+      top = addIfNotThere("Shirts", top);
+      bottom = addIfNotThere("Pants", bottom);
+      shoes = addIfNotThere("closed-toed-shoes", shoes);
+      return;
+    }
+  }
+
+  int getRandomInt()
+  {
+    var randomGenerator = new Random();
+    return randomGenerator.nextInt(50);
   }
 
   void getRecommendation()
   {
     // Get filters using helper functions
-    String weatherFilter = weatherClothesFilter(weatherIconText);
-    String calendarFilter = calendarClothesFilter();
-    String timeFilter = onlyTimeClothesFilter(TimeOfDay.now());
+    weatherClothesFilter(actualIconCode);
+    calendarClothesFilter();
+    timeClothesFilter(TimeOfDay.now(), actualIconCode);
+    //shoes = 'Shoes';
 
-    // If weather not allowed by user but caledar exists then use calendar and time
-    if (weatherFilter == '' && calendarFilter != '')
-    {
-      getClothesBasedOnFilters(calendarFilter + timeFilter);
-    }
-    // If weather allowed by user but caledar is not then use only weatherFilter
-    if (weatherFilter == '' && calendarFilter != '')
-    {
-      getClothesBasedOnFilters(weatherFilter);
-    }
-    // If weather and calendar not used/allowed by user then use only time filter
-    if (weatherFilter != '' && calendarFilter != '')
-    {
-      getClothesBasedOnFilters(timeFilter);
-    }
-  }
+    // TODO get clothes from actual database with filtering
+    var topOutfit = filterByItem(top);
+    var bottomOutfit = filterByItem(bottom);
+    var shoesOutfit = filterByItem(shoes);
 
-  void getClothesBasedOnFilters(String filters)
-  {
-    // Filter closet based on input filters
-    // Get clothes using chance system (with multipliers for liked pieces of clothing)
-    // Assign clothes to the proper widget in the outfit widget
+
+    globals.item1 = "Item " + getRandomInt().toString() + " of " + top;
+    globals.item2 = "Item " + getRandomInt().toString() + " of " + bottom;
+    globals.item3 = "Item " + getRandomInt().toString() + " of " + shoes;
   }
 
   // Time picker widget
   selectTime(BuildContext context) async {
-    final TimeOfDay? timeOfDay = await showTimePicker(
+    final prefs = await SharedPreferences.getInstance();
+    final TimeOfDay? timeChosen = await showTimePicker(
       context: context,
       initialTime: selectedTime,
       initialEntryMode: TimePickerEntryMode.dial,
     );
-    if(timeOfDay != null && timeOfDay != selectedTime)
+    if(timeChosen != null && timeChosen != selectedTime)
     {
       setState(() {
-        selectedTime = timeOfDay;
+        selectedTime = timeChosen;
       });
+    }
+    prefs.setInt('notificationHour', selectedTime.hour);
+    prefs.setInt('notificationMinute', selectedTime.minute);
+  }
+
+  Future<void> setNotificationOnoFF(bool value)
+  async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('notificationOnOff', value);
+    String currentDateTime = DateTime.now().toString();
+    String userInputTime = (
+        currentDateTime.substring(0, 11) +
+            selectedTime.hour.toString()) + ":" +
+        selectedTime.minute.toString() + ":" +
+        "00.000000"
+    ;
+    if (value == true)
+    {
+      //notifs.NotificationService().scheduleNotification(DateTime.parse(userInputTime), "message");
+      print(DateTime.now().toString());
+      print(userInputTime);
     }
   }
 
 
- //placeholder, list of recommended items goes here
-  List<ItemSwipe> items = [
-    ItemSwipe(name: "Item1"),
-    ItemSwipe(name: "Item2"),
-    ItemSwipe(name: "Item3"),
-  ];
-
   @override
   Widget build(BuildContext context) {
+
+    if (globals.recommendationOnOff == 0)
+    {
+      //getRecommendation();
+      globals.recommendationOnOff = 1;
+    }
+
     return Scaffold(
         body: SingleChildScrollView(
             child: Column(
               children: <Widget>[
                 Row(
-                  children: [ 
+                  children: [
                     //call WeatherSummary and CalendarSummary here to display info
                     Flexible(
                       flex: 2,
@@ -430,24 +633,70 @@ class _HomeViewState extends State<HomeView> {
                         weatherIconText: weatherIconText,
                       ),
                     ),
+                    Flexible(
+                        flex: 2,
+                        child: CalendarSummary()
+                    )
                   ],
                 ),
-                Container(
-                    alignment: Alignment.center,
-                    height: 400.0,
-                    padding: EdgeInsets.only(left: 60.0),
-                    child: Stack(
-                      children: items,
-                    )),
-                ElevatedButton(
-                    onPressed: () {
-                      selectTime(context);
-                    },
-                    child: const Text("Choose Notification Time"),
+                buildRecommendation(context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        selectTime(context);
+                      },
+                      child: Text("Notification Time: " + selectedTime.hourOfPeriod.toString() + selectedTime.toString().substring(12, 15) + " " + selectedTime.period.toString().substring(10,12)),
                     ),
-                    Text("${selectedTime.hourOfPeriod}:${selectedTime.minute} ${selectedTime.period.toString().substring(10,12)}"),
+                    Switch(
+                        value: isNotificatinOnOff,
+                        onChanged: (value) {
+                          setState(() {
+                            setNotificationOnoFF(value);
+                            isNotificatinOnOff = value;
+                            getRecommendation();
+                          });
+                        }
+                    ),
+                  ],
+                )
               ],
             )));
+  }
+
+  Widget buildRecommendation(BuildContext context) {
+    return StreamBuilder<List<Clothing>>(
+        stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getFilteredItem(top),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Clothing>? recommendations = snapshot.data;
+            if(recommendations!.length == 0) {
+              return Container(
+                  alignment: Alignment.center,
+                  height: 400.0,
+                  padding: EdgeInsets.only(left: 20.0),
+                  child: Text("There is no recommendation right now :("));
+            }
+            List<ItemSwipe> items = <ItemSwipe>[];
+            recommendations.forEach((element) {
+              items.add(ItemSwipe(item: element));
+            });
+            return Container(
+                alignment: Alignment.center,
+                height: 400.0,
+                padding: EdgeInsets.only(left: 60.0),
+                child: Stack(
+                  children: items,
+                ));
+          } else {
+            return Container(
+                alignment: Alignment.center,
+                height: 400.0,
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text("There is no recommendation right now :("));
+          }
+        });
   }
 }
 
