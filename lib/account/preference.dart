@@ -63,7 +63,7 @@ class _PreferencePageState extends State<PreferencePage> {
                       child: ListTile(
                           dense: true,
                           visualDensity:
-                              VisualDensity(horizontal: 0, vertical: 0),
+                              VisualDensity(horizontal: 0, vertical: -4),
                           title: const Text(
                               "Enable laundry notifications from the app",
                               style: TextStyle(fontSize: 13)),

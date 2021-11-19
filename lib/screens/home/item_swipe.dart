@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipable/flutter_swipable.dart';
+import 'package:intl/intl.dart';
 
 import '../../clothes.dart';
 
@@ -14,6 +15,7 @@ class ItemSwipe extends StatelessWidget {
   final Clothing item;
   void updateLaundry() {
     item.isLaundry = true;
+    item.inLaundryFor = DateFormat.yMd().format(DateTime.now());
     item.upload();
 
   }

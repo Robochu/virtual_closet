@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
@@ -42,6 +43,7 @@ class _LaundryState extends State<Laundry> {
                     // Set laundry status of clothes to false to remove from basket
                     for (int index = 0; index < clothes.length; index++) {
                       clothes[index].isLaundry = false;
+                      clothes[index].inLaundryFor = '';
                       clothes[index].upload();
                     }
                     // Close confirmation dialog box

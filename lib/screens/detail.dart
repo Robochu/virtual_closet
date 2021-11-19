@@ -2,6 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:virtual_closet/models/user.dart';
+import 'package:virtual_closet/service/database.dart';
 import 'laundry/toggle.dart';
 import '../clothes.dart';
 
@@ -55,8 +59,22 @@ class _DetailPageState extends State<DetailPage> {
     materialController.dispose();
   }
 
+  String duration(String? str) {
+    if(str == null) return "";
+    DateTime date = DateFormat.yMd().parse(str);
+    Duration difference = DateTime.now().difference(date);
+    if(difference.inDays == 0) {
+      return (difference.inDays + 1).toString() + " day";
+    } else if(difference.inDays == 1) {
+        return (difference.inDays).toString() + " day";
+    }
+      return difference.inDays.toString() + " days";
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<MyUser?>(context);
     return Scaffold(
         body: Form(
             key: _formKey,
@@ -228,6 +246,10 @@ class _DetailPageState extends State<DetailPage> {
                           onToggleCallback: (value) {
                             setState(() {
                               (value == 1) ? clothing!.isLaundry = true : clothing!.isLaundry = false;
+                              if(value == 1) {
+                                clothing!.inLaundryFor = DateFormat.yMd().format(DateTime.now());
+                                DatabaseService(uid: user!.uid).updateLaundryDetail(clothing!, DateTime.now());
+                              }
                             });
                           }
                       )
@@ -251,6 +273,11 @@ class _DetailPageState extends State<DetailPage> {
                         )
                       ]
                   ),
+                  (clothing!.isLaundry)
+                  ? Padding(padding: EdgeInsets.only(left: 20.0),
+                      child: Text("This item has been in laundry for ${duration(clothing!.inLaundryFor)}",
+                  style: TextStyle(color: Colors.black45, fontStyle: FontStyle.italic)))
+                      : const Text(""),
                   if (_isEditable) Row(
                     children: <Widget>[
                       Container(

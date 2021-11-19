@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 
@@ -32,6 +33,16 @@ class DatabaseService {
       'imageURL': location,
       'fileName' : item.filename,
       'item': item.item,
+      'inLaundryFor': item.inLaundryFor
+    }, SetOptions(merge: true));
+  }
+
+  Future updateLaundryDetail(Clothing item, DateTime date) async {
+    DateFormat dateFormat = DateFormat.yMd();
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    CollectionReference closet = usersCollection.doc(uid).collection('closet');
+    return await closet.doc(item.filename).set({
+      'inLaundryFor': dateFormat.format(date)
     }, SetOptions(merge: true));
   }
 
@@ -61,7 +72,8 @@ class DatabaseService {
                 doc['color'] ?? '',
                 doc['material'] ?? '',
                 doc['item'] ?? '',
-                doc['isLaundry'] ?? '')).toList());
+                doc['isLaundry'] ?? '',
+                doc['inLaundryFor'] ?? '')).toList());
   }
 
   Stream<List<Clothing>> getFilteredItem(String itemType) {
@@ -80,7 +92,8 @@ class DatabaseService {
             doc['color'] ?? '',
             doc['material'] ?? '',
             doc['item'] ?? '',
-            doc['isLaundry'] ?? '')).toList());
+            doc['isLaundry'] ?? '',
+            doc['inLaundryFor'] ?? '')).toList());
   }
 
   Future<MyUserData> get userData {
