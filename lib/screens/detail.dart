@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/service/database.dart';
 import 'laundry/toggle.dart';
@@ -31,7 +32,7 @@ class _DetailPageState extends State<DetailPage> {
   late final colorController;
   late final sleeveController;*/
   late final materialController;
-
+  late int laundryFreq;
 
   late bool _isEditable;
 
@@ -43,11 +44,13 @@ class _DetailPageState extends State<DetailPage> {
     initSleeves = clothing!.sleeves;
     initColor = clothing!.color;
     initMaterials = clothing!.materials;
+    laundryFreq = 7;
     /*
     colorController = TextEditingController(text: initColor);
     sleeveController = TextEditingController(text: initSleeves);*/
     materialController = TextEditingController(text: initMaterials);
     _isEditable = widget.editable;
+    _getLaundryFreq();
   }
 
   @override
@@ -57,6 +60,12 @@ class _DetailPageState extends State<DetailPage> {
     colorController.dispose();
     sleeveController.dispose();*/
     materialController.dispose();
+  }
+  void _getLaundryFreq() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7).toInt();
+    });
   }
 
   String duration(String? str) {
@@ -69,6 +78,17 @@ class _DetailPageState extends State<DetailPage> {
         return (difference.inDays).toString() + " day";
     }
       return difference.inDays.toString() + " days";
+
+  }
+
+  bool isOverdue(String? str)  {
+    if(str == null) return false;
+    DateTime date = DateFormat.yMd().parse(str);
+    Duration difference = DateTime.now().difference(date);
+    if(difference.inDays >= laundryFreq) {
+      return true;
+    }
+    return false;
 
   }
 
@@ -276,7 +296,7 @@ class _DetailPageState extends State<DetailPage> {
                   (clothing!.isLaundry)
                   ? Padding(padding: EdgeInsets.only(left: 20.0),
                       child: Text("This item has been in laundry for ${duration(clothing!.inLaundryFor)}",
-                  style: TextStyle(color: Colors.black45, fontStyle: FontStyle.italic)))
+                  style: TextStyle(color: (isOverdue(clothing!.inLaundryFor)) ? Colors.red: Colors.black45, fontStyle: FontStyle.italic)))
                       : const Text(""),
                   if (_isEditable) Row(
                     children: <Widget>[

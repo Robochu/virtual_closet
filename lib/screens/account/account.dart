@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:virtual_closet/account/google_link.dart';
-import 'package:virtual_closet/account/preference.dart';
-import 'package:virtual_closet/account/profile.dart';
+import 'package:virtual_closet/screens/account/google_link.dart';
+import 'package:virtual_closet/screens/account/preference.dart';
+import 'package:virtual_closet/screens/account/profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:virtual_closet/service/fire_auth.dart';
 

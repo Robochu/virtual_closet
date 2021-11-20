@@ -7,11 +7,8 @@
 
 import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:virtual_closet/main.dart';
-import 'package:virtual_closet/account/account.dart';
 final tUser = MockUser(
   isAnonymous: false,
   uid: 'T3STU1D',

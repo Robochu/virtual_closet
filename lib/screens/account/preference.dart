@@ -88,7 +88,13 @@ class _PreferencePageState extends State<PreferencePage> {
                               left: BorderSide(),
                               right: BorderSide())),
                       child: ListTile(
-                        title: Text(
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                        title: (laundryFreq == 1)
+                            ? const Text(
+                            "I want to do laundry every 1 day",
+                            style: TextStyle(fontSize: 13))
+                            : Text(
                             "I want to do laundry every ${laundryFreq.toStringAsFixed(0)} days",
                             style: const TextStyle(fontSize: 13)),
                         trailing: TextButton(
@@ -115,7 +121,6 @@ class _PreferencePageState extends State<PreferencePage> {
                                                           .getInstance();
                                                   prefs.setDouble('laundryFreq',
                                                       laundryFreq);
-
                                                   Navigator.pop(context);
                                                 },
                                                 child: const Text("Save")),
@@ -126,7 +131,7 @@ class _PreferencePageState extends State<PreferencePage> {
                                                     min: 1,
                                                     max: 30,
                                                     divisions: 30,
-                                                    label: "${laundryFreq.toStringAsFixed(0)} days",
+                                                    label: "${laundryFreq.toStringAsFixed(0)}",
                                                     onChanged: (value) {
                                                       setStateIn(() { //update slider
                                                         laundryFreq = value;

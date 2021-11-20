@@ -3,10 +3,11 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
-import 'package:virtual_closet/account/account.dart';
+import 'package:virtual_closet/screens/account/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
@@ -208,9 +209,11 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    laundryFreq = 7;
     getWeatherInfo();
     getNotificationTime();
     getNotificationOnOff();
+    _getLaundryFreq();
   }
 
   String weatherText = '';
@@ -225,7 +228,14 @@ class _HomeViewState extends State<HomeView> {
   String top = '';
   String bottom = '';
   String shoes = '';
+  late int laundryFreq;
 
+  void _getLaundryFreq() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7).toInt();
+    });
+  }
 
   Future<void> getNotificationTime()
   async {
@@ -606,6 +616,30 @@ class _HomeViewState extends State<HomeView> {
       print(userInputTime);
     }
   }
+  int duration(String? str) {
+    if(str == null) return 0;
+    DateTime date = DateFormat.yMd().parse(str);
+    Duration difference = DateTime.now().difference(date);
+    if(difference.inDays == 0) {
+      return (difference.inDays + 1);
+    } else if(difference.inDays == 1) {
+      return (difference.inDays);
+    }
+    return difference.inDays;
+
+  }
+
+  int countOverdue(List<Clothing>? closet) {
+    if(closet == null || closet.isEmpty) return 0;
+    int counter = 0;
+
+    for(var items in closet) {
+      if(items.isLaundry && duration(items.inLaundryFor) >= laundryFreq) {
+        counter++;
+      }
+    }
+    return counter;
+  }
 
 
   @override
@@ -660,7 +694,14 @@ class _HomeViewState extends State<HomeView> {
                         }
                     ),
                   ],
-                )
+                ),
+                const ListTile(
+                    dense: true,
+                    visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
+                    tileColor: Colors.transparent,
+                    leading: Text("Reminders", style: TextStyle(fontWeight: FontWeight.bold))
+                ),
+                buildReminders(context)
               ],
             )));
   }
@@ -671,32 +712,64 @@ class _HomeViewState extends State<HomeView> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Clothing>? recommendations = snapshot.data;
-            if(recommendations!.length == 0) {
+            if(recommendations!.isEmpty) {
               return Container(
                   alignment: Alignment.center,
                   height: 400.0,
-                  padding: EdgeInsets.only(left: 20.0),
-                  child: Text("There is no recommendation right now :("));
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: const Text("There is no recommendation right now :("));
             }
             List<ItemSwipe> items = <ItemSwipe>[];
-            recommendations.forEach((element) {
+            for (var element in recommendations) {
               items.add(ItemSwipe(item: element));
-            });
+            }
             return Container(
                 alignment: Alignment.center,
                 height: 400.0,
-                padding: EdgeInsets.only(left: 60.0),
+                padding: const EdgeInsets.only(left: 60.0),
                 child: Stack(
                   children: items,
                 ));
           } else {
-            return Container(
-                alignment: Alignment.center,
-                height: 400.0,
-                padding: EdgeInsets.only(left: 20.0),
-                child: Text("There is no recommendation right now :("));
+            return const Center(child: CircularProgressIndicator());
           }
         });
+  }
+
+  Widget buildReminders(BuildContext context) {
+    return StreamBuilder<List<Clothing>>(
+        stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
+    builder: (context, snapshot) {
+          if(snapshot.hasData) {
+            List<Clothing>? clothes = snapshot.data;
+            int counter = countOverdue(clothes);
+            if(counter == 0) {
+              return const Padding(padding: EdgeInsets.only(top: 0.0, bottom: 50.0),
+                  child:Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45))));
+            }
+            return Padding(
+              padding: EdgeInsets.only(bottom: 50.0, right: 16.0, left: 16.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.black,
+                    )),
+                child:
+                  ListTile(
+                    dense: true,
+                    visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
+                    title: ((counter == 1) ? const Text("You have 1 unwashed item. Wash it now!")
+                                           : Text("You have ${counter} unwashed items. Let's do some laundry!")),
+                    onTap: () => Laundry(),
+                  )
+              )
+            );
+
+          } else {
+            return const Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45)));
+          }
+    }
+    );
   }
 }
 
