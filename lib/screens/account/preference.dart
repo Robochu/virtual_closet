@@ -9,7 +9,7 @@ class PreferencePage extends StatefulWidget {
 
 class _PreferencePageState extends State<PreferencePage> {
   late bool laundrySwitch;
-  late double laundryFreq;
+  late int laundryFreq;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _PreferencePageState extends State<PreferencePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       laundrySwitch = (prefs.getBool('laundryNotif') ?? false);
-      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7);
+      laundryFreq = (prefs.getInt('laundryFreq') ?? 7);
     });
   }
 
@@ -88,7 +88,13 @@ class _PreferencePageState extends State<PreferencePage> {
                               left: BorderSide(),
                               right: BorderSide())),
                       child: ListTile(
-                        title: Text(
+                        dense: true,
+                        visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                        title: (laundryFreq == 1)
+                            ? const Text(
+                            "I want to do laundry every 1 day",
+                            style: TextStyle(fontSize: 13))
+                            : Text(
                             "I want to do laundry every ${laundryFreq.toStringAsFixed(0)} days",
                             style: const TextStyle(fontSize: 13)),
                         trailing: TextButton(
@@ -113,26 +119,25 @@ class _PreferencePageState extends State<PreferencePage> {
                                                   SharedPreferences prefs =
                                                       await SharedPreferences
                                                           .getInstance();
-                                                  prefs.setDouble('laundryFreq',
+                                                  prefs.setInt('laundryFreq',
                                                       laundryFreq);
-
                                                   Navigator.pop(context);
                                                 },
                                                 child: const Text("Save")),
                                             Container(
                                                 height: 100,
                                                 child: Slider(
-                                                    value: laundryFreq,
+                                                    value: laundryFreq.toDouble(),
                                                     min: 1,
                                                     max: 30,
                                                     divisions: 30,
-                                                    label: "${laundryFreq.toStringAsFixed(0)} days",
+                                                    label: "${laundryFreq}",
                                                     onChanged: (value) {
                                                       setStateIn(() { //update slider
-                                                        laundryFreq = value;
+                                                        laundryFreq = value.toInt();
                                                       });
                                                       setState(() { //update outside
-                                                        laundryFreq = value;
+                                                        laundryFreq = value.toInt();
                                                       });
                                                     }))
                                           ]));

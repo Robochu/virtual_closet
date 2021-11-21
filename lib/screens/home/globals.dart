@@ -1,5 +1,7 @@
 library my_prj.globals;
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 String EVENTSOFTODAY = "";
 int numOfEvents = -2;
