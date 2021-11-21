@@ -37,13 +37,14 @@ class _AccountPageState extends State<AccountPage> {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => PreferencePage()));
               }),
+          /*
           ListTile(
               trailing: const Icon(Icons.arrow_forward_rounded),
               title: const Text("Connect to Google"),
               onTap: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => GoogleLinking()));
-              }),
+              }),*/
           Card(
             shape: RoundedRectangleBorder (borderRadius: BorderRadius.circular(10)),
             color: Colors.lightBlueAccent,

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timer_builder/timer_builder.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account/account.dart';
@@ -84,8 +85,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: SizedBox(
-        height: 75,
-        width: 75,
+        height: 70,
+        width: 70,
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () => _onButtonPressed(),
@@ -233,7 +234,7 @@ class _HomeViewState extends State<HomeView> {
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7).toInt();
+      laundryFreq = prefs.getInt('laundryFreq') ?? 7;
     });
   }
 
@@ -701,7 +702,10 @@ class _HomeViewState extends State<HomeView> {
                     tileColor: Colors.transparent,
                     leading: Text("Reminders", style: TextStyle(fontWeight: FontWeight.bold))
                 ),
-                buildReminders(context)
+                TimerBuilder.periodic(Duration(seconds:20), builder: (context) {
+                  _getLaundryFreq();
+                  return buildReminders(context);
+                })
               ],
             )));
   }
@@ -740,9 +744,11 @@ class _HomeViewState extends State<HomeView> {
     return StreamBuilder<List<Clothing>>(
         stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
     builder: (context, snapshot) {
+
           if(snapshot.hasData) {
             List<Clothing>? clothes = snapshot.data;
             int counter = countOverdue(clothes);
+            print(counter);
             if(counter == 0) {
               return const Padding(padding: EdgeInsets.only(top: 0.0, bottom: 50.0),
                   child:Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45))));
@@ -758,14 +764,15 @@ class _HomeViewState extends State<HomeView> {
                   ListTile(
                     dense: true,
                     visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
-                    title: ((counter == 1) ? const Text("You have 1 unwashed item. Wash it now!")
-                                           : Text("You have ${counter} unwashed items. Let's do some laundry!")),
-                    onTap: () => Laundry(),
+                    title: ((counter == 1) ? const Text("You have 1 overdue item. Wash it now!")
+                                           : Text("You have ${counter} overdue items. Let's do some laundry!")),
+                    onTap: () {},
                   )
               )
             );
 
           } else {
+
             return const Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45)));
           }
     }

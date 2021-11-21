@@ -64,7 +64,7 @@ class _DetailPageState extends State<DetailPage> {
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7).toInt();
+      laundryFreq = prefs.getInt('laundryFreq') ?? 7;
     });
   }
 

@@ -9,7 +9,7 @@ class PreferencePage extends StatefulWidget {
 
 class _PreferencePageState extends State<PreferencePage> {
   late bool laundrySwitch;
-  late double laundryFreq;
+  late int laundryFreq;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _PreferencePageState extends State<PreferencePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       laundrySwitch = (prefs.getBool('laundryNotif') ?? false);
-      laundryFreq = (prefs.getDouble('laundryFreq') ?? 7);
+      laundryFreq = (prefs.getInt('laundryFreq') ?? 7);
     });
   }
 
@@ -119,7 +119,7 @@ class _PreferencePageState extends State<PreferencePage> {
                                                   SharedPreferences prefs =
                                                       await SharedPreferences
                                                           .getInstance();
-                                                  prefs.setDouble('laundryFreq',
+                                                  prefs.setInt('laundryFreq',
                                                       laundryFreq);
                                                   Navigator.pop(context);
                                                 },
@@ -127,17 +127,17 @@ class _PreferencePageState extends State<PreferencePage> {
                                             Container(
                                                 height: 100,
                                                 child: Slider(
-                                                    value: laundryFreq,
+                                                    value: laundryFreq.toDouble(),
                                                     min: 1,
                                                     max: 30,
                                                     divisions: 30,
-                                                    label: "${laundryFreq.toStringAsFixed(0)}",
+                                                    label: "${laundryFreq}",
                                                     onChanged: (value) {
                                                       setStateIn(() { //update slider
-                                                        laundryFreq = value;
+                                                        laundryFreq = value.toInt();
                                                       });
                                                       setState(() { //update outside
-                                                        laundryFreq = value;
+                                                        laundryFreq = value.toInt();
                                                       });
                                                     }))
                                           ]));
