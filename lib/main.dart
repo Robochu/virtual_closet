@@ -1,3 +1,5 @@
+// @dart=2.9
+
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,12 +20,12 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key key}) : super(key: key);
   @override
 // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<MyUser?>.value(
+    return StreamProvider<MyUser>.value(
         value: Authentication(auth: FirebaseAuth.instance).user,
         initialData: null,
         child: MaterialApp(

@@ -134,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               name: nameText.text,
                               email: emailText.text,
                               password: passwordText.text,
-                              context: context);
+                              /*context: context*/);
                           user.then((value) async {
                             if (value != null) {
                               //don't call navigator to prevent stacking up, auth_screen is taking care of navigate to home screen after signup/login
