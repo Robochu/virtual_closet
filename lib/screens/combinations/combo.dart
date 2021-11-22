@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:virtual_closet/clothes.dart';
+import 'package:virtual_closet/screens/combinations/designer.dart';
 
 class Combo extends StatefulWidget {
   const Combo({Key? key}) : super(key: key);
@@ -9,8 +10,47 @@ class Combo extends StatefulWidget {
 }
 
 class _ComboState extends State<Combo> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late Clothing top;
+  late Clothing bottom;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void press(BuildContext context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Designer(),
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+        body: Column (
+            children: <Widget>[
+              const SizedBox(height: 30),
+              Center(
+                  child: ElevatedButton(
+                    onPressed: () => press(context),
+                    child: const Text(
+                        "Design an outfit",
+                        style: TextStyle(fontSize: 20)
+                    ),
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)
+                        )
+                    ),
+                  )
+              )
+            ]
+        )
+    );
   }
 }
