@@ -224,7 +224,7 @@ class _HomeViewState extends State<HomeView> {
   double currentLongitude = 0.0;
   double currentLatitude = 0.0;
   TimeOfDay selectedTime = TimeOfDay.now();
-  bool isNotificatinOnOff = true;
+  bool isNotificationOnOff = true;
   String actualIconCode = '';
   String top = '';
   String bottom = '';
@@ -257,11 +257,11 @@ class _HomeViewState extends State<HomeView> {
 
     if (notificationOnoFF == 0)
     {
-      isNotificatinOnOff = false;
+      isNotificationOnOff = false;
     }
     else
     {
-      isNotificatinOnOff = notificationOnoFF as bool;
+      isNotificationOnOff = notificationOnoFF as bool;
     }
   }
 
@@ -685,11 +685,11 @@ class _HomeViewState extends State<HomeView> {
                       child: Text("Notification Time: " + selectedTime.hourOfPeriod.toString() + selectedTime.toString().substring(12, 15) + " " + selectedTime.period.toString().substring(10,12)),
                     ),
                     Switch(
-                        value: isNotificatinOnOff,
+                        value: isNotificationOnOff,
                         onChanged: (value) {
                           setState(() {
                             setNotificationOnoFF(value);
-                            isNotificatinOnOff = value;
+                            isNotificationOnOff = value;
                             getRecommendation();
                           });
                         }
