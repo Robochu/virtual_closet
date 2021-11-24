@@ -309,7 +309,7 @@ class _HomeViewState extends State<HomeView> {
     await wf.currentWeatherByLocation(currentLatitude, currentLongitude);
 
     // Change weather text to text from api weather call
-    if (this.mounted)
+    if (mounted)
     {
       setState(() {
         print(wlatlong.toString());
@@ -558,7 +558,7 @@ class _HomeViewState extends State<HomeView> {
 
   int getRandomInt()
   {
-    var randomGenerator = new Random();
+    var randomGenerator = Random();
     return randomGenerator.nextInt(50);
   }
 
@@ -702,7 +702,7 @@ class _HomeViewState extends State<HomeView> {
                     tileColor: Colors.transparent,
                     leading: Text("Reminders", style: TextStyle(fontWeight: FontWeight.bold))
                 ),
-                TimerBuilder.periodic(Duration(seconds:20), builder: (context) {
+                TimerBuilder.periodic(const Duration(seconds:20), builder: (context) {
                   _getLaundryFreq();
                   return buildReminders(context);
                 })
@@ -754,7 +754,7 @@ class _HomeViewState extends State<HomeView> {
                   child:Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45))));
             }
             return Padding(
-              padding: EdgeInsets.only(bottom: 50.0, right: 16.0, left: 16.0),
+              padding: const EdgeInsets.only(bottom: 50.0, right: 16.0, left: 16.0),
               child: Container(
                 decoration: BoxDecoration(
                     border: Border.all(
@@ -763,9 +763,9 @@ class _HomeViewState extends State<HomeView> {
                 child:
                   ListTile(
                     dense: true,
-                    visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
+                    visualDensity: const VisualDensity(horizontal: 0.0, vertical: -4.0),
                     title: ((counter == 1) ? const Text("You have 1 overdue item. Wash it now!")
-                                           : Text("You have ${counter} overdue items. Let's do some laundry!")),
+                                           : Text("You have $counter overdue items. Let's do some laundry!")),
                     onTap: () {},
                   )
               )

@@ -12,18 +12,18 @@ import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/detail.dart';
 import 'package:firebase_ml_custom/firebase_ml_custom.dart';
-//import 'package:tflite_flutter/tflite_flutter.dart';
-//import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
-import 'package:tflite/tflite.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
+//import 'package:tflite/tflite.dart';
 
 class ImageFromGalleryScreen extends StatefulWidget {
   final type;
 
-  ImageFromGalleryScreen(this.type);
+  const ImageFromGalleryScreen(this.type);
 
   @override
   ImageFromGalleryScreenState createState() =>
-      ImageFromGalleryScreenState(this.type);
+      ImageFromGalleryScreenState(type);
 }
 
 class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
@@ -31,7 +31,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
   var imagePicker;
   var type;
 
-  /*late Interpreter interpreter;
+  late Interpreter interpreter;
   late InterpreterOptions _interpreterOptions;
 
   late List<int> _inputShape;
@@ -41,11 +41,14 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
   late TensorBuffer _outputBuffer;
 
   late TfLiteType _inputType;
-  late TfLiteType _outputType;*/
+  late TfLiteType _outputType;
 
-  final String _labelsFileName = 'assets/labels.txt';
+  final String _labelsFileName = 'assets/dict.txt';
 
   final String _modelFilePath = 'assets/model-export_icn_tflite-Bingabad_20211104015315-2021-11-14T17_06_32.199644Z_model.tflite';
+
+  NormalizeOp preProcessNormalizeOp = NormalizeOp(0, 1);
+  NormalizeOp postProcessNormalizeOp = NormalizeOp(0, 255);
 
   ImageFromGalleryScreenState(this.type);
 
@@ -71,11 +74,19 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
     }
     void up() async {
       try {
-        //predict();
-        //print(_outputBuffer);
-        var recognitions = Tflite.runModelOnImage(path: _image.path);
-        print(recognitions);
+        predict();
+        print(_outputBuffer);
+        /*List<dynamic>? recognitions = await Tflite.runModelOnImage(path: _image.path);
+        if (recognitions == null) {
+          print("ERROR");
+        }
+        else {
+          print("Recognitions Length: ");
+          print(recognitions.length);
+        }*/
         Clothing item = Clothing.full(user!.uid, _image.path, '', '', 'Tops', 'Short', 'Black', '', 'T-shirt', false, '');
+        //Tflite.close();
+        close();
         Navigator.push(
             context,
             MaterialPageRoute(builder: (context) =>
@@ -91,7 +102,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       appBar: AppBar(title: Text(title)),
       body: Column(
         children: <Widget>[
-          SizedBox(
+          const SizedBox(
             height: 52,
           ),
           Center(
@@ -128,7 +139,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
               ),
             ),
           ),
-          SizedBox(height:60),
+          const SizedBox(height:60),
           ElevatedButton(
             // onPress: null = disabled button
             onPressed:  (_image == null) ? null : () => up(),
@@ -146,7 +157,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
 
   //AI code
 
-  /*Future<void> loadModel() async {
+  Future<void> loadModel() async {
     try {
       interpreter =
       await Interpreter.fromAsset(_modelFilePath, options: _interpreterOptions);
@@ -157,7 +168,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       _inputType = interpreter.getInputTensor(0).type;
       _outputType = interpreter.getOutputTensor(0).type;
 
-      //_outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
+      _outputBuffer = TensorBuffer.createFixedSize(_outputShape, _outputType);
     } catch (e) {
       print('Unable to create interpreter, Caught Exception: ${e.toString()}');
     }
@@ -182,15 +193,14 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
 
   void close() {
     interpreter.close();
-  }*/
+  }
 
 
 
 
-
+/*
   /// Gets the model ready for inference on images.
   static Future<String> loadModel() async {
-    Tflite.close();
     print("LOADING\nTHE\nMODEL");
     final modelFile = await loadModelFromFirebase();
     return loadTFLiteModel(modelFile);
@@ -238,7 +248,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
     try {
       await Tflite.loadModel(
         model: "assets/model-export_icn_tflite-Bingabad_20211104015315-2021-11-14T17_06_32.199644Z_model.tflite",
-        labels: "assets/labels.txt",
+        labels: "assets/dict.txt",
         numThreads: 1, // defaults to 1
         isAsset: true, // defaults to true, set to false to load resources outside assets
         useGpuDelegate: false // defaults to false, set to true to use GPU delegate
@@ -250,5 +260,5 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
           'Failed on loading your model to the TFLite interpreter: $exception');
       return 'Failed to load model';
     }
-  }
+  }*/
 }

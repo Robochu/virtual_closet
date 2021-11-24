@@ -14,7 +14,7 @@ class DatabaseService {
     return await firestoreDb.collection('users').doc(uid).set({
       'name' : user.name,
       'email': user.email,
-      'uid': this.uid,
+      'uid': uid,
       'lastName': user.lastName,
       'dob': user.dob,
     });
@@ -103,10 +103,10 @@ class DatabaseService {
   MyUserData _dataFromSnapshot(DocumentSnapshot snapshot) {
     if(!snapshot.exists) {
       return MyUserData(
-          uid: this.uid, email: '', name: '', lastName: '', dob: '');
+          uid: uid, email: '', name: '', lastName: '', dob: '');
     }
     return MyUserData(
-        uid: this.uid,
+        uid: uid,
         email: snapshot['email'],
         name: snapshot['name'] ?? '',
         lastName: snapshot['lastName'] ?? '',

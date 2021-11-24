@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 * Stateless widget to give a summary of the user's calendar
  */
 class CalendarSummary extends StatefulWidget {
-  CalendarSummary({Key? key}) : super(key: key);
+  const CalendarSummary({Key? key}) : super(key: key);
 
   @override
   _CalendarSummaryState createState() => _CalendarSummaryState();
@@ -25,7 +25,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
   List<Event>? listOfTodayEvents;
   String todaysEventsAsString = "";
   String displayAllEvents = "";
-  final storage = new FlutterSecureStorage();
+  final storage = FlutterSecureStorage();
   DateFormat dateFormat = DateFormat("E, MMMM d");
 
   Future<void> doBlankCredentials()
@@ -121,22 +121,22 @@ class _CalendarSummaryState extends State<CalendarSummary> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Padding(
-            padding: EdgeInsets.all(5.0),
+            padding: const EdgeInsets.all(5.0),
             child: Text(
-              "${displayAllEvents}",
+              displayAllEvents,
               style:
-              TextStyle(color: Colors.black, fontSize: 18.0),
+              const TextStyle(color: Colors.black, fontSize: 18.0),
             ),
           ),
           Expanded(
             child: Align(
               alignment: FractionalOffset.bottomRight,
                 child: Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
+                  padding: const EdgeInsets.only(bottom: 10.0),
                     child: FloatingActionButton(
                     onPressed: getEvents,
                     tooltip: 'New joke',
-                    child: new Icon(Icons.refresh),
+                    child: Icon(Icons.refresh),
                   ),
               ),
             ),
@@ -160,7 +160,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
           showDialog(builder: (BuildContext context) { return getLeadDialog(); }, context: context);
           },
         child: Container(
-        margin: EdgeInsets.all(15.0),
+        margin: const EdgeInsets.all(15.0),
         decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(

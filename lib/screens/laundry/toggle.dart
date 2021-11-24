@@ -9,7 +9,7 @@ class AnimatedToggle extends StatefulWidget {
   final Color textColor;
   final bool preSet;
 
-  AnimatedToggle({
+  const AnimatedToggle({
     required this.values,
     required this.onToggleCallback,
     this.buttonColor = Colors.blueAccent,

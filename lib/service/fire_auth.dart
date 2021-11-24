@@ -46,10 +46,10 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('This password is too weak');
-        return Future<Null>.value(null);
+        return Future<MyUser?>.value(null);
       } else if (e.code == 'email-already-in-use') {
         print('Account already exists for this email');
-        return Future<Null>.value(null);
+        return Future<MyUser?>.value(null);
       }
     } catch (e) {
       print(e);
@@ -69,10 +69,10 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
-        return Future<Null>.value(null);
+        return Future<MyUser?>.value(null);
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided.');
-        return Future<Null>.value(null);
+        return Future<MyUser?>.value(null);
       }
     }
     return _createUser(user);
@@ -93,7 +93,7 @@ class Authentication {
 
   Future signOut() async {
     try {
-      User? user = await auth.currentUser;
+      User? user = auth.currentUser;
         return await auth.signOut();
 
     } catch (e) {

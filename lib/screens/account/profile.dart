@@ -177,7 +177,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Navigator.pop(context);
                                       },
                                       child: const Text("Save")),
-                                  Container(
+                                  SizedBox(
                                       height: 300,
                                       child: CupertinoDatePicker(
                                           initialDateTime: DateTime.now(),

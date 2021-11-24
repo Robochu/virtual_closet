@@ -49,8 +49,8 @@ class _AccountPageState extends State<AccountPage> {
             shape: RoundedRectangleBorder (borderRadius: BorderRadius.circular(10)),
             color: Colors.lightBlueAccent,
             child: FlatButton.icon(
-              icon: Icon(Icons.person),
-              label: Text('Logout'),
+              icon: const Icon(Icons.person),
+              label: const Text('Logout'),
               onPressed: () async {
                 await _auth.signOut();
               },

@@ -63,7 +63,7 @@ class _PreferencePageState extends State<PreferencePage> {
                       child: ListTile(
                           dense: true,
                           visualDensity:
-                              VisualDensity(horizontal: 0, vertical: -4),
+                              const VisualDensity(horizontal: 0, vertical: -4),
                           title: const Text(
                               "Enable laundry notifications from the app",
                               style: TextStyle(fontSize: 13)),
@@ -89,7 +89,7 @@ class _PreferencePageState extends State<PreferencePage> {
                               right: BorderSide())),
                       child: ListTile(
                         dense: true,
-                        visualDensity: VisualDensity(horizontal: 0, vertical: -4),
+                        visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
                         title: (laundryFreq == 1)
                             ? const Text(
                             "I want to do laundry every 1 day",
@@ -124,14 +124,14 @@ class _PreferencePageState extends State<PreferencePage> {
                                                   Navigator.pop(context);
                                                 },
                                                 child: const Text("Save")),
-                                            Container(
+                                            SizedBox(
                                                 height: 100,
                                                 child: Slider(
                                                     value: laundryFreq.toDouble(),
                                                     min: 1,
                                                     max: 30,
                                                     divisions: 30,
-                                                    label: "${laundryFreq}",
+                                                    label: "$laundryFreq",
                                                     onChanged: (value) {
                                                       setStateIn(() { //update slider
                                                         laundryFreq = value.toInt();

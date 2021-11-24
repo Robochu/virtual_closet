@@ -128,7 +128,7 @@ class _LaundryState extends State<Laundry> {
                                 laundryClothes.length, (index) {
                               return InkWell(
                                 child: Padding (
-                                    padding: EdgeInsets.all(15),
+                                    padding: const EdgeInsets.all(15),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(20),
                                       child: Image(

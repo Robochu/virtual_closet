@@ -24,11 +24,11 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Virtual Closet'),
+          title: const Text('Virtual Closet'),
         ),
         body:
         Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: ListView(children: <Widget>[
               /*FutureBuilder(
                 future: _initializeFirebase(),
@@ -58,7 +58,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   )),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: nameText,
                   decoration: const InputDecoration(
@@ -113,17 +113,17 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: () {
                       if ((nameText.text == "")) {
                         print("Please enter a name");
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text("Please enter a name")
                         ));
                       }
                       else if (emailText.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text("Please enter an email")
                         ));
                       }
                       else if (passwordText.text == "") {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                             content: Text("Please enter a password")
                         ));
                       }
@@ -150,7 +150,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         }
                         else {
                           print("Passwords must match");
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                               content: Text("Passwords must match")
                           ));
                         }

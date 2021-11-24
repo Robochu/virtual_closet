@@ -21,20 +21,20 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Virtual Closet'),
+          title: const Text('Virtual Closet'),
         ),
         body: Padding(
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: ListView(children: <Widget>[
               Column(
-                children: [
+                children: const [
                   Text('Login'),
                 ],
               ),
               Container(
                   alignment: Alignment.center,
-                  padding: EdgeInsets.all(10),
-                  child: Text(
+                  padding: const EdgeInsets.all(10),
+                  child: const Text(
                     'Virtual Closet',
                     style: TextStyle(
                         color: Colors.blue,
@@ -43,10 +43,10 @@ class _LoginState extends State<Login> {
                   )),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: emailText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Email',
                   ),
@@ -54,10 +54,10 @@ class _LoginState extends State<Login> {
               ),
               Container(
                 alignment: Alignment.center,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: TextField(
                   controller: passwordText,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: 'Password',
                   ),
@@ -77,15 +77,15 @@ class _LoginState extends State<Login> {
                   style: TextButton.styleFrom(
                     primary: Colors.blue,
                   ),
-                  child: Text('Forgot Password')),
+                  child: const Text('Forgot Password')),
               Container(
                   height: 50,
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
                     ),
-                    child: Text('Login'),
+                    child: const Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
                       Future<MyUser?> user =
@@ -99,12 +99,12 @@ class _LoginState extends State<Login> {
               Container(
                   child: Row(
                     children: <Widget>[
-                      Text('New User?'),
+                      const Text('New User?'),
                       TextButton(
                           style: TextButton.styleFrom(
                             primary: Colors.blue,
                           ),
-                          child: Text(
+                          child: const Text(
                             'Sign up',
                             style: TextStyle(fontSize: 20),
                           ),

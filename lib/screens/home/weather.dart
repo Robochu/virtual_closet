@@ -21,7 +21,7 @@ class WeatherSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: EdgeInsets.all(15.0),
+        margin: const EdgeInsets.all(15.0),
         color: Colors.blue,
         height: 70,
         width: 170,

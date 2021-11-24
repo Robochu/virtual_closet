@@ -294,7 +294,7 @@ class _DetailPageState extends State<DetailPage> {
                       ]
                   ),
                   (clothing!.isLaundry)
-                  ? Padding(padding: EdgeInsets.only(left: 20.0),
+                  ? Padding(padding: const EdgeInsets.only(left: 20.0),
                       child: Text("This item has been in laundry for ${duration(clothing!.inLaundryFor)}",
                   style: TextStyle(color: (isOverdue(clothing!.inLaundryFor)) ? Colors.red: Colors.black45, fontStyle: FontStyle.italic)))
                       : const Text(""),
