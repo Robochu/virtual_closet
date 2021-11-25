@@ -599,10 +599,9 @@ class _HomeViewState extends State<HomeView> {
     prefs.setInt('notificationMinute', selectedTime.minute);
   }
 
-  Future<void> setNotificationOnoFF(bool value)
+  Future<void> setNotification()
   async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('notificationOnOff', value);
     String currentDateTime = DateTime.now().toString();
     String userInputTime = (
         currentDateTime.substring(0, 11) +
@@ -610,12 +609,27 @@ class _HomeViewState extends State<HomeView> {
         selectedTime.minute.toString() + ":" +
         "00.000000"
     ;
-    if (value == true)
-    {
-      //notifs.NotificationService().scheduleNotification(DateTime.parse(userInputTime), "message");
-      print(DateTime.now().toString());
-      print(userInputTime);
-    }
+    
+    //notifs.NotificationService().scheduleNotification(DateTime.parse(userInputTime), "message");
+    print(DateTime.now().toString());
+    print(userInputTime);
+  }
+
+  void addAlarm()
+  {
+
+    
+  }
+
+  Dialog getAlarmDialog()
+  {
+    return Dialog(
+      child: Container(
+                height: MediaQuery.of(context).size.height - 350,
+                width: MediaQuery.of(context).size.width + 50,
+                color: Colors.white,
+              ),
+    );
   }
   int duration(String? str) {
     if(str == null) return 0;
@@ -674,11 +688,27 @@ class _HomeViewState extends State<HomeView> {
                     )
                   ],
                 ),
-                buildRecommendation(context),
+                //buildRecommendation(context),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ElevatedButton(
+                    Expanded(
+                      child: Align(
+                        alignment: FractionalOffset.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 10.0, right: 10.0),
+                              child: FloatingActionButton.extended(
+                                label: const Text("View Alarms"),
+                                onPressed: () {
+                                  showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context);
+                                },
+                                tooltip: 'New alarm',
+                                icon: new Icon(Icons.alarm),
+                            ),
+                        ),
+                      ),
+                    ),
+                     ElevatedButton(
                       onPressed: () {
                         selectTime(context);
                       },
@@ -688,7 +718,7 @@ class _HomeViewState extends State<HomeView> {
                         value: isNotificationOnOff,
                         onChanged: (value) {
                           setState(() {
-                            setNotificationOnoFF(value);
+                            //setNotificationOnoFF(value);
                             isNotificationOnOff = value;
                             getRecommendation();
                           });
