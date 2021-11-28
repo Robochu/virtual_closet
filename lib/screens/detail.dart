@@ -132,7 +132,8 @@ class _DetailPageState extends State<DetailPage> {
                           'Bottoms',
                           'Outerwear',
                           'Shoes',
-                          'Accessories'
+                          'Accessories',
+                          'Full Body',
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
                             value: value,

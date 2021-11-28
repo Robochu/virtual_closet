@@ -63,6 +63,7 @@ class _ClosetState extends State<Closet> {
             Tab(text: "Outerwear"),
             Tab(text: "Shoes"),
             Tab(text: "Accessories"),
+            Tab(text: "Full Body"),
             Tab(icon: Icon(Icons.search)),
           ],
         ),
@@ -74,6 +75,7 @@ class _ClosetState extends State<Closet> {
             buildCloset(context, filterByCategory("Outerwear")),
             buildCloset(context, filterByCategory("Shoes")),
             buildCloset(context, filterByCategory("Accessories")),
+            buildCloset(context, filterByCategory("Full Body")),
             buildSearch(context),
           ],
         ),
@@ -112,7 +114,7 @@ class _ClosetState extends State<Closet> {
                         categoryFilter = text!;
                       }),
                       items: <String>[
-                        '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
+                        '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories', 'Full Body'
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem(
                           value: value,
