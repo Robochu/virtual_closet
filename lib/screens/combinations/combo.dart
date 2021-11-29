@@ -11,8 +11,6 @@ class Combo extends StatefulWidget {
 
 class _ComboState extends State<Combo> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late Clothing top;
-  late Clothing bottom;
 
   @override
   void initState() {
@@ -23,7 +21,7 @@ class _ComboState extends State<Combo> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const Designer(),
+            builder: (context) => const Designer(outfit: [],),
         )
     );
   }

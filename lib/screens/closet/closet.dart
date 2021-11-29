@@ -49,7 +49,7 @@ class _ClosetState extends State<Closet> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Scaffold(
         appBar: const TabBar(
           isScrollable: true,
