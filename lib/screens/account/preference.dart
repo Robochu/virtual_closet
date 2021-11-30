@@ -71,14 +71,16 @@ class _PreferencePageState extends State<PreferencePage> {
                               scale: 0.6,
                               child: CupertinoSwitch(
                                   value: laundrySwitch,
-                                  onChanged: (bool value) {
-                                    setState(() async {
+                                  onChanged: (bool value) async {
+                                    SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                    prefs.setBool(
+                                        'laundryNotif', value);
+                                    setState(() {
                                       laundrySwitch = value;
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.setBool(
-                                          'laundryNotif', laundrySwitch);
+
                                     });
+
                                   },
                                   activeColor: Colors.lightGreen)))),
                   Container(
