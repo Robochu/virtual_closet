@@ -13,6 +13,7 @@ import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
+import 'package:virtual_closet/screens/home/notification_services.dart';
 import 'package:virtual_closet/screens/home/weather.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
@@ -215,6 +216,7 @@ class _HomeViewState extends State<HomeView> {
     getNotificationTime();
     getNotificationOnOff();
     _getLaundryFreq();
+    _getLaundryNotification();
   }
 
   String weatherText = '';
@@ -230,11 +232,21 @@ class _HomeViewState extends State<HomeView> {
   String bottom = '';
   String shoes = '';
   late int laundryFreq;
+  late bool laundryNotif;
+  int prevCounter = 0;
+  int counter = 0;
 
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       laundryFreq = prefs.getInt('laundryFreq') ?? 7;
+    });
+  }
+
+  void _getLaundryNotification() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      laundryNotif = prefs.getBool('laundryNotif') ?? false;
     });
   }
 
@@ -644,16 +656,18 @@ class _HomeViewState extends State<HomeView> {
 
   }
 
-  int countOverdue(List<Clothing>? closet) {
+  countOverdue(List<Clothing>? closet) {
     if(closet == null || closet.isEmpty) return 0;
-    int counter = 0;
+    prevCounter = counter;
+    int temp = 0;
 
     for(var items in closet) {
       if(items.isLaundry && duration(items.inLaundryFor) >= laundryFreq) {
-        counter++;
+        temp++;
       }
     }
-    return counter;
+      counter = temp;
+
   }
 
 
@@ -698,6 +712,7 @@ class _HomeViewState extends State<HomeView> {
                           child: Padding(
                             padding: const EdgeInsets.only(top: 10.0, right: 10.0),
                               child: FloatingActionButton.extended(
+                                heroTag: Text("Alarm"), //solve multiple heroes exception
                                 label: const Text("View Alarms"),
                                 onPressed: () {
                                   showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context);
@@ -777,8 +792,13 @@ class _HomeViewState extends State<HomeView> {
 
           if(snapshot.hasData) {
             List<Clothing>? clothes = snapshot.data;
-            int counter = countOverdue(clothes);
-            print(counter);
+            countOverdue(clothes);
+            _getLaundryNotification();
+            if(counter != prevCounter && counter > 0 && laundryNotif) {
+              NotificationService().showNotification((counter == 1) ? "You have 1 overdue item. Wash it now!"
+                  : "You have $counter overdue items. Let's do some laundry!");
+            }
+            //print(counter);
             if(counter == 0) {
               return const Padding(padding: EdgeInsets.only(top: 0.0, bottom: 50.0),
                   child:Center(child: Text("Good job! You don't have any reminders right now", style: TextStyle(color: Colors.black45))));

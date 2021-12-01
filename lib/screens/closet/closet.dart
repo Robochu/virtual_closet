@@ -6,8 +6,8 @@ import '../../clothes.dart';
 import '../detail.dart';
 
 class Closet extends StatefulWidget {
-  const Closet({Key? key}) : super(key: key);
-
+  const Closet({Key? key, bool? isSelectable}) : isSelectable = isSelectable ?? false;
+  final bool isSelectable;
   @override
   State<Closet> createState() => _ClosetState();
 }
@@ -16,7 +16,7 @@ class _ClosetState extends State<Closet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController searchController;
   late TextEditingController materialsController;
-
+  late final bool _isSelectable;
   String categoryFilter = "";
   String sleevesFilter = "";
   String colorFilter = "";
@@ -28,6 +28,7 @@ class _ClosetState extends State<Closet> {
     super.initState();
     searchController = TextEditingController();
     materialsController = TextEditingController();
+    _isSelectable = widget.isSelectable;
   }
 
   @override
@@ -49,7 +50,7 @@ class _ClosetState extends State<Closet> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 7,
+      length: 8,
       child: Scaffold(
         appBar: const TabBar(
           isScrollable: true,
@@ -63,6 +64,7 @@ class _ClosetState extends State<Closet> {
             Tab(text: "Outerwear"),
             Tab(text: "Shoes"),
             Tab(text: "Accessories"),
+            Tab(text: "Full Body"),
             Tab(icon: Icon(Icons.search)),
           ],
         ),
@@ -74,6 +76,7 @@ class _ClosetState extends State<Closet> {
             buildCloset(context, filterByCategory("Outerwear")),
             buildCloset(context, filterByCategory("Shoes")),
             buildCloset(context, filterByCategory("Accessories")),
+            buildCloset(context, filterByCategory("Full Body")),
             buildSearch(context),
           ],
         ),
@@ -112,7 +115,7 @@ class _ClosetState extends State<Closet> {
                         categoryFilter = text!;
                       }),
                       items: <String>[
-                        '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'
+                        '', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories', 'Full Body'
                       ].map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem(
                           value: value,
@@ -318,7 +321,8 @@ class _ClosetState extends State<Closet> {
                             )
                         )
                     ),
-                    onTap: () => press(context, clothes![index]),
+                    onTap: () => _isSelectable ? Navigator.pop(context, clothes![index])
+                                : press(context, clothes![index]),
                   );
                 }),
               ));
