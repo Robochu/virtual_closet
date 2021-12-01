@@ -101,22 +101,31 @@ class _LaundryState extends State<Laundry> {
               } else {
                 _showConfDialog = true;
                 return Scaffold(
+
                     body: Column(
                         children: <Widget>[
                           const SizedBox (height: 30),
-                          Center(
-                              child: ElevatedButton(
-                                onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
-                                child: const Text(
-                                  'Empty Laundry Basket', style: TextStyle(
-                                    fontSize: 20)),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.redAccent,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)
+                          Row(
+                            children: <Widget>[
+                              ElevatedButton(
+                                onPressed: () {},
+                                child: const Text("Select")
+                              ),
+                              ElevatedButton(
+                                    onPressed: (_showConfDialog == true) ? () => delete(context, laundryClothes) : null,
+                                    child: const Text(
+                                        'Empty Laundry Basket', style: TextStyle(
+                                        fontSize: 20)),
+                                    style: ElevatedButton.styleFrom(
+                                        primary: Colors.redAccent,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10)
+                                        )
+                                    ),
                                   )
-                                ),
-                              )
+
+
+                            ],
                           ),
                           const SizedBox(height: 15),
                           Expanded(child: GridView.count(

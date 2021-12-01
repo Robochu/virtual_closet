@@ -1,7 +1,6 @@
-import 'dart:developer';
+
 import 'dart:io';
 import 'package:flutter/material.dart';
-//import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import "package:googleapis_auth/auth_io.dart";
 import 'package:googleapis/calendar/v3.dart' hide Colors;
 import 'package:http/src/client.dart';
@@ -23,7 +22,9 @@ class CalendarSummary extends StatefulWidget {
 class _CalendarSummaryState extends State<CalendarSummary> {
   int numberOfTodayEvents = globals.numOfEvents;
   List<Event>? listOfTodayEvents;
-  String displayAllEvents = "Please connect your calendar, use the refresh button below to prompt the connect screen.";
+  String displayAllEvents =
+      "Please connect your calendar, use the refresh button below to prompt the connect screen.";
+  var calendar;
 
   DateFormat dateFormat = DateFormat("E, MMMM d");
 
@@ -32,45 +33,23 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('accessTokenData', atd);
     await prefs.setString('accessTokenType', att);
-    await prefs.setString('accessTokenExpiry',  ate);
+    await prefs.setString('accessTokenExpiry', ate);
     await prefs.setString('refreshToken', rt);
   }
 
-  /*
-  String getAccessTokenData() {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var at = await storage.read(key: 'accessTokenData');
-
-    return at.toString();
+  @override
+  void initState() {
+    super.initState();
+    connectCalendar();
   }
 
-  String getAccessTokenType() {
-    var at = storage.read(key: 'accessTokenType');
-
-    return at.toString();
-  }
-
-  String getAccessTokenExpiry() {
-    var at = storage.read(key: 'accessTokenExpiry');
-
-    return at.toString();
-  }
-
-  String getRefreshToken() {
-    var rt = storage.read(key: 'refreshToken');
-
-    return rt.toString();
-  }*/
-
-  Future<void> getEvents() async {
-    String todaysEventsAsString = "";
-    globals.numOfEvents = -1;
-    var accessTokenFromStorage;
+  void connectCalendar() async {
+    AccessToken accessTokenFromStorage;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var atd = prefs.getString('accessTokenData') ?? "";
-    var att = prefs.getString('accessTokenType')?? "";
-    var ate = prefs.getString('accessTokenExpiry')?? "";
-    var rt = prefs.getString('refreshToken')?? "";
+    var att = prefs.getString('accessTokenType') ?? "";
+    var ate = prefs.getString('accessTokenExpiry') ?? "";
+    var rt = prefs.getString('refreshToken') ?? "";
 
     var _scopes = [CalendarApi.calendarEventsReadonlyScope];
 
@@ -87,96 +66,65 @@ class _CalendarSummaryState extends State<CalendarSummary> {
 
     if (atd != "" && rt != "" && ate != "") {
       //print("atd: $atd, rt: $rt");
-      accessTokenFromStorage = AccessToken.fromJson(
-          {'type': att, 'data': atd, 'expiry': ate});
+      accessTokenFromStorage =
+          AccessToken.fromJson({'type': att, 'data': atd, 'expiry': ate});
 
       AccessCredentials creds = await refreshCredentials(_credentials,
           AccessCredentials(accessTokenFromStorage, rt, _scopes), Client());
       Client client = Client();
       AuthClient authClient = autoRefreshingClient(_credentials, creds, client);
-      try {
-        var calendar = CalendarApi(authClient);
-
-        DateTime start = DateTime.now().subtract(Duration(
-            hours: DateTime.now().hour,
-            minutes: DateTime.now().minute,
-            seconds: DateTime.now().minute));
-        DateTime end = DateTime.now().add(Duration(
-            hours: 24 - DateTime.now().hour,
-            minutes: 60 - DateTime.now().minute,
-            seconds: 60 - DateTime.now().minute));
-
-        var calEvents = calendar.events.list(
-          "primary",
-          timeMin: start,
-          timeMax: end,
-        );
-        calEvents.then((Events events) {
-          listOfTodayEvents = events.items!;
-          for (var event in events.items!) {
-            EventDateTime? start = event.start;
-            EventDateTime? end = event.end;
-            //print(event.summary! +  " " + DateFormat.jm().format(start!.dateTime!.toLocal()));
-            todaysEventsAsString += event.summary! + " "
-                + DateFormat.jm().format(start!.dateTime!.toLocal()) +
-                "-" + DateFormat.jm().format(end!.dateTime!.toLocal()) + "\n";
-            globals.EVENTSOFTODAY += event.summary! + "\n";
-          }
-
-          //writeCredentials(client.credentials.accessToken.data, client.credentials.accessToken.type, client.credentials.accessToken.expiry.toString(), client.credentials.refreshToken.toString());
-          //prefs.setString('accessToken', client.credentials.accessToken);
-          //prefs.setString('refreshToken', client.credentials.refreshToken.toString());
-          setTodayEvents(events.items!.length, todaysEventsAsString);
-        });
-      } catch (e) {
-        print('Error getting events $e');
-      }
+      calendar = CalendarApi(authClient);
     } else {
-      try {
-        clientViaUserConsent(_credentials, _scopes, prompt)
-            .then((AuthClient client) {
-          var calendar = CalendarApi(client);
-
-          DateTime start = DateTime.now().subtract(Duration(
-              hours: DateTime.now().hour,
-              minutes: DateTime.now().minute,
-              seconds: DateTime.now().minute));
-          DateTime end = DateTime.now().add(Duration(
-              hours: 24 - DateTime.now().hour,
-              minutes: 60 - DateTime.now().minute,
-              seconds: 60 - DateTime.now().minute));
-
-          var calEvents = calendar.events.list(
-            "primary",
-            timeMin: start,
-            timeMax: end,
-          );
-          calEvents.then((Events events) {
-            listOfTodayEvents = events.items!;
-            for (var event in events.items!) {
-              EventDateTime? start = event.start;
-              EventDateTime? end = event.end;
-              //print(event.summary! + " " + DateFormat.jm().format(start!.dateTime!));
-              todaysEventsAsString += event.summary! + " "
-                  + DateFormat.jm().format(start!.dateTime!.toLocal()) +
-                  "-" + DateFormat.jm().format(end!.dateTime!.toLocal()) + "\n";
-              globals.EVENTSOFTODAY += event.summary! + "\n";
-            }
-
-            print('access token: ' + client.credentials.accessToken.data);
-            print(
-                'refresh token ' + client.credentials.refreshToken.toString());
-            print(client.credentials.accessToken.toJson());
-            writeCredentials(client.credentials.accessToken.data, client.credentials.accessToken.type, client.credentials.accessToken.expiry.toString(), client.credentials.refreshToken.toString());
-            //prefs.setString('accessToken', client.credentials.accessToken);
-            //prefs.setString('refreshToken', client.credentials.refreshToken.toString());
-            setTodayEvents(events.items!.length, todaysEventsAsString);
-          });
-        });
-      } catch (e) {
-        log('Error getting events $e');
-      }
+      clientViaUserConsent(_credentials, _scopes, prompt)
+          .then((AuthClient client) {
+        calendar = CalendarApi(client);
+        writeCredentials(
+            client.credentials.accessToken.data,
+            client.credentials.accessToken.type,
+            client.credentials.accessToken.expiry.toString(),
+            client.credentials.refreshToken.toString());
+      });
     }
+    getEvents();
+  }
+
+
+  Future<void> getEvents() async {
+    String todaysEventsAsString = "";
+    globals.numOfEvents = -1;
+
+    DateTime start = DateTime.now().subtract(Duration(
+        hours: DateTime.now().hour,
+        minutes: DateTime.now().minute,
+        seconds: DateTime.now().minute));
+    DateTime end = DateTime.now().add(Duration(
+        hours: 24 - DateTime.now().hour,
+        minutes: 60 - DateTime.now().minute,
+        seconds: 60 - DateTime.now().minute));
+
+    var calEvents = calendar.events.list(
+      "primary",
+      timeMin: start,
+      timeMax: end,
+    );
+    calEvents.then((Events events) {
+      listOfTodayEvents = events.items!;
+      for (var event in events.items!) {
+        EventDateTime? start = event.start;
+        EventDateTime? end = event.end;
+        //print(event.summary! + " " + DateFormat.jm().format(start!.dateTime!));
+        todaysEventsAsString += event.summary! +
+            " " +
+            DateFormat.jm().format(start!.dateTime!.toLocal()) +
+            "-" +
+            DateFormat.jm().format(end!.dateTime!.toLocal()) +
+            "\n";
+        globals.EVENTSOFTODAY += event.summary! + "\n";
+      }
+
+
+      setTodayEvents(events.items!.length, todaysEventsAsString);
+    });
   }
 
   void setTodayEvents(int numberOfEvents, String todaysEventsAsString) {
@@ -199,61 +147,68 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     }
   }
 
-  Dialog getCalendarDialog() {
-    return Dialog(
-      child: Container(
-        height: 300.0,
-        width: 360.0,
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              "Today's Events",
-              style: TextStyle(fontSize: 22),
-            ),
-            const Divider(
-                thickness: 3.5,
-                indent: 7.5,
-                endIndent: 7.5,
-                color: Colors.black),
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Text(
-                displayAllEvents,
-                style: const TextStyle(color: Colors.black, fontSize: 18.0),
-              ),
-            ),
-            Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0, right: 7.5),
-                  child: FloatingActionButton(
-                    onPressed: getEvents,
-                    tooltip: 'New joke',
-                    child: Icon(Icons.refresh),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
-    if (numberOfTodayEvents == -2) {
+    if (numberOfTodayEvents == -2 && calendar != null) {
       getEvents();
+    }
+    Dialog getCalendarDialog() {
+      return Dialog(
+        child: Container(
+          height: 300.0,
+          width: 360.0,
+          color: Colors.white,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                "Today's Events",
+                style: TextStyle(fontSize: 22),
+              ),
+              const Divider(
+                  thickness: 3.5,
+                  indent: 7.5,
+                  endIndent: 7.5,
+                  color: Colors.black),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  displayAllEvents,
+                  style: const TextStyle(color: Colors.black, fontSize: 18.0),
+                ),
+              ),
+              Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0, right: 7.5),
+                    child: FloatingActionButton(
+                      onPressed: () {
+                        displayAllEvents == "Please connect your calendar, use the refresh button below to prompt the connect screen."
+                            ? connectCalendar()
+                            : getEvents();
+                      } ,
+                      tooltip: 'New joke',
+                      child: const Icon(Icons.refresh),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     return InkWell(
       onTap: () {
         showDialog(
             builder: (BuildContext context) {
-              return getCalendarDialog();
+              return StatefulBuilder(builder: (context, setState) {
+                return getCalendarDialog();
+              });
             },
             context: context);
       },

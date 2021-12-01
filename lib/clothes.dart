@@ -21,6 +21,7 @@ class Clothing {
   bool isLaundry;
   String? inLaundryFor;
 
+
   Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials, this.item, this.isLaundry);
 
   Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor);
