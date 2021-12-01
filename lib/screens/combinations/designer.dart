@@ -1,5 +1,7 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/clothes.dart';
+import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/detail.dart';
 
 import 'outfit.dart';
@@ -15,22 +17,77 @@ class Designer extends StatefulWidget {
 
 class _DesignerState extends State<Designer> {
   late Outfit outfit;
-
+  bool _isEdit = false;
+  bool _nameEdit = false;
+  TextEditingController name_controller = TextEditingController();
   @override
   void initState() {
     super.initState();
     outfit = widget.outfit;
+    name_controller.text = outfit.name;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title:TextField(
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+          controller: name_controller,
+          enabled: _nameEdit,
+        ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    _nameEdit = !_nameEdit;
+                  });
+                },
+                icon: _nameEdit ? Icon(Icons.check) : Icon(Icons.edit))
+            ]
+      ),
+      body: SingleChildScrollView(
+      child : Column(
         children: [
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              children: List.generate(outfit.clothes.length, (index) {
+              children: List.generate( //add an extra box if in edit mode
+                  _isEdit ? outfit.clothes.length+1 : outfit.clothes.length, (index) {
+                    if(index == outfit.clothes.length) {
+                      return InkWell(
+                        onTap: () async {
+                          final result = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) =>
+                                  Closet(isSelectable: true))
+                          );
+                          setState(() {
+                            outfit.clothes.add(result);
+                          });
+                        },
+                        child: Padding (
+                            padding: const EdgeInsets.all(15),
+                                child: Container(
+
+                                  alignment: Alignment.bottomLeft,
+                                  padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                                  child: DottedBorder(
+                                    borderType: BorderType.RRect,
+                                    radius: const Radius.circular(20),
+                                    color: Colors.black45,
+                                      strokeWidth: 1,
+                                      child: const Center(
+                                          child: Icon(Icons.add, color: Colors.black45)
+                                      )
+                                  )
+                                  ),
+                            )
+                      );
+                    }
                 return InkWell(
                   child: Padding (
                       padding: const EdgeInsets.all(15),
@@ -77,26 +134,15 @@ class _DesignerState extends State<Designer> {
               Expanded(
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.red,
-                  ),
-                  child: const Text('Cancel'),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              Container(
-                width: 20,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
                     primary: Colors.blue,
                   ),
-                  child: const Text('Edit'),
+                  child: Text(_isEdit ? 'Cancel' : 'Edit Outfit'),
                   onPressed: () {
-                    // TODO Divay, edit the closet class to allow selecting clothes and open it here.
-                    // TODO this page is for viewing which clothes are in the outfit, not selecting them.
-                  },
-                ),
+                    setState(() {
+                      _isEdit = !_isEdit;
+                    });
+
+                  }),
               ),
               Container(
                 width: 20,
@@ -108,6 +154,10 @@ class _DesignerState extends State<Designer> {
                     ),
                     child: const Text('Save'),
                     onPressed: () {
+                      setState(() {
+                        _isEdit = false;
+                      });
+                      outfit.name = name_controller.text;
                       // TODO Maeve
                       Navigator.pop(context);
                     }),
@@ -119,7 +169,7 @@ class _DesignerState extends State<Designer> {
           ),
         ],
       ),
-    );
+    ));
   }
 
   void openClothing(BuildContext context, Clothing clothing) {

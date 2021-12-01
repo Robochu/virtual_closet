@@ -6,8 +6,8 @@ import '../../clothes.dart';
 import '../detail.dart';
 
 class Closet extends StatefulWidget {
-  const Closet({Key? key}) : super(key: key);
-
+  const Closet({Key? key, bool? isSelectable}) : isSelectable = isSelectable ?? false;
+  final bool isSelectable;
   @override
   State<Closet> createState() => _ClosetState();
 }
@@ -16,7 +16,7 @@ class _ClosetState extends State<Closet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   late TextEditingController searchController;
   late TextEditingController materialsController;
-
+  late final bool _isSelectable;
   String categoryFilter = "";
   String sleevesFilter = "";
   String colorFilter = "";
@@ -28,6 +28,7 @@ class _ClosetState extends State<Closet> {
     super.initState();
     searchController = TextEditingController();
     materialsController = TextEditingController();
+    _isSelectable = widget.isSelectable;
   }
 
   @override
@@ -287,6 +288,7 @@ class _ClosetState extends State<Closet> {
                 crossAxisCount: 2,
                 // Generate 100 widgets that display their index in the List.
                 children: List.generate(clothes!.length, (index) {
+                  bool _isSelected = false;
                   return InkWell(
                     child: Padding (
                         padding: const EdgeInsets.all(15),
@@ -320,7 +322,8 @@ class _ClosetState extends State<Closet> {
                             )
                         )
                     ),
-                    onTap: () => press(context, clothes![index]),
+                    onTap: () => _isSelectable ? Navigator.pop(context, clothes![index])
+                                : press(context, clothes![index]),
                   );
                 }),
               ));
