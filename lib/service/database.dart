@@ -33,7 +33,7 @@ class DatabaseService {
       'imageURL': location,
       'fileName' : item.filename,
       'item': item.item,
-      'inLaundryFor': item.inLaundryFor
+      'inLaundryFor': item.inLaundryFor,
     }, SetOptions(merge: true));
   }
 
@@ -51,7 +51,7 @@ class DatabaseService {
     final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
     CollectionReference closet = usersCollection.doc(uid).collection('closet');
     return await closet.doc(item.filename).set({
-      'inLaundryFor': dateFormat.format(date)
+      'inLaundryFor': dateFormat.format(date),
     }, SetOptions(merge: true));
   }
 

@@ -21,13 +21,14 @@ class Clothing {
   bool isLaundry;
   String? inLaundryFor;
 
+
   Clothing(this.uid, this.path, this.category, this.sleeves, this.color, this.materials, this.item, this.isLaundry);
 
-  Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor);
+  Clothing.usingLink(this.uid, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor, );
 
-  Clothing.full(this.uid, this.path, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor);
+  Clothing.full(this.uid, this.path, this.filename, this.link, this.category, this.sleeves, this.color, this.materials,this.item, this.isLaundry, this.inLaundryFor, );
 
-  Clothing.clone(Clothing other) : this.full(other.uid, other.path, other.filename, other.link, other.category, other.sleeves, other.color, other.materials, other.item, other.isLaundry, other.inLaundryFor);
+  Clothing.clone(Clothing other) : this.full(other.uid, other.path, other.filename, other.link, other.category, other.sleeves, other.color, other.materials, other.item, other.isLaundry, other.inLaundryFor, );
 
   @override
   bool operator==(Object other) =>
