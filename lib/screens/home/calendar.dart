@@ -43,7 +43,7 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     connectCalendar();
   }
 
-  void connectCalendar() async {
+  Future<void> connectCalendar() async {
     AccessToken accessTokenFromStorage;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var atd = prefs.getString('accessTokenData') ?? "";
@@ -147,6 +147,56 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     }
   }
 
+  Dialog getCalendarDialog(setStateIn) {
+    return Dialog(
+      child: Container(
+        height: 300.0,
+        width: 360.0,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              "Today's Events",
+              style: TextStyle(fontSize: 22),
+            ),
+            const Divider(
+                thickness: 3.5,
+                indent: 7.5,
+                endIndent: 7.5,
+                color: Colors.black),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Text(
+                displayAllEvents,
+                style: const TextStyle(color: Colors.black, fontSize: 18.0),
+              ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: FractionalOffset.bottomRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0, right: 7.5),
+                  child: FloatingActionButton(
+                    onPressed: () async {
+                      displayAllEvents ==
+                          "Please connect your calendar, use the refresh button below to prompt the connect screen."
+                          ? await connectCalendar()
+                          : await getEvents();
+
+                      setStateIn(() {});
+                    },
+                    tooltip: 'New joke',
+                    child: const Icon(Icons.refresh),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
 
   @override
@@ -154,60 +204,14 @@ class _CalendarSummaryState extends State<CalendarSummary> {
     if (numberOfTodayEvents == -2 && calendar != null) {
       getEvents();
     }
-    Dialog getCalendarDialog() {
-      return Dialog(
-        child: Container(
-          height: 300.0,
-          width: 360.0,
-          color: Colors.white,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                "Today's Events",
-                style: TextStyle(fontSize: 22),
-              ),
-              const Divider(
-                  thickness: 3.5,
-                  indent: 7.5,
-                  endIndent: 7.5,
-                  color: Colors.black),
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text(
-                  displayAllEvents,
-                  style: const TextStyle(color: Colors.black, fontSize: 18.0),
-                ),
-              ),
-              Expanded(
-                child: Align(
-                  alignment: FractionalOffset.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0, right: 7.5),
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        displayAllEvents == "Please connect your calendar, use the refresh button below to prompt the connect screen."
-                            ? connectCalendar()
-                            : getEvents();
-                      } ,
-                      tooltip: 'New joke',
-                      child: const Icon(Icons.refresh),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+
 
     return InkWell(
       onTap: () {
         showDialog(
             builder: (BuildContext context) {
-              return StatefulBuilder(builder: (context, setState) {
-                return getCalendarDialog();
+              return StatefulBuilder(builder: (context, setStateIn) {
+                return getCalendarDialog(setStateIn);
               });
             },
             context: context);
