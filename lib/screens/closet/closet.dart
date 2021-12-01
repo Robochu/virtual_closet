@@ -288,7 +288,6 @@ class _ClosetState extends State<Closet> {
                 crossAxisCount: 2,
                 // Generate 100 widgets that display their index in the List.
                 children: List.generate(clothes!.length, (index) {
-                  bool _isSelected = false;
                   return InkWell(
                     child: Padding (
                         padding: const EdgeInsets.all(15),

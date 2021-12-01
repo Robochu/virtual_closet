@@ -1,8 +1,11 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:virtual_closet/clothes.dart';
+import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/detail.dart';
+import 'package:virtual_closet/service/database.dart';
 
 import 'outfit.dart';
 
@@ -29,6 +32,7 @@ class _DesignerState extends State<Designer> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<MyUser?>(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -46,12 +50,14 @@ class _DesignerState extends State<Designer> {
                   setState(() {
                     _nameEdit = !_nameEdit;
                   });
+                  if(name_controller.text != outfit.name) {
+                    DatabaseService(uid: user!.uid).updateOutfit(name_controller.text, outfit.clothes, outfit.id);
+                  }
                 },
-                icon: _nameEdit ? Icon(Icons.check) : Icon(Icons.edit))
+                icon: _nameEdit ? const Icon(Icons.check) : const Icon(Icons.edit))
             ]
       ),
-      body: SingleChildScrollView(
-      child : Column(
+      body: Column(
         children: [
           Expanded(
             child: GridView.count(
@@ -158,7 +164,7 @@ class _DesignerState extends State<Designer> {
                         _isEdit = false;
                       });
                       outfit.name = name_controller.text;
-                      // TODO Maeve
+                      DatabaseService(uid: user!.uid).updateOutfit(name_controller.text, outfit.clothes, outfit.id);
                       Navigator.pop(context);
                     }),
               ),
@@ -169,7 +175,7 @@ class _DesignerState extends State<Designer> {
           ),
         ],
       ),
-    ));
+    );
   }
 
   void openClothing(BuildContext context, Clothing clothing) {
