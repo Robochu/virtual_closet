@@ -37,6 +37,15 @@ class DatabaseService {
     }, SetOptions(merge: true));
   }
 
+  Future updateOutfit(String name, List<Clothing> outfit) async {
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    CollectionReference outfits = usersCollection.doc(uid).collection('outfits');
+    return await outfits.doc(name).set({
+      'name': name,
+      'clothes': outfit,
+    }, SetOptions(merge: true));
+  }
+
   Future updateLaundryDetail(Clothing item, DateTime date) async {
     DateFormat dateFormat = DateFormat.yMd();
     final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');

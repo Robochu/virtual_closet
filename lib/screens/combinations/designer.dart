@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/screens/detail.dart';
 
+import 'outfit.dart';
+
 class Designer extends StatefulWidget {
   const Designer({Key? key, required this.outfit}) : super(key: key);
 
-  final List<Clothing> outfit;
+  final Outfit outfit;
 
   @override
   State<Designer> createState() => _DesignerState();
 }
 
 class _DesignerState extends State<Designer> {
-  late List<Clothing> outfit;
+  late Outfit outfit;
 
   @override
   void initState() {
@@ -28,7 +30,7 @@ class _DesignerState extends State<Designer> {
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
-              children: List.generate(outfit.length, (index) {
+              children: List.generate(outfit.clothes.length, (index) {
                 return InkWell(
                   child: Padding (
                       padding: const EdgeInsets.all(15),
@@ -42,11 +44,11 @@ class _DesignerState extends State<Designer> {
                             padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(outfit[index].link!),
+                                image: NetworkImage(outfit.clothes[index].link!),
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            child: (outfit[index].isLaundry) ? const Text('In Laundry',
+                            child: (outfit.clothes[index].isLaundry) ? const Text('In Laundry',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18.0,
@@ -62,7 +64,7 @@ class _DesignerState extends State<Designer> {
                           )
                       )
                   ),
-                  onTap: () => openClothing(context, outfit[index]),
+                  onTap: () => openClothing(context, outfit.clothes[index]),
                 );
               }),
             ),
@@ -78,7 +80,7 @@ class _DesignerState extends State<Designer> {
                     primary: Colors.red,
                   ),
                   child: const Text('Cancel'),
-                  onPressed: () => {},
+                  onPressed: () => Navigator.pop(context),
                 ),
               ),
               Container(
@@ -105,7 +107,10 @@ class _DesignerState extends State<Designer> {
                       primary: Colors.green,
                     ),
                     child: const Text('Save'),
-                    onPressed: () => {}),
+                    onPressed: () {
+                      // TODO Maeve
+                      Navigator.pop(context);
+                    }),
               ),
               Container(
                 width: 20,

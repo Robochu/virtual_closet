@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/screens/combinations/designer.dart';
+import 'outfit.dart';
 
 class Combo extends StatefulWidget {
   const Combo({Key? key}) : super(key: key);
@@ -21,7 +22,7 @@ class _ComboState extends State<Combo> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => const Designer(outfit: [],),
+            builder: (context) => Designer(outfit: Outfit("", []),),
         )
     );
   }
