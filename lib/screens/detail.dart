@@ -267,10 +267,10 @@ class _DetailPageState extends State<DetailPage> {
                           onToggleCallback: (value) {
                             setState(() {
                               (value == 1) ? clothing!.isLaundry = true : clothing!.isLaundry = false;
-                              if(value == 1) {
-                                clothing!.inLaundryFor = DateFormat.yMd().format(DateTime.now());
+                                clothing!.inLaundryFor =  DateFormat.yMd().format(DateTime.now());
                                 DatabaseService(uid: user!.uid).updateLaundryDetail(clothing!, DateTime.now());
-                              }
+
+
                             });
                           }
                       )
@@ -298,7 +298,9 @@ class _DetailPageState extends State<DetailPage> {
                   ? Padding(padding: const EdgeInsets.only(left: 20.0),
                       child: Text("This item has been in laundry for ${duration(clothing!.inLaundryFor)}",
                   style: TextStyle(color: (isOverdue(clothing!.inLaundryFor)) ? Colors.red: Colors.black45, fontStyle: FontStyle.italic)))
-                      : const Text(""),
+                      : Padding(padding: const EdgeInsets.only(left: 20.0),
+                      child: Text(clothing!.inLaundryFor == '' ? "This item has not been worn yet" : "This item was last washed on ${clothing!.inLaundryFor}",
+                          style: const TextStyle(color: Colors.black45))),
                   if (_isEditable) Row(
                     children: <Widget>[
                       Container(
