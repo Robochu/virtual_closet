@@ -91,49 +91,49 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
         String color;
         String itemName;
 
-        if (prediction.indexOf("hat") != -1) {
+        if (prediction.contains("hat")) {
           category = "Accessories";
           itemName = "Hat";
           length = "N/A";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("jacket") != -1) {
+        else if (prediction.contains("jacket")) {
           category = "Outerwear";
           itemName = "Jacket";
           length = "Long";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("pants") != -1) {
+        else if (prediction.contains("pants")) {
           category = "Bottoms";
           itemName = "Pants";
           length = "Long";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("shoe") != -1) {
+        else if (prediction.contains("shoe")) {
           category = "Shoes";
           itemName = "Shoes";
           length = "N/A";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("shorts") != -1) {
+        else if (prediction.contains("shorts")) {
           category = "Bottoms";
           itemName = "Shorts";
           length = "Short";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("suit") != -1) {
+        else if (prediction.contains("suit")) {
           category = "Tops";
           itemName = "Suit";
           length = "Long";
           color = prediction.substring(0, prediction.indexOf(' '));
           color = color[0].toUpperCase() + color.substring(1);
         }
-        else if (prediction.indexOf("t-shirt") != -1) {
+        else if (prediction.contains("t-shirt")) {
           category = "Tops";
           itemName = "T-shirt";
           length = "Short";
@@ -334,49 +334,49 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
       String color;
       String itemName;
 
-      if (prediction.indexOf("hat") != -1) {
+      if (prediction.contains("hat")) {
         category = "Accessories";
         itemName = "Hat";
         length = "N/A";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("jacket") != -1) {
+      else if (prediction.contains("jacket")) {
         category = "Outerwear";
         itemName = "Jacket";
         length = "Long";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("pants") != -1) {
+      else if (prediction.contains("pants")) {
         category = "Bottoms";
         itemName = "Pants";
         length = "Long";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("shoe") != -1) {
+      else if (prediction.contains("shoe")) {
         category = "Shoes";
         itemName = "Shoes";
         length = "N/A";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("shorts") != -1) {
+      else if (prediction.contains("shorts")) {
         category = "Bottoms";
         itemName = "Shorts";
         length = "Short";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("suit") != -1) {
+      else if (prediction.contains("suit")) {
         category = "Tops";
         itemName = "Suit";
         length = "Long";
         color = prediction.substring(0, prediction.indexOf(' '));
         color = color[0].toUpperCase() + color.substring(1);
       }
-      else if (prediction.indexOf("t-shirt") != -1) {
+      else if (prediction.contains("t-shirt")) {
         category = "Tops";
         itemName = "T-shirt";
         length = "Short";

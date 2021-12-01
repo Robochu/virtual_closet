@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/service/database.dart';
 import 'laundry/toggle.dart';
@@ -32,9 +33,14 @@ class _DetailPageState extends State<DetailPage> {
   late final colorController;
   late final sleeveController;*/
   late final materialController;
+  late final attributeController;
+  late final expectedController;
+  late final actualController;
   late int laundryFreq;
 
   late bool _isEditable;
+
+  String attributeError = '';
 
   @override
   void initState() {
@@ -49,6 +55,9 @@ class _DetailPageState extends State<DetailPage> {
     colorController = TextEditingController(text: initColor);
     sleeveController = TextEditingController(text: initSleeves);*/
     materialController = TextEditingController(text: initMaterials);
+    attributeController = TextEditingController(text: '');
+    expectedController = TextEditingController(text: '');
+    actualController = TextEditingController(text: '');
     _isEditable = widget.editable;
     _getLaundryFreq();
   }
@@ -370,7 +379,7 @@ class _DetailPageState extends State<DetailPage> {
                         Expanded(
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Colors.redAccent,
+                              primary: Colors.blueAccent,
                             ),
                             child: const Text('Edit'),
                             onPressed: () => {
@@ -378,6 +387,20 @@ class _DetailPageState extends State<DetailPage> {
                               setState(() {})
                             },
                           ),
+                        ),
+                        Container(
+                          width: 20,
+                        ),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.redAccent,
+                            ),
+                            child: const Text('Report Error'),
+                            onPressed: () => {
+                              _showReportErrorDialog()
+                            }
+                          )
                         ),
                         Container(
                           width: 20,
@@ -390,5 +413,120 @@ class _DetailPageState extends State<DetailPage> {
                 ],
               ),
             )));
+  }
+
+  Future<void> _showReportErrorDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return SimpleDialog(
+            title: const Text("What's wrong?"),
+            children: <Widget>[
+              TextFormField(
+                enabled: true,
+                decoration: const InputDecoration(
+                  filled: true,
+                  labelText: 'Attribute that was incorrect',
+                ),
+                controller: attributeController,
+              ),
+              TextFormField(
+                enabled: true,
+                decoration: const InputDecoration(
+                  filled: true,
+                  labelText: 'What did you expect?',
+                ),
+                controller: expectedController,
+              ),
+              TextFormField(
+                enabled: true,
+                decoration: const InputDecoration(
+                  filled: true,
+                  labelText: 'What was it instead?',
+                ),
+                controller: actualController,
+              ),
+              Container(
+                width: 20,
+              ),
+              Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.redAccent,
+                      ),
+                      child: const Text('Cancel'),
+                      onPressed: () => {
+                        Navigator.of(context).pop()
+                      }
+                  )
+              ),
+              Container(
+                width: 20,
+              ),
+              Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blueAccent,
+                      ),
+                      child: const Text('Submit'),
+                      onPressed: () => {
+                        sendEmail(context)
+                      }
+                  )
+              ),
+              Container(
+                width: 20,
+              ),
+            ]
+              /*Align(
+                  alignment: Alignment.centerLeft,
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                      filled: true,
+                      labelText: "What attribute is wrong?",
+                    ),
+                    isExpanded: true,
+                    hint: const Text('Choose an attribute'),
+                    value: (attributeError != '')
+                        ? attributeError
+                        : 'Category',
+                    onChanged: (String? value) {
+                      setState(() {
+                        attributeError = value!;
+                      });
+                    },
+                    items: <String>[
+                      'Category',
+                      'Clothing item',
+                      'Color',
+                      'Length',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  )
+              ),*/
+        );
+      },
+    );
+  }
+
+  void sendEmail(BuildContext dialogContext) async {
+    String bodyText = "Attribute: " + attributeController.text
+        + "\nExpected: " + expectedController.text
+        + "\nActual: " + actualController.text + "\n";
+    final Email email = Email(
+      body: bodyText,
+      subject: 'User reported error',
+      recipients: ['virtual.closet.help@gmail.com'],
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
+    Navigator.of(dialogContext).pop();
   }
 }

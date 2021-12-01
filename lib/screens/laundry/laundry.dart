@@ -5,6 +5,7 @@ import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import '../detail.dart';
+import 'package:drag_select_grid_view/drag_select_grid_view.dart';
 
 class Laundry extends StatefulWidget {
   const Laundry({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class Laundry extends StatefulWidget {
 
 class _LaundryState extends State<Laundry> {
   bool _showConfDialog = true;
+  final controller = DragSelectGridViewController();
 
   void press(BuildContext context, Clothing clothing) {
     Navigator.push(
