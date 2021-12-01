@@ -58,7 +58,7 @@ class _ComboState extends State<Combo> {
               )),
                   outfits!.isEmpty ?
                       const Center(
-                        child: Text("You don't have any outfit combination yet. Let's design some!")
+                        child: Text("No outfits created.")
                       )
                       : Expanded(child: GridView.count(
                       crossAxisCount: 2,

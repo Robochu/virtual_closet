@@ -69,6 +69,11 @@ class DatabaseService {
     final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
     return await usersCollection.doc(uid).collection('closet').doc(item.filename).delete();
   }
+  Future deleteOutfit(Outfit outfit) async {
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    return await usersCollection.doc(uid).collection('outfits').doc(outfit.id).delete();
+
+  }
 
   Future createClosetSpace(String name) async {
     final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
