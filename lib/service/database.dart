@@ -35,6 +35,7 @@ class DatabaseService {
       'fileName' : item.filename,
       'item': item.item,
       'inLaundryFor': item.inLaundryFor,
+      'isFavorite': item.isFavorite,
     }, SetOptions(merge: true));
   }
 
@@ -53,6 +54,13 @@ class DatabaseService {
       'name': name,
       'clothes': items,
       'id': id
+    }, SetOptions(merge: true));
+  }
+  Future updateFavorite(Clothing item)  async {
+    final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+    CollectionReference closet = usersCollection.doc(uid).collection('closet');
+    return await closet.doc(item.filename).set({
+      'isFavorite': item.isFavorite,
     }, SetOptions(merge: true));
   }
 
@@ -96,8 +104,9 @@ class DatabaseService {
                 doc['color'] ?? '',
                 doc['material'] ?? '',
                 doc['item'] ?? '',
-                doc['isLaundry'] ?? '',
-                doc['inLaundryFor'] ?? '')).toList());
+                doc['isLaundry'] ?? false,
+                doc['inLaundryFor'] ?? '',
+                doc['isFavorite'] ?? false)).toList());
   }
 
   Stream<List<Clothing>> getFilteredItem(String itemType) {
@@ -116,8 +125,9 @@ class DatabaseService {
             doc['color'] ?? '',
             doc['material'] ?? '',
             doc['item'] ?? '',
-            doc['isLaundry'] ?? '',
-            doc['inLaundryFor'] ?? '')).toList());
+            doc['isLaundry'] ?? false,
+            doc['inLaundryFor'] ?? '',
+            doc['isFavorite'] ?? false)).toList());
   }
 
   Stream<List<Outfit>> get outfits {
@@ -151,7 +161,8 @@ class DatabaseService {
                     snapshot['material'] ?? '',
                     snapshot['item'] ?? '',
                     snapshot['isLaundry'] ?? '',
-                    snapshot['inLaundryFor'] ?? ''));}});
+                    snapshot['inLaundryFor'] ?? '',
+                    snapshot['isFavorite'] ?? false));}});
 
           }
 

@@ -22,7 +22,6 @@ class _DesignerState extends State<Designer> {
   late Outfit outfit;
   late Outfit original;
   bool _isEdit = false;
-  bool _nameEdit = false;
   TextEditingController name_controller = TextEditingController();
 
   @override
@@ -46,23 +45,9 @@ class _DesignerState extends State<Designer> {
             style: const TextStyle(
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
             controller: name_controller,
-            enabled: _nameEdit,
+            enabled: _isEdit,
           ),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    _nameEdit = !_nameEdit;
-                  });
-                  if (name_controller.text != outfit.name) {
-                    DatabaseService(uid: user!.uid).updateOutfit(
-                        name_controller.text, outfit.clothes, outfit.id);
-                  }
-                },
-                icon: _nameEdit
-                    ? const Icon(Icons.check)
-                    : const Icon(Icons.edit))
-          ]),
+          ),
       body: Column(
         children: [
           Expanded(
@@ -263,6 +248,7 @@ class _DesignerState extends State<Designer> {
                       setState(() {
                         _isEdit = !_isEdit;
                         outfit = Outfit.clone(original);
+                        name_controller.text = outfit.name;
                       });
                     }),
               ),
