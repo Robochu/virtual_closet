@@ -133,6 +133,14 @@ class DatabaseService {
 
           for(var ref in item_refs)  {
             usersCollection.doc(uid).collection('closet').doc(ref).get().then((snapshot) {
+              if(!snapshot.exists) {
+                item_refs.remove(ref);
+                FirebaseFirestore.instance.collection('users')
+                    .doc(uid).collection('outfits').doc(doc.id).set({
+                  'clothes': item_refs,
+                }, SetOptions(merge: true));
+
+              } else {
                 items.add(Clothing.usingLink(
                     uid,
                     snapshot['fileName'] ?? '',
@@ -143,7 +151,8 @@ class DatabaseService {
                     snapshot['material'] ?? '',
                     snapshot['item'] ?? '',
                     snapshot['isLaundry'] ?? '',
-                    snapshot['inLaundryFor'] ?? ''));});
+                    snapshot['inLaundryFor'] ?? ''));}});
+
           }
 
           return Outfit(doc['name'] ?? '', items, doc['id'], ref: item_refs);

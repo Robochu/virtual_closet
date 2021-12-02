@@ -78,10 +78,12 @@ class _DesignerState extends State<Designer> {
                             MaterialPageRoute(
                                 builder: (context) =>
                                     Closet(isSelectable: true)));
+                        if(result != null) {
                         setState(() {
-                          outfit.clothes.add(result);
+                            outfit.clothes.addAll(result);
+
                         });
-                      },
+                      }},
                       child: Padding(
                         padding: const EdgeInsets.all(15),
                         child: Container(
@@ -98,40 +100,94 @@ class _DesignerState extends State<Designer> {
                                         color: Colors.black45)))),
                       ));
                 }
-                return InkWell(
-                  child: Padding(
-                      padding: const EdgeInsets.all(15),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            constraints: const BoxConstraints.expand(
-                              height: 200.0,
-                            ),
-                            alignment: Alignment.bottomLeft,
-                            padding:
-                                const EdgeInsets.only(left: 16.0, bottom: 8.0),
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image:
-                                    NetworkImage(outfit.clothes[index].link!),
-                                fit: BoxFit.cover,
+                if(_isEdit) {
+                  return GridTile(
+                      header: GridTileBar(
+                          leading: IconButton(
+                            icon: const Icon(
+                                Icons.remove_circle_rounded, color: Colors.red,
+                                size: 30.0),
+                            onPressed: () {
+                              setState(() {
+                                outfit.clothes.removeAt(index);
+                              });
+                              DatabaseService(uid: user!.uid).updateOutfit(
+                                  outfit.name, outfit.clothes, outfit.id);
+                            },
+
+                          )),
+                      child: InkWell(
+                        child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Container(
+                                  constraints: const BoxConstraints.expand(
+                                    height: 200.0,
+                                  ),
+                                  alignment: Alignment.bottomLeft,
+                                  padding:
+                                  const EdgeInsets.only(
+                                      left: 16.0, bottom: 8.0),
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image:
+                                      NetworkImage(outfit.clothes[index].link!),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: (outfit.clothes[index].isLaundry)
+                                      ? const Text('In Laundry',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18.0,
+                                          color: Colors.white,
+                                          shadows: [
+                                            Shadow(
+                                                blurRadius: 10.0,
+                                                color: Colors.black)
+                                          ]))
+                                      : null,
+                                ))),
+                        onTap: () =>
+                            openClothing(context, outfit.clothes[index]),
+                      ));
+                } else {
+                  return InkWell(
+                    child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              constraints: const BoxConstraints.expand(
+                                height: 200.0,
                               ),
-                            ),
-                            child: (outfit.clothes[index].isLaundry)
-                                ? const Text('In Laundry',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0,
-                                        color: Colors.white,
-                                        shadows: [
-                                          Shadow(
-                                              blurRadius: 10.0,
-                                              color: Colors.black)
-                                        ]))
-                                : null,
-                          ))),
-                  onTap: () => openClothing(context, outfit.clothes[index]),
-                );
+                              alignment: Alignment.bottomLeft,
+                              padding:
+                              const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                              decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image:
+                                  NetworkImage(outfit.clothes[index].link!),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: (outfit.clothes[index].isLaundry)
+                                  ? const Text('In Laundry',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                      color: Colors.white,
+                                      shadows: [
+                                        Shadow(
+                                            blurRadius: 10.0,
+                                            color: Colors.black)
+                                      ]))
+                                  : null,
+                            ))),
+                    onTap: () => openClothing(context, outfit.clothes[index]),
+                  );
+                }
               }),
             ),
           ),
@@ -182,8 +238,9 @@ class _DesignerState extends State<Designer> {
                     child: const Text('Delete'),
                     onPressed: () {
                       showDialog(
+                          barrierDismissible: false,
                           context: context,
-                          builder: (context) {
+                          builder: (dialogcontext) {
                             return AlertDialog(
                               title: const Text(
                                   'Are you sure you want to delete this outfit?'),
@@ -193,12 +250,15 @@ class _DesignerState extends State<Designer> {
                                   onPressed: () {
                                     DatabaseService(uid: user!.uid)
                                         .deleteOutfit(outfit);
-                                    Navigator.of(context).popUntil((route)=> route.isFirst);
+                                    Navigator.of(dialogcontext, rootNavigator: true).pop();
+                                    Navigator.of(context).pop();
                                   },
+
                                 ),
                                 TextButton(
                                   child: const Text('No'),
                                   onPressed: () {
+                                    Navigator.of(dialogcontext, rootNavigator: true).pop();
                                     Navigator.of(context).pop();
                                   },
                                 ),
