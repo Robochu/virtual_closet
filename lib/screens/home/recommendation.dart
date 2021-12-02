@@ -32,22 +32,22 @@ class RecommendationQueue {
   void calculateScore() {
     for(var item in recommendations) {
       if(attributes.contains(item.clothing.category)) {
-        item.score = item.score+1;
+        item.score = item.score+ 1;
       }
       if(attributes.contains(item.clothing.item)) {
-        item.score = item.score +1;
+        item.score = item.score + 1;
       }
       if(attributes.contains(item.clothing.color)) {
-        item.score = item.score +1;
+        item.score = item.score + 1;
       }
       if(attributes.contains(item.clothing.materials)) {
-        item.score = item.score +1;
+        item.score = item.score + 1;
       }
       if(attributes.contains(item.clothing.sleeves)) {
-        item.score = item.score +1;
+        item.score = item.score + 1;
       }
       if(item.clothing.isFavorite) {
-        item.score = item.score * 2;
+        item.score = item.score + 3;
       }
     }
   }

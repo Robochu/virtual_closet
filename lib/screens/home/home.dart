@@ -714,12 +714,15 @@ class _HomeViewState extends State<HomeView> {
               items
                   .add(ItemSwipe(item: recommendations.removeFirst().clothing));
             }
+            items.add(ItemSwipe(item: Clothing.usingLink("","not","","","","","","",false,"",false)));
+            List<ItemSwipe> reversed = items.reversed.toList();
+
             return Container(
                 alignment: Alignment.center,
                 height: 400.0,
                 padding: const EdgeInsets.only(left: 60.0),
                 child: Stack(
-                  children: items,
+                  children: reversed,
                 ));
           } else {
             return const Center(child: CircularProgressIndicator());
