@@ -9,4 +9,6 @@ class Outfit {
 
   Outfit(this.name, this.clothes, this.id, {this.ref});
 
+  Outfit.clone(Outfit other): this(other.name, [...other.clothes], other.id);
+
 }
