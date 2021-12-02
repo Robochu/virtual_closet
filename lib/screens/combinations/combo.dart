@@ -122,14 +122,6 @@ class _ComboState extends State<Combo> {
             if (outfits != null) {
               empty = outfits.isEmpty;
               outfits = outfits.where(filter).toList();
-              if (outfits.isEmpty) {
-                return Center(
-                  child: Text(
-                    empty ? "No outfits created." : "No outfits found!",
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              }
             }
             return Column(children: [
               Center(

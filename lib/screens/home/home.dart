@@ -235,6 +235,7 @@ class _HomeViewState extends State<HomeView> {
   late bool laundryNotif;
   int prevCounter = 0;
   int counter = 0;
+  List<String> attributes = <String>[];
 
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -399,6 +400,14 @@ class _HomeViewState extends State<HomeView> {
     return toThat += addThis;
   }
 
+  void addAttribute(List<String> atts) {
+    for(var att in atts) {
+      if (!attributes.contains(att)) {
+        attributes.add(att);
+      }
+    }
+  }
+
   // Helper function to translate weather icon code to weather code
   void weatherClothesFilter(String weatherIconText)
   {
@@ -409,54 +418,65 @@ class _HomeViewState extends State<HomeView> {
 
     if (weatherIconText == '01d')
     {
+      addAttribute(["T-shirt", "Shorts", "Sandals"]);
+
       top = addIfNotThere("T-shirt", top);
       bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
     }
     else if (weatherIconText == '02d')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '03d')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '04d')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '09d')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '10d')
     {
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '11d')
     {
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '13d')
     {
+
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '50d')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
@@ -464,54 +484,63 @@ class _HomeViewState extends State<HomeView> {
 
     if (weatherIconText == '01n')
     {
+      addAttribute(["T-shirt", "Shorts", "Sandals"]);
       top = addIfNotThere("T-shirt", top);
       bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("open-toed-shoes", shoes);
     }
     else if (weatherIconText == '02n')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '03n')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '04n')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '09n')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '10n')
     {
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '11n')
     {
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '13n')
     {
+      addAttribute(["Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '50n')
     {
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
@@ -526,18 +555,24 @@ class _HomeViewState extends State<HomeView> {
     {
       if ('interview'.matchAsPrefix(events.toLowerCase(), i) != null)
       {
+
+        addAttribute(["Suit", "Pants", "Shoes"]);
         top = 'Suit';
         bottom = 'Pants';
         shoes = 'Shoes';
       }
       else if ('lunch'.matchAsPrefix(events.toLowerCase(), i) != null)
       {
+
+        addAttribute(["Shirt", "Pants", "Shoes"]);
         top = 'Shirts';
         bottom = 'Pants';
         shoes = 'shoes';
       }
       else if ('flight'.matchAsPrefix(events.toLowerCase(), i) != null)
       {
+
+        addAttribute(["T-shirt", "Shorts", "Sneaker"]);
         top = 'T-shirt';
         bottom = 'Shorts';
         shoes = 'sneakers';
@@ -554,6 +589,8 @@ class _HomeViewState extends State<HomeView> {
     // If user doesn't allow weather and has no google calendar hooked up then filter only using time
     if (currentTime.period.toString().substring(10, 12) == 'am')
     {
+
+      addAttribute(["T-shirt", "Shorts", "Closed-toed-shoes"]);
       top = addIfNotThere("T-shirt", top);
       bottom = addIfNotThere("Shorts", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
@@ -561,6 +598,8 @@ class _HomeViewState extends State<HomeView> {
     }
     if (currentTime.period.toString().substring(10, 12) == 'pm')
     {
+
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
