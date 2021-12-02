@@ -24,6 +24,7 @@ class RecommendationQueue {
     PriorityQueue<Recommendation> queue = PriorityQueue<Recommendation>((a,b) => (b.score.compareTo(a.score)));
     calculateScore();
     recommendations.removeWhere((element) => element.score == 0);
+    recommendations.removeWhere((element) => element.clothing.isLaundry == true);
     queue.addAll(recommendations);
     return queue;
   }
