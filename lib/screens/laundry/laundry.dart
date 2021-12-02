@@ -14,11 +14,7 @@ class Laundry extends StatefulWidget {
 }
 
 class _LaundryState extends State<Laundry> {
-  //bool _showConfDialog = true;
-  //int _selectedClothes = 0;
   bool _selectionMode = false;
-
-  //final controller = DragSelectGridViewController();
 
   List<int> _selectedIndex = <int>[];
 
@@ -67,7 +63,6 @@ class _LaundryState extends State<Laundry> {
         });
   }
 
-
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<MyUser?>(context);
@@ -107,37 +102,56 @@ class _LaundryState extends State<Laundry> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                       const SizedBox(height: 20),
-                      Center(
-                        child:
-                          TextButton(
-                            onPressed: () {
-                              if (_selectionMode && _selectedIndex.isNotEmpty) {
-                                List<Clothing> toEmpty = <Clothing>[];
-                                for (var index in _selectedIndex) {
-                                  toEmpty.add(laundryClothes[index]);
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            OutlinedButton(
+                                child: Text(
+                                    (_selectionMode) ? "Cancel" : "Select",
+                                    style: const TextStyle(
+                                        fontSize: 15, color: Colors.white)),
+                                style: ElevatedButton.styleFrom(
+                                    primary: Colors.blue,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    )),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectionMode = !_selectionMode;
+                                    _selectedIndex.clear();
+                                  });
+                                }),
+                            TextButton(
+                              onPressed: () {
+                                if (_selectionMode &&
+                                    _selectedIndex.isNotEmpty) {
+                                  List<Clothing> toEmpty = <Clothing>[];
+                                  for (var index in _selectedIndex) {
+                                    toEmpty.add(laundryClothes[index]);
+                                  }
+                                  delete(context, toEmpty,
+                                      "Are you sure you want to remove these clothes from the laundry basket?");
+                                } else if (!_selectionMode) {
+                                  delete(context, laundryClothes,
+                                      "Are you sure you want to empty the laundry basket?");
                                 }
-                                delete(context, toEmpty,
-                                    "Are you sure you want to remove these clothes from the laundry basket?");
-                              } else if (!_selectionMode) {
-                                delete(context, laundryClothes,
-                                    "Are you sure you want to empty the laundry basket?");
-                              }
-                            },
-                            child: Text(
-                                ((_selectionMode)
-                                    ? 'Remove from Laundry Basket'
-                                    : 'Empty Laundry Basket'),
-                                style: const TextStyle(fontSize: 15, color: Colors.white)),
-                            style: ElevatedButton.styleFrom(
-                                primary:
-                                    (_selectionMode && _selectedIndex.isEmpty)
-                                        ? Colors.black45
-                                        : Colors.redAccent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
-                          )
-                      ),
+                              },
+                              child: Text(
+                                  ((_selectionMode)
+                                      ? 'Remove from Laundry Basket'
+                                      : 'Empty Laundry Basket'),
+                                  style: const TextStyle(
+                                      fontSize: 15, color: Colors.white)),
+                              style: ElevatedButton.styleFrom(
+                                  primary:
+                                      (_selectionMode && _selectedIndex.isEmpty)
+                                          ? Colors.black45
+                                          : Colors.redAccent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  )),
+                            ),
+                          ]),
                       const SizedBox(height: 10),
                       Expanded(
                           child: GridView.count(
@@ -180,28 +194,6 @@ class _LaundryState extends State<Laundry> {
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
-                                              /*
-                                                  child: (laundryClothes[index]
-                                                      .isSelected) ? const Text(
-                                                      'Selected',
-                                                      style: TextStyle(
-                                                          fontWeight: FontWeight
-                                                              .bold,
-                                                          fontSize: 18.0,
-                                                          color: Colors.white,
-                                                          shadows: [
-                                                            Shadow(
-                                                                blurRadius: 10.0,
-                                                                color: Colors
-                                                                    .black
-                                                            )
-                                                          ]
-                                                      )
-                                                  ) : null,*/
-                                              /*Image(
-                                              image: NetworkImage(laundryClothes[index].link!),
-                                              fit: BoxFit.cover,
-                                            ),*/
                                             ))),
                                     onTap: () => {
                                           setState(() {
@@ -239,34 +231,12 @@ class _LaundryState extends State<Laundry> {
                                               fit: BoxFit.cover,
                                             ),
                                           ),
-                                          /*
-                                              child: (laundryClothes[index].isSelected) ? const Text('Selected',
-                                                  style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 18.0,
-                                                      color: Colors.white,
-                                                      shadows: [
-                                                        Shadow (
-                                                            blurRadius: 10.0,
-                                                            color: Colors.black
-                                                        )
-                                                      ]
-                                                  )
-                                              ) : null,*/
-                                          /*Image(
-                                              image: NetworkImage(laundryClothes[index].link!),
-                                              fit: BoxFit.cover,
-                                            ),*/
                                         ))),
                                 onTap: () =>
                                     {press(context, laundryClothes[index])},
                                 onLongPress: () => {
                                       setState(() {
                                         _selectionMode = !_selectionMode;
-                                        /*
-                                    laundryClothes[index].isSelected = true;
-                                    laundryClothes[index].upload();
-                                    _selectedClothes++;*/
                                       }),
                                     });
                           }
