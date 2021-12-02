@@ -35,6 +35,7 @@ class DatabaseService {
       'fileName' : item.filename,
       'item': item.item,
       'inLaundryFor': item.inLaundryFor,
+      'isSelected': item.isSelected,
     }, SetOptions(merge: true));
   }
 
@@ -97,7 +98,8 @@ class DatabaseService {
                 doc['material'] ?? '',
                 doc['item'] ?? '',
                 doc['isLaundry'] ?? '',
-                doc['inLaundryFor'] ?? '')).toList());
+                doc['inLaundryFor'] ?? '',
+                doc['isSelected'] ?? '')).toList());
   }
 
   Stream<List<Clothing>> getFilteredItem(String itemType) {
@@ -117,7 +119,8 @@ class DatabaseService {
             doc['material'] ?? '',
             doc['item'] ?? '',
             doc['isLaundry'] ?? '',
-            doc['inLaundryFor'] ?? '')).toList());
+            doc['inLaundryFor'] ?? '',
+            doc['isSelected'] ?? '')).toList());
   }
 
   Stream<List<Outfit>> get outfits {
@@ -143,7 +146,8 @@ class DatabaseService {
                     snapshot['material'] ?? '',
                     snapshot['item'] ?? '',
                     snapshot['isLaundry'] ?? '',
-                    snapshot['inLaundryFor'] ?? ''));});
+                    snapshot['inLaundryFor'] ?? '',
+                    snapshot['isSelected'] ?? ''));});
           }
 
           return Outfit(doc['name'] ?? '', items, doc['id'], ref: item_refs);
