@@ -20,6 +20,7 @@ class Clothing {
   String item;
   bool isLaundry;
   String? inLaundryFor;
+  bool isSelected = false;
   bool isFavorite = false;
 
 
