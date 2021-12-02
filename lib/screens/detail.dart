@@ -110,6 +110,18 @@ class _DetailPageState extends State<DetailPage> {
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(clothing!.isFavorite ? Icons.favorite : Icons.favorite_outline,
+            color: clothing!.isFavorite ? Colors.red : Colors.white),
+            onPressed: () {
+              setState(() {
+                clothing!.isFavorite = !clothing!.isFavorite;
+              });
+              DatabaseService(uid: user!.uid).updateFavorite(clothing!);
+            }
+          )
+        ],
         backgroundColor: Colors.blue,
       ),
         body: Form(

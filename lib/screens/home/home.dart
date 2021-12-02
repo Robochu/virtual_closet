@@ -14,6 +14,7 @@ import 'package:virtual_closet/screens/closet/closet.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart';
+import 'package:virtual_closet/screens/home/recommendation.dart';
 import 'package:virtual_closet/screens/home/weather.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart' as notifs;
@@ -22,6 +23,8 @@ import 'package:virtual_closet/screens/laundry/laundry.dart';
 import 'package:virtual_closet/screens/combinations/combo.dart';
 import 'package:virtual_closet/service/database.dart';
 import 'package:weather/weather.dart';
+
+import 'package:collection/collection.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -217,6 +220,7 @@ class _HomeViewState extends State<HomeView> {
     getNotificationOnOff();
     _getLaundryFreq();
     _getLaundryNotification();
+    getRecommendation();
   }
 
   String weatherText = '';
@@ -426,42 +430,42 @@ class _HomeViewState extends State<HomeView> {
     }
     else if (weatherIconText == '02d')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '03d')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '04d')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '09d')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '10d')
     {
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long","Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '11d')
     {
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long","Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
@@ -469,14 +473,14 @@ class _HomeViewState extends State<HomeView> {
     else if (weatherIconText == '13d')
     {
 
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long","Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '50d')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
@@ -491,56 +495,56 @@ class _HomeViewState extends State<HomeView> {
     }
     else if (weatherIconText == '02n')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '03n')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '04n')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '09n')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
     }
     else if (weatherIconText == '10n')
     {
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long","Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '11n')
     {
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long", "Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '13n')
     {
-      addAttribute(["Shirt", "Pants", "Boots"]);
+      addAttribute(["Long","Shirt", "Pants", "Boots"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("boots", shoes);
     }
     else if (weatherIconText == '50n')
     {
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long","Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toe-shoes", shoes);
@@ -599,7 +603,7 @@ class _HomeViewState extends State<HomeView> {
     if (currentTime.period.toString().substring(10, 12) == 'pm')
     {
 
-      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
+      addAttribute(["Long", "Shirt", "Pants", "Closed-toed-shoes"]);
       top = addIfNotThere("Shirts", top);
       bottom = addIfNotThere("Pants", bottom);
       shoes = addIfNotThere("closed-toed-shoes", shoes);
@@ -741,7 +745,8 @@ class _HomeViewState extends State<HomeView> {
                     )
                   ],
                 ),
-                //buildRecommendation(context),
+                buildRecommendation(context),
+                /*
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -779,7 +784,7 @@ class _HomeViewState extends State<HomeView> {
                         }
                     ),
                   ],
-                ),
+                ),*/
                 const ListTile(
                     dense: true,
                     visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
@@ -796,11 +801,12 @@ class _HomeViewState extends State<HomeView> {
 
   Widget buildRecommendation(BuildContext context) {
     return StreamBuilder<List<Clothing>>(
-        stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).getFilteredItem(top),
+        stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<Clothing>? recommendations = snapshot.data;
-            if(recommendations!.isEmpty) {
+            List<Clothing> closet = snapshot.data ?? <Clothing>[];
+            PriorityQueue<Recommendation> recommendations = RecommendationQueue(closet: closet, attributes: attributes).queue;
+            if(closet.isEmpty || recommendations.isEmpty) {
               return Container(
                   alignment: Alignment.center,
                   height: 400.0,
@@ -808,8 +814,8 @@ class _HomeViewState extends State<HomeView> {
                   child: const Text("There is no recommendation right now :("));
             }
             List<ItemSwipe> items = <ItemSwipe>[];
-            for (var element in recommendations) {
-              items.add(ItemSwipe(item: element));
+            while(recommendations.isNotEmpty) {
+              items.add(ItemSwipe(item: recommendations.removeFirst().clothing));
             }
             return Container(
                 alignment: Alignment.center,
@@ -869,19 +875,7 @@ class _HomeViewState extends State<HomeView> {
   }
 }
 
-/*CustomModelDownloadConditions conditions = new CustomModelDownloadConditions.Builder()
-    .requireWifi()
-    .build();
-FirebaseModelDownloader.getInstance()
-    .getModel("clothing_recognition", DownloadType.LOCAL_MODEL, conditions)
-    .addOnSuccessListener(new OnSuccessListener<CustomModel>() {
-      @Override
-      public void onSuccess(CustomModel model) {
-        // Download complete. Depending on your app, you could enable
-        // the ML feature, or switch from the local model to the remote
-        // model, etc.
-      }
-    });*/
+
 
 
 
