@@ -148,7 +148,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
         }
 
         //Clothing item = Clothing.full(user!.uid, _image.path, '', '', 'Tops', 'Short', 'Black', '', 'T-shirt', false, '');
-        Clothing item = Clothing.full(user!.uid, _image.path, '', '', category, length, color, '', itemName, false, '', false);
+        Clothing item = Clothing.full(user!.uid, _image.path, '', '', category, length, color, '', itemName, false, '', );
         //Tflite.close();
         close();
         Navigator.push(
@@ -389,7 +389,7 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
         length = "N/A";
         color = "Multicolor";
       }
-      Clothing item = Clothing.full(_user!.uid, _image.path, '', '', category, length, color, '', itemName, false, '', false);
+      Clothing item = Clothing.full(_user!.uid, _image.path, '', '', category, length, color, '', itemName, false, '', );
       //Clothing item = Clothing.full(_user!.uid, _image.path, '', '', 'Tops', 'Short', 'Black', '', 'T-shirt', false, '');
       //Tflite.close();
       close();

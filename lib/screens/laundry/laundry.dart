@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:virtual_closet/models/user.dart';
 import '../../service/database.dart';
 import '../../clothes.dart';
 import '../detail.dart';
-import 'package:drag_select_grid_view/drag_select_grid_view.dart';
 
 class Laundry extends StatefulWidget {
   const Laundry({Key? key}) : super(key: key);
@@ -15,9 +14,13 @@ class Laundry extends StatefulWidget {
 }
 
 class _LaundryState extends State<Laundry> {
-  bool _showConfDialog = true;
-  int _selectedClothes = 0;
-  final controller = DragSelectGridViewController();
+  //bool _showConfDialog = true;
+  //int _selectedClothes = 0;
+  bool _selectionMode = false;
+
+  //final controller = DragSelectGridViewController();
+
+  List<int> _selectedIndex = <int>[];
 
   void press(BuildContext context, Clothing clothing) {
     Navigator.push(
@@ -28,32 +31,29 @@ class _LaundryState extends State<Laundry> {
     );
   }
 
-  void delete(BuildContext context, List<Clothing> clothes) {
+  void delete(BuildContext context, List<Clothing> clothes, String message) {
     showDialog(
         context: context,
         builder: (BuildContext cxt) {
           return AlertDialog(
             title: const Text("Please Confirm"),
-            content: const Text("Are you sure you want to empty the laundry basket?"),
+            content: Text(message),
+            //Text("Are you sure you want to empty the laundry basket?"),
             actions: [
               // Yes button
               TextButton(
                   onPressed: () {
-                    // Remove confirmation dialog from view
-                    setState(() {
-                      _showConfDialog = false;
-                    });
                     // Set laundry status of clothes to false to remove from basket
-                    for (int index = 0; index < clothes.length; index++) {
-                      clothes[index].isLaundry = false;
-                      clothes[index].inLaundryFor = '';
-                      clothes[index].upload();
+                    for (var item in clothes) {
+                      item.isLaundry = false;
+                      item.inLaundryFor =
+                          DateFormat.yMd().format(DateTime.now());
+                      item.upload();
                     }
                     // Close confirmation dialog box
                     Navigator.of(cxt).pop();
                   },
-                  child: const Text('Yes')
-              ),
+                  child: const Text('Yes')),
               // No button
               TextButton(
                 onPressed: () {
@@ -64,52 +64,9 @@ class _LaundryState extends State<Laundry> {
               ),
             ],
           );
-        }
-    );
+        });
   }
 
-  void deleteSpecificClothes(BuildContext context, List<Clothing> clothes) {
-    showDialog(
-        context: context,
-        builder: (BuildContext cxt) {
-          return AlertDialog(
-            title: const Text("Please Confirm"),
-            content: const Text("Are you sure you want to remove these clothes from the laundry basket?"),
-            actions: [
-              // Yes button
-              TextButton(
-                  onPressed: () {
-                    // Remove confirmation dialog from view
-                    setState(() {
-                      _showConfDialog = false;
-                    });
-                    // Set laundry status of clothes to false to remove from basket
-                    for (int index = 0; index < clothes.length; index++) {
-                      if (clothes[index].isSelected) {
-                        clothes[index].isLaundry = false;
-                        clothes[index].inLaundryFor = '';
-                        clothes[index].isSelected = false;
-                        clothes[index].upload();
-                      }
-                    }
-                    // Close confirmation dialog box
-                    Navigator.of(cxt).pop();
-                  },
-                  child: const Text('Yes')
-              ),
-              // No button
-              TextButton(
-                onPressed: () {
-                  // Close confirmation dialog box
-                  Navigator.of(cxt).pop();
-                },
-                child: const Text('No'),
-              ),
-            ],
-          );
-        }
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,63 +97,149 @@ class _LaundryState extends State<Laundry> {
                 return const Center(
                   child: Text(
                     "The laundry basket is currently empty.\n\n"
-                        "To add clothes here, change the laundry status from the closet screen.",
+                    "To add clothes here, change the laundry status from the closet screen.",
                     textAlign: TextAlign.center,
                   ),
                 );
               } else {
-                _showConfDialog = true;
                 return Scaffold(
-
                     body: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const SizedBox (height: 30),
-                          Row(
-                            children: <Widget>[
-                              ElevatedButton(
-                                    onPressed:
-                          (_showConfDialog == true) ? () => ((_selectedClothes == 0) ? delete(context, laundryClothes) : deleteSpecificClothes(context, laundryClothes)) : null,
-                          child: Text(
-                          ((_selectedClothes > 0) ? 'Remove from Laundry Basket' : 'Empty Laundry Basket'),
-                          style: TextStyle(
-                          fontSize: 20)),
-                          style: ElevatedButton.styleFrom(
-                          primary: Colors.redAccent,
-                          shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                      const SizedBox(height: 20),
+                      Center(
+                        child:
+                          TextButton(
+                            onPressed: () {
+                              if (_selectionMode && _selectedIndex.isNotEmpty) {
+                                List<Clothing> toEmpty = <Clothing>[];
+                                for (var index in _selectedIndex) {
+                                  toEmpty.add(laundryClothes[index]);
+                                }
+                                delete(context, toEmpty,
+                                    "Are you sure you want to remove these clothes from the laundry basket?");
+                              } else if (!_selectionMode) {
+                                delete(context, laundryClothes,
+                                    "Are you sure you want to empty the laundry basket?");
+                              }
+                            },
+                            child: Text(
+                                ((_selectionMode)
+                                    ? 'Remove from Laundry Basket'
+                                    : 'Empty Laundry Basket'),
+                                style: const TextStyle(fontSize: 15, color: Colors.white)),
+                            style: ElevatedButton.styleFrom(
+                                primary:
+                                    (_selectionMode && _selectedIndex.isEmpty)
+                                        ? Colors.black45
+                                        : Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                )),
                           )
-                          ),
-                          )
-
-
-                          ],
-                          ),
-                          const SizedBox(height: 15),
-                          Expanded(child: GridView.count(
-                          // Create a grid with 2 columns. If you change the scrollDirection to
-                          // horizontal, this produces 2 rows.
-                          crossAxisCount: 2,
-                            // Generate 100 widgets that display their index in the List.
-                            children: List.generate(
-                                laundryClothes.length, (index) {
-                              return InkWell(
-                                      child: Padding (
-                                          padding: const EdgeInsets.all(15),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(20),
+                      ),
+                      const SizedBox(height: 10),
+                      Expanded(
+                          child: GridView.count(
+                        // Create a grid with 2 columns. If you change the scrollDirection to
+                        // horizontal, this produces 2 rows.
+                        crossAxisCount: 2,
+                        // Generate 100 widgets that display their index in the List.
+                        children: List.generate(laundryClothes.length, (index) {
+                          if (_selectionMode) {
+                            return GridTile(
+                                header: GridTileBar(
+                                    leading: Icon(
+                                  _selectedIndex.contains(index)
+                                      ? Icons.check_circle
+                                      : Icons.radio_button_unchecked_rounded,
+                                  color: _selectedIndex.contains(index)
+                                      ? Colors.blue
+                                      : Colors.black,
+                                  size: 30.0,
+                                )),
+                                child: InkWell(
+                                    child: Padding(
+                                        padding: const EdgeInsets.all(15),
+                                        child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                             child: Container(
-                                              constraints: const BoxConstraints.expand(
+                                              constraints:
+                                                  const BoxConstraints.expand(
                                                 height: 200.0,
                                               ),
                                               alignment: Alignment.bottomLeft,
-                                              padding: const EdgeInsets.only(left: 16.0, bottom: 8.0),
+                                              padding: const EdgeInsets.only(
+                                                  left: 16.0, bottom: 8.0),
                                               decoration: BoxDecoration(
                                                 image: DecorationImage(
-                                                  image: NetworkImage(laundryClothes[index].link!),
+                                                  image: NetworkImage(
+                                                      laundryClothes[index]
+                                                          .link!),
                                                   fit: BoxFit.cover,
                                                 ),
                                               ),
+                                              /*
+                                                  child: (laundryClothes[index]
+                                                      .isSelected) ? const Text(
+                                                      'Selected',
+                                                      style: TextStyle(
+                                                          fontWeight: FontWeight
+                                                              .bold,
+                                                          fontSize: 18.0,
+                                                          color: Colors.white,
+                                                          shadows: [
+                                                            Shadow(
+                                                                blurRadius: 10.0,
+                                                                color: Colors
+                                                                    .black
+                                                            )
+                                                          ]
+                                                      )
+                                                  ) : null,*/
+                                              /*Image(
+                                              image: NetworkImage(laundryClothes[index].link!),
+                                              fit: BoxFit.cover,
+                                            ),*/
+                                            ))),
+                                    onTap: () => {
+                                          setState(() {
+                                            if (_selectedIndex
+                                                .contains(index)) {
+                                              _selectedIndex.remove(index);
+                                            } else {
+                                              _selectedIndex.add(index);
+                                            }
+                                          })
+                                        },
+                                    onLongPress: () => {
+                                          setState(() {
+                                            _selectionMode = !_selectionMode;
+                                          }),
+                                        }));
+                          } else {
+                            return InkWell(
+                                child: Padding(
+                                    padding: const EdgeInsets.all(15),
+                                    child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Container(
+                                          constraints:
+                                              const BoxConstraints.expand(
+                                            height: 200.0,
+                                          ),
+                                          alignment: Alignment.bottomLeft,
+                                          padding: const EdgeInsets.only(
+                                              left: 16.0, bottom: 8.0),
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  laundryClothes[index].link!),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          /*
                                               child: (laundryClothes[index].isSelected) ? const Text('Selected',
                                                   style: TextStyle(
                                                       fontWeight: FontWeight.bold,
@@ -209,44 +252,27 @@ class _LaundryState extends State<Laundry> {
                                                         )
                                                       ]
                                                   )
-                                              ) : null,
-                                            /*Image(
+                                              ) : null,*/
+                                          /*Image(
                                               image: NetworkImage(laundryClothes[index].link!),
                                               fit: BoxFit.cover,
                                             ),*/
-                                          ))),
-                                  onTap: () => {
-                                    //press(context, laundryClothes[index])
-                                    if (laundryClothes[index].isSelected) {
-                                      setState(() {
-                                        laundryClothes[index].isSelected = false;
-                                        laundryClothes[index].upload();
-                                        _selectedClothes--;
-                                      })
-                                    }
-                                    else if (_selectedClothes > 0) {
-                                      setState(() {
-                                        laundryClothes[index].isSelected = true;
-                                        laundryClothes[index].upload();
-                                      })
-                                    }
-                                    else {
-                                      press(context, laundryClothes[index])
-                                    }
-                                },
+                                        ))),
+                                onTap: () =>
+                                    {press(context, laundryClothes[index])},
                                 onLongPress: () => {
-                                  setState(() {
+                                      setState(() {
+                                        _selectionMode = !_selectionMode;
+                                        /*
                                     laundryClothes[index].isSelected = true;
                                     laundryClothes[index].upload();
-                                    _selectedClothes++;
-                                  }),
-                                }
-                              );
-                            }),
-                          ))
-                        ]
-                    )
-                );
+                                    _selectedClothes++;*/
+                                      }),
+                                    });
+                          }
+                        }),
+                      ))
+                    ]));
               }
             }
           } else {

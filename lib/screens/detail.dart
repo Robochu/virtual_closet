@@ -105,6 +105,13 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     final user = Provider.of<MyUser?>(context);
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        backgroundColor: Colors.blue,
+      ),
         body: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -114,10 +121,8 @@ class _DetailPageState extends State<DetailPage> {
                   (widget.clothing.link! != '')
                       ? Image(
                     image: NetworkImage(widget.clothing.link!),
-
                   )
                       : Image.file(File(widget.clothing.path!)),
-
                   Align(
                       alignment: Alignment.centerLeft,
                       child: DropdownButtonFormField<String>(
