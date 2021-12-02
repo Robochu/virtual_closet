@@ -6,6 +6,8 @@ class Outfit {
   String id = '';
   List<String>? ref;
   List<Clothing> clothes;
+  DateTime? recommendationDate;
+  String recommendationFrequency = 'Never';
 
   Outfit(this.name, this.clothes, this.id, {this.ref});
 

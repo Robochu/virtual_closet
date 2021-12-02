@@ -79,7 +79,7 @@ class _DesignerState extends State<Designer> {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    Closet(isSelectable: true)));
+                                    const Closet(isSelectable: true)));
                         if (result != null) {
                           setState(() {
                             for (var item in result) {
@@ -204,6 +204,60 @@ class _DesignerState extends State<Designer> {
                     style: ElevatedButton.styleFrom(
                       primary: Colors.blue,
                     ),
+                    child: Text(outfit.recommendationDate == null ?
+                      'No date picked' :
+                      "${outfit.recommendationDate!.toLocal()}".split(' ')[0]),
+                    onPressed: () {
+                      selectDate(context);
+                    }),
+              ),
+              Container(
+                width: 20,
+              ),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white)),
+                    filled: true,
+                    labelText: 'Frequency',
+                  ),
+                  isExpanded: true,
+                  value: outfit.recommendationFrequency,
+                  onChanged: outfit.recommendationDate == null ? null :
+                    (text) => setState(() {
+                    outfit.recommendationFrequency = text!;
+                  }),
+                  items: <String>[
+                    'Never',
+                    'Just once',
+                    'Every day',
+                    'Every week',
+                    'Every month',
+                    'Every year',
+                  ].map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              Container(
+                width: 20,
+              ),
+            ],
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                width: 20,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.blue,
+                    ),
                     child: Text(_isEdit ? 'Cancel' : 'Edit Outfit'),
                     onPressed: () {
                       setState(() {
@@ -307,6 +361,19 @@ class _DesignerState extends State<Designer> {
         ],
       ),
     );
+  }
+
+  Future<void> selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: outfit.recommendationDate ?? DateTime.now(),
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
+    if (picked != null && picked != outfit.recommendationDate) {
+      setState(() {
+        outfit.recommendationDate = picked;
+      });
+    }
   }
 
   void openClothing(BuildContext context, Clothing clothing) {
