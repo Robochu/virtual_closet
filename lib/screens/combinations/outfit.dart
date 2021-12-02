@@ -7,9 +7,10 @@ class Outfit {
   List<String>? ref;
   List<Clothing> clothes;
   DateTime? recommendationDate;
-  String recommendationFrequency = 'Never';
+  String recommendationFrequency;
 
-  Outfit(this.name, this.clothes, this.id, {this.ref});
+  Outfit(this.name, this.clothes, this.id, {this.ref, this.recommendationDate,
+    this.recommendationFrequency = 'Never'});
 
   Outfit.clone(Outfit other): this(other.name, [...other.clothes], other.id);
 

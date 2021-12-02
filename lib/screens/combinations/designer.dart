@@ -101,8 +101,7 @@ class _DesignerState extends State<Designer> {
                           setState(() {
                             outfit.clothes.removeAt(index);
                           });
-                          DatabaseService(uid: user!.uid).updateOutfit(
-                              outfit.name, outfit.clothes, outfit.id);
+                          DatabaseService(uid: user!.uid).updateOutfit(outfit);
                         },
                       )),
                       child: InkWell(
@@ -193,7 +192,7 @@ class _DesignerState extends State<Designer> {
                       'No date picked' :
                       "${outfit.recommendationDate!.toLocal()}".split(' ')[0]),
                     onPressed: () {
-                      selectDate(context);
+                      selectDate(context, user!.uid);
                     }),
               ),
               Container(
@@ -212,6 +211,7 @@ class _DesignerState extends State<Designer> {
                   onChanged: outfit.recommendationDate == null ? null :
                     (text) => setState(() {
                     outfit.recommendationFrequency = text!;
+                    DatabaseService(uid: user!.uid).updateOutfit(outfit);
                   }),
                   items: <String>[
                     'Never',
@@ -287,10 +287,7 @@ class _DesignerState extends State<Designer> {
                                 _isEdit = false;
                               });
                               outfit.name = name_controller.text;
-                              DatabaseService(uid: user!.uid).updateOutfit(
-                                  name_controller.text,
-                                  outfit.clothes,
-                                  outfit.id);
+                              DatabaseService(uid: user!.uid).updateOutfit(outfit);
                               Navigator.pop(context);
                             }
                           }),
@@ -349,7 +346,7 @@ class _DesignerState extends State<Designer> {
     );
   }
 
-  Future<void> selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context, String uid) async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: outfit.recommendationDate ?? DateTime.now(),
@@ -358,6 +355,7 @@ class _DesignerState extends State<Designer> {
     if (picked != null && picked != outfit.recommendationDate) {
       setState(() {
         outfit.recommendationDate = picked;
+        DatabaseService(uid: uid).updateOutfit(outfit);
       });
     }
   }

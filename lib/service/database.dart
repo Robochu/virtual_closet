@@ -39,21 +39,24 @@ class DatabaseService {
     }, SetOptions(merge: true));
   }
 
-  Future updateOutfit(String name, List<Clothing> outfit, String id) async {
+  Future updateOutfit(Outfit outfit) async {
     final CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
     CollectionReference outfits = usersCollection.doc(uid).collection('outfits');
     List<String?> items = <String>[];
-    for(var item in outfit) {
+    for(var item in outfit.clothes) {
       items.add(item.filename);
       //print(items.last.path);
     }
-    if(id == '') {
-      id = Clothing.random.nextInt(4294967296).toString();
+    if(outfit.id == '') {
+      outfit.id = Clothing.random.nextInt(4294967296).toString();
     }
-    return await outfits.doc(id).set({
-      'name': name,
+    return await outfits.doc(outfit.id).set({
+      'name': outfit.name,
       'clothes': items,
-      'id': id
+      'recommendationDate': outfit.recommendationDate == null ? '' :
+        outfit.recommendationDate!.toIso8601String(),
+      'recommendationFrequency': outfit.recommendationFrequency,
+      'id': outfit.id,
     }, SetOptions(merge: true));
   }
   Future updateFavorite(Clothing item)  async {
@@ -166,7 +169,10 @@ class DatabaseService {
 
           }
 
-          return Outfit(doc['name'] ?? '', items, doc['id'], ref: item_refs);
+          return Outfit(doc['name'] ?? '', items, doc['id'], ref: item_refs,
+            recommendationDate: doc['recommendationDate'] == '' ? null :
+              DateTime.parse(doc['recommendationDate']),
+            recommendationFrequency: doc['recommendationFrequency']);
         }).toList()
     );
   }
