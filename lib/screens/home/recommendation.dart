@@ -20,10 +20,11 @@ class RecommendationQueue {
   List<Recommendation> recommendations = <Recommendation>[];
   RecommendationQueue({required this.closet, required this.attributes, required this.outfits}) {
     for (var item in closet) {
-      print(item.link);
+      //print(item.link);
       recommendations.add(Recommendation(score: 0, clothing: item));
     }
-    print('');
+    //print('');
+    //print(outfits.length);
     for (Outfit outfit in outfits) {
       if (outfit.recommendationDate != null &&
         outfit.recommendationDate!.difference(DateTime.now()).inDays <= 7) {
@@ -40,7 +41,7 @@ class RecommendationQueue {
     PriorityQueue<Recommendation> queue = PriorityQueue<Recommendation>((a,b) {
       int res = b.score.compareTo(a.score);
       if(res == 0) {
-        return b.clothing.filename!.compareTo(a.clothing.filename!);
+        return res+1;
       } else {
         return res;
       }

@@ -234,6 +234,7 @@ class _HomeViewState extends State<HomeView> {
     _getLaundryFreq();
     _getLaundryNotification();
     getRecommendation();
+    getOutfit();
   }
 
   String weatherText = '';
@@ -253,11 +254,18 @@ class _HomeViewState extends State<HomeView> {
   int prevCounter = 0;
   int counter = 0;
   List<String> attributes = <String>[];
+  List<Outfit> outfits = <Outfit>[];
 
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       laundryFreq = prefs.getInt('laundryFreq') ?? 7;
+    });
+  }
+  void getOutfit() async {
+    List<Outfit> outfit = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).outfits.first;
+    setState(() {
+      outfits = [...outfit];
     });
   }
 
@@ -694,15 +702,12 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget buildRecommendation(BuildContext context) {
-    return StreamBuilder<List<Outfit>>(
-      stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).outfits,
-      builder: (context, outfitSnapshot) { return StreamBuilder<List<Clothing>>(
+    return StreamBuilder<List<Clothing>>(
           stream:
               DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               List<Clothing> closet = snapshot.data ?? <Clothing>[];
-              List<Outfit> outfits = outfitSnapshot.data ?? <Outfit>[];
               PriorityQueue<Recommendation> recommendations =
                   RecommendationQueue(closet: closet, attributes: attributes, outfits: outfits)
                       .queue;
@@ -734,8 +739,7 @@ class _HomeViewState extends State<HomeView> {
               return const Center(child: CircularProgressIndicator());
             }
           });
-      },
-    );
+
   }
 
   Widget buildReminders(BuildContext context) {
