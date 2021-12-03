@@ -231,7 +231,37 @@ class _DesignerState extends State<Designer> {
               Container(
                 width: 20,
               ),
+
             ],
+          ),
+
+          Expanded(
+            child: DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white)),
+                filled: true,
+                labelText: 'Recommend this when the weather is',
+              ),
+              isExpanded: true,
+              value: outfit.recommendationWeather,
+              onChanged: (text) => setState(() {
+                outfit.recommendationWeather = text!;
+                DatabaseService(uid: user!.uid).updateOutfit(outfit);
+              }),
+              items: <String>[
+                'None',
+                'Sunny/Clear',
+                'Cloudy',
+                'Snowy',
+                'Rainy',
+              ].map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
+            ),
           ),
           Row(
             children: <Widget>[

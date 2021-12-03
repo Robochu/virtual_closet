@@ -229,8 +229,6 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     laundryFreq = 7;
     getWeatherInfo();
-    getNotificationTime();
-    getNotificationOnOff();
     _getLaundryFreq();
     _getLaundryNotification();
     getRecommendation();
@@ -255,6 +253,7 @@ class _HomeViewState extends State<HomeView> {
   int counter = 0;
   List<String> attributes = <String>[];
   List<Outfit> outfits = <Outfit>[];
+  String weather = '';
 
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -262,8 +261,12 @@ class _HomeViewState extends State<HomeView> {
       laundryFreq = prefs.getInt('laundryFreq') ?? 7;
     });
   }
+
   void getOutfit() async {
-    List<Outfit> outfit = await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).outfits.first;
+    List<Outfit> outfit =
+        await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid)
+            .outfits
+            .first;
     setState(() {
       outfits = [...outfit];
     });
@@ -274,28 +277,6 @@ class _HomeViewState extends State<HomeView> {
     setState(() {
       laundryNotif = prefs.getBool('laundryNotif') ?? false;
     });
-  }
-
-  Future<void> getNotificationTime() async {
-    final prefs = await SharedPreferences.getInstance();
-    final notificationHour = prefs.getInt('notificationHour') ?? 0;
-    final notificationMinute = prefs.getInt('notificationMinute') ?? 0;
-
-    if (notificationHour != 0 && notificationMinute != 0) {
-      selectedTime =
-          TimeOfDay(hour: notificationHour, minute: notificationMinute);
-    }
-  }
-
-  Future<void> getNotificationOnOff() async {
-    final prefs = await SharedPreferences.getInstance();
-    final notificationOnoFF = prefs.getBool('notificationOnOff') ?? 0;
-
-    if (notificationOnoFF == 0) {
-      isNotificationOnOff = false;
-    } else {
-      isNotificationOnOff = notificationOnoFF as bool;
-    }
   }
 
   // Method to call weather api and get current weather using latitude and longitude or city name etc.
@@ -362,57 +343,85 @@ class _HomeViewState extends State<HomeView> {
     String commonThunderstorm = 'wi-thunderstorm';
     String commonSnow = 'wi-snow';
     String commonMist = 'wi-fog';
-
+    String temp = '';
     if (weatherIconText == '01d') {
+      temp = "Sunny/Clear";
+      addAttribute(["Short", "T-shirt", "Shorts", "Shoes", "Hat"]);
       weatherIconText = 'wi-day-sunny';
     } else if (weatherIconText == '02d') {
+      temp = "Cloudy";
+      addAttribute(["T-shirt", "Pants", "Shoes"]);
       weatherIconText = 'wi-day-cloudy-high';
     } else if (weatherIconText == '03d') {
+      temp = "Cloudy";
+      addAttribute(["T-shirt", "Pants", "Shoes"]);
       weatherIconText = commonScatteredClouds;
     } else if (weatherIconText == '04d') {
+      temp = "Cloudy";
+      addAttribute(["T-shirt", "Pants", "Shoes"]);
       weatherIconText = commonBrokenClouds;
     } else if (weatherIconText == '09d') {
+      temp = "Rainy";
+      addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
       weatherIconText = commonShowerRain;
     } else if (weatherIconText == '10d') {
+      temp = "Rainy";
+      addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
       weatherIconText = 'wi-day-rain';
     } else if (weatherIconText == '11d') {
+      temp = "Rainy";
+      addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
       weatherIconText = commonThunderstorm;
     } else if (weatherIconText == '13d') {
+      temp = "Snowy";
+      addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
       weatherIconText = commonSnow;
     } else if (weatherIconText == '50d') {
+      temp = "Cloudy";
+      addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
       weatherIconText = commonMist;
     }
 
     if (weatherIconText == '01n') {
+      temp = "Sunny/Clear";
       weatherIconText = 'wi-night-clear';
     } else if (weatherIconText == '02n') {
+      temp = "Cloudy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = 'wi-night-cloudy';
     } else if (weatherIconText == '03n') {
+      temp = "Cloudy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = commonScatteredClouds;
     } else if (weatherIconText == '04n') {
+      temp = "Cloudy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = commonBrokenClouds;
     } else if (weatherIconText == '09n') {
+      temp = "Rainy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = commonShowerRain;
     } else if (weatherIconText == '10n') {
+      temp = "Rainy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = 'wi-night-rain';
     } else if (weatherIconText == '11n') {
+      temp = "Rainy";
+      addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = commonThunderstorm;
     } else if (weatherIconText == '13n') {
+      temp = "Snowy";
+      addAttribute(["Long", "Shirt", "Pants", "Boots", "Jacket"]);
       weatherIconText = commonSnow;
     } else if (weatherIconText == '50n') {
+      temp = "Cloudy";
+      addAttribute(["T-shirt", "Pants", "Closed-toed-shoes"]);
       weatherIconText = commonMist;
     }
-
+    setState(() {
+      weather = temp;
+    });
     return weatherIconText;
-  }
-
-  String addIfNotThere(String addThis, String toThat) {
-    for (int i = 0; i < toThat.length; i++) {
-      if (addThis.matchAsPrefix(toThat, i) != null) {
-        return toThat;
-      }
-    }
-    return toThat += addThis;
   }
 
   void addAttribute(List<String> atts) {
@@ -428,33 +437,43 @@ class _HomeViewState extends State<HomeView> {
     if (weatherIconText == '') {
       return;
     }
-
+    print("In weather");
+    String temp = '';
     if (weatherIconText == '01d') //sunny
     {
+      temp = "Sunny";
       addAttribute(["Short", "T-shirt", "Shorts", "Shoes", "Hat"]);
     } else if (weatherIconText == '02d') //cloudy
     {
+      temp = "Cloudy";
       addAttribute(["T-shirt", "Pants", "Shoes"]);
     } else if (weatherIconText == '03d') //scattered cloud
     {
+      temp = "Rainy";
       addAttribute(["Shirt", "Pants", "Shoes"]);
     } else if (weatherIconText == '04d') //broken cloud
     {
+      temp = "Rainy";
       addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
     } else if (weatherIconText == '09d') //shower rain
     {
+      temp = "Rainy";
       addAttribute(["Long", "Shirt", "Pants", "Shoes"]);
     } else if (weatherIconText == '10d') //rain
     {
+      temp = "Rainy";
       addAttribute(["Long", "Shirt", "Pants", "Boots"]);
     } else if (weatherIconText == '11d') //thunderstorm
     {
+      temp = "Rainy";
       addAttribute(["Long", "Shirt", "Pants", "Boots", "Jacket"]);
     } else if (weatherIconText == '13d') //snow
     {
+      temp = "Snowy";
       addAttribute(["Long", "Shirt", "Pants", "Boots", "Jacket"]);
     } else if (weatherIconText == '50d') //mist
     {
+      temp = "Cloudy";
       addAttribute(["T-shirt", "Pants", "Shoes"]);
     }
 
@@ -462,27 +481,38 @@ class _HomeViewState extends State<HomeView> {
     {
       addAttribute(["T-shirt", "Shorts", "Sandals"]);
     } else if (weatherIconText == '02n') {
+      temp = "Cloudy";
       addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
     } else if (weatherIconText == '03n') {
+      temp = "Cloudy";
       addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
     } else if (weatherIconText == '04n') {
+      temp = "Cloudy";
       addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
     } else if (weatherIconText == '09n') //shower rain
     {
+      temp = "Rainy";
       addAttribute(["Shirt", "Pants", "Closed-toed-shoes"]);
     } else if (weatherIconText == '10n') //thunderstorm
     {
+      temp = "Rainy";
       addAttribute(["Shirt", "Pants", "Boots"]);
     } else if (weatherIconText == '11n') //rain
     {
+      temp = "Rainy";
       addAttribute(["Shirt", "Pants", "Boots", "Jacket"]);
     } else if (weatherIconText == '13n') //snow
     {
+      temp = "Snowy";
       addAttribute(["Long", "Shirt", "Pants", "Boots", "Jacket"]);
     } else if (weatherIconText == '50n') {
       //mist
+      temp = "Cloudy";
       addAttribute(["T-shirt", "Pants", "Closed-toed-shoes"]);
     }
+    setState(() {
+      weather = temp;
+    });
   }
 
   void calendarClothesFilter() {
@@ -508,27 +538,6 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  void timeClothesFilter(TimeOfDay currentTime, weatherIConCode) {
-    if (weatherIConCode != '' || globals.EVENTSOFTODAY != '') {
-      return;
-    }
-    // If user doesn't allow weather and has no google calendar hooked up then filter only using time
-    if (currentTime.period.toString().substring(10, 12) == 'am') {
-      addAttribute(["T-shirt", "Shorts", "Closed-toed-shoes"]);
-      top = addIfNotThere("T-shirt", top);
-      bottom = addIfNotThere("Shorts", bottom);
-      shoes = addIfNotThere("closed-toed-shoes", shoes);
-      return;
-    }
-    if (currentTime.period.toString().substring(10, 12) == 'pm') {
-      addAttribute(["Long", "Shirt", "Pants", "Closed-toed-shoes"]);
-      top = addIfNotThere("Shirts", top);
-      bottom = addIfNotThere("Pants", bottom);
-      shoes = addIfNotThere("closed-toed-shoes", shoes);
-      return;
-    }
-  }
-
   void temperatureClothesFilter(double? curr, double? feels) {
     if (curr! >= 70.0 && feels! >= 70) {
       addAttribute(["Short"]); //short sleeve if temp is > 70
@@ -539,61 +548,11 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  int getRandomInt() {
-    var randomGenerator = Random();
-    return randomGenerator.nextInt(50);
-  }
-
   void getRecommendation() {
     // Get filters using helper functions
     weatherClothesFilter(actualIconCode);
     temperatureClothesFilter(currTemp, feelLike);
     calendarClothesFilter();
-    timeClothesFilter(TimeOfDay.now(), actualIconCode);
-  }
-
-  // Time picker widget
-  selectTime(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final TimeOfDay? timeChosen = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-      initialEntryMode: TimePickerEntryMode.dial,
-    );
-    if (timeChosen != null && timeChosen != selectedTime) {
-      setState(() {
-        selectedTime = timeChosen;
-      });
-    }
-    prefs.setInt('notificationHour', selectedTime.hour);
-    prefs.setInt('notificationMinute', selectedTime.minute);
-  }
-
-  Future<void> setNotification() async {
-    final prefs = await SharedPreferences.getInstance();
-    String currentDateTime = DateTime.now().toString();
-    String userInputTime =
-        (currentDateTime.substring(0, 11) + selectedTime.hour.toString()) +
-            ":" +
-            selectedTime.minute.toString() +
-            ":" +
-            "00.000000";
-
-    //notifs.NotificationService().scheduleNotification(DateTime.parse(userInputTime), "message");
-    print(DateTime.now().toString());
-    print(userInputTime);
-  }
-
-  void addAlarm() {}
-
-  Dialog getAlarmDialog() {
-    return Dialog(
-      child: Container(
-        height: MediaQuery.of(context).size.height - 350,
-        width: MediaQuery.of(context).size.width + 50,
-        color: Colors.white,
-      ),
-    );
   }
 
   int duration(String? str) {
@@ -621,125 +580,91 @@ class _HomeViewState extends State<HomeView> {
     counter = temp;
   }
 
+  Future<void> onRefresh() async {
+    getWeatherInfo();
+    _getLaundryFreq();
+    _getLaundryNotification();
+    getOutfit();
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (globals.recommendationOnOff == 0) {
-      //getRecommendation();
-      globals.recommendationOnOff = 1;
-    }
-
-    return Scaffold(
-        body: SingleChildScrollView(
-            child: Column(
-      children: <Widget>[
-        Row(
-          children: [
-            //call WeatherSummary and CalendarSummary here to display info
-            Flexible(
-              flex: 2,
-              child: WeatherSummary(
-                weatherText: weatherText,
-                currTemp: currTemp,
-                feelLike: feelLike,
-                weatherIconText: weatherIconText,
-              ),
+    return RefreshIndicator(
+        onRefresh: onRefresh,
+        child: Scaffold(
+            body: SingleChildScrollView(
+                child: Column(
+          children: <Widget>[
+            Row(
+              children: [
+                //call WeatherSummary and CalendarSummary here to display info
+                Flexible(
+                  flex: 2,
+                  child: WeatherSummary(
+                    weatherText: weatherText,
+                    currTemp: currTemp,
+                    feelLike: feelLike,
+                    weatherIconText: weatherIconText,
+                  ),
+                ),
+                Flexible(flex: 2, child: CalendarSummary())
+              ],
             ),
-            Flexible(flex: 2, child: CalendarSummary())
+            buildRecommendation(context),
+            const ListTile(
+                dense: true,
+                visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
+                tileColor: Colors.transparent,
+                leading: Text("Reminders",
+                    style: TextStyle(fontWeight: FontWeight.bold))),
+            buildReminders(context)
           ],
-        ),
-        buildRecommendation(context),
-        /*
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Align(
-                        alignment: FractionalOffset.topRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 10.0, right: 10.0),
-                              child: FloatingActionButton.extended(
-                                heroTag: Text("Alarm"), //solve multiple heroes exception
-                                label: const Text("View Alarms"),
-                                onPressed: () {
-                                  showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context);
-                                },
-                                tooltip: 'New alarm',
-                                icon: new Icon(Icons.alarm),
-                            ),
-                        ),
-                      ),
-                    ),
-                     ElevatedButton(
-                      onPressed: () {
-                        selectTime(context);
-                      },
-                      child: Text("Notification Time: " + selectedTime.hourOfPeriod.toString() + selectedTime.toString().substring(12, 15) + " " + selectedTime.period.toString().substring(10,12)),
-                    ),
-                    Switch(
-                        value: isNotificationOnOff,
-                        onChanged: (value) {
-                          setState(() {
-                            //setNotificationOnoFF(value);
-                            isNotificationOnOff = value;
-                            getRecommendation();
-                          });
-                        }
-                    ),
-                  ],
-                ),*/
-        const ListTile(
-            dense: true,
-            visualDensity: VisualDensity(horizontal: 0.0, vertical: -4.0),
-            tileColor: Colors.transparent,
-            leading: Text("Reminders",
-                style: TextStyle(fontWeight: FontWeight.bold))),
-        TimerBuilder.periodic(const Duration(seconds: 20), builder: (context) {
-          _getLaundryFreq();
-          return buildReminders(context);
-        })
-      ],
-    )));
+        ))));
   }
 
   Widget buildRecommendation(BuildContext context) {
     return StreamBuilder<List<Clothing>>(
-          stream:
-              DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<Clothing> closet = snapshot.data ?? <Clothing>[];
-              PriorityQueue<Recommendation> recommendations =
-                  RecommendationQueue(closet: closet, attributes: attributes, outfits: outfits)
-                      .queue;
-              if (closet.isEmpty || recommendations.isEmpty) {
-                return Container(
-                    alignment: Alignment.center,
-                    height: 400.0,
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: const Text("There is no recommendation right now :("));
-              }
-              List<ItemSwipe> items = <ItemSwipe>[];
-              while (recommendations.isNotEmpty) {
-                items
-                    .add(ItemSwipe(item: recommendations.removeFirst().clothing));
-              }
-              //for display message when runs out of card
-              items.add(ItemSwipe(item: Clothing.usingLink("","not","","","","","","",false,"",false)));
-
-              List<ItemSwipe> reversed = items.reversed.toList();
-
+        stream:
+            DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Clothing> closet = snapshot.data ?? <Clothing>[];
+            PriorityQueue<Recommendation> recommendations = RecommendationQueue(
+                    closet: closet,
+                    attributes: attributes,
+                    outfits: outfits,
+                    weather: weather)
+                .queue;
+            if (closet.isEmpty || recommendations.isEmpty) {
               return Container(
                   alignment: Alignment.center,
                   height: 400.0,
-                  padding: const EdgeInsets.only(left: 60.0),
-                  child: Stack(
-                    children: reversed,
-                  ));
-            } else {
-              return const Center(child: CircularProgressIndicator());
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: const Text("There is no recommendation right now :("));
             }
-          });
+            List<ItemSwipe> items = <ItemSwipe>[];
+            while (recommendations.isNotEmpty) {
+              items
+                  .add(ItemSwipe(item: recommendations.removeFirst().clothing));
+            }
+            //for display message when runs out of card
+            items.add(ItemSwipe(
+                item: Clothing.usingLink(
+                    "", "not", "", "", "", "", "", "", false, "", false)));
 
+            List<ItemSwipe> reversed = items.reversed.toList();
+
+            return Container(
+                alignment: Alignment.center,
+                height: 400.0,
+                padding: const EdgeInsets.only(left: 60.0),
+                child: Stack(
+                  children: reversed,
+                ));
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        });
   }
 
   Widget buildReminders(BuildContext context) {

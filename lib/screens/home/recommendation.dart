@@ -17,12 +17,17 @@ class RecommendationQueue {
   List<Outfit> outfits;
   List<Clothing> blacklist = [];
   List<Clothing> whitelist = [];
+  String weather;
   List<Recommendation> recommendations = <Recommendation>[];
-  RecommendationQueue({required this.closet, required this.attributes, required this.outfits}) {
+  RecommendationQueue({required this.closet, required this.attributes, required this.outfits, required this.weather}) {
     for (var item in closet) {
       recommendations.add(Recommendation(score: 0, clothing: item));
     }
+    //print(outfits.length);
     for (Outfit outfit in outfits) {
+      if(outfit.recommendationWeather.compareTo(weather) == 0) {
+        whitelist.addAll(outfit.clothes);
+      }
       if (outfit.recommendationDate != null &&
         outfit.recommendationFrequency != 'Never') {
         if (outfit.recommendationDate!.isBefore(DateTime.now()) &&
@@ -57,6 +62,7 @@ class RecommendationQueue {
               blacklist.addAll(outfit.clothes);
             }
           }
+
         }
       }
     }
@@ -88,6 +94,7 @@ class RecommendationQueue {
         item.score = 20;
         continue;
       }
+
 
       if(attributes.contains(item.clothing.category)) {
         item.score = item.score+ 1;

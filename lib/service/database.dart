@@ -56,6 +56,7 @@ class DatabaseService {
       'recommendationDate': outfit.recommendationDate == null ? '' :
         outfit.recommendationDate!.toIso8601String(),
       'recommendationFrequency': outfit.recommendationFrequency,
+      'recommendationWeather': outfit.recommendationWeather,
       'id': outfit.id,
     }, SetOptions(merge: true));
   }
@@ -172,7 +173,8 @@ class DatabaseService {
           return Outfit(doc['name'] ?? '', items, doc['id'], ref: item_refs,
             recommendationDate: doc['recommendationDate'] == '' ? null :
               DateTime.parse(doc['recommendationDate']),
-            recommendationFrequency: doc['recommendationFrequency']);
+            recommendationFrequency: doc['recommendationFrequency'],
+          recommendationWeather: doc['recommendationWeather'] ?? 'None');
         }).toList()
     );
   }
