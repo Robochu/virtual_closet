@@ -718,7 +718,9 @@ class _HomeViewState extends State<HomeView> {
                 items
                     .add(ItemSwipe(item: recommendations.removeFirst().clothing));
               }
+              //for display message when runs out of card
               items.add(ItemSwipe(item: Clothing.usingLink("","not","","","","","","",false,"",false)));
+
               List<ItemSwipe> reversed = items.reversed.toList();
 
               return Container(

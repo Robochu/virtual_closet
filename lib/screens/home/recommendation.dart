@@ -37,7 +37,15 @@ class RecommendationQueue {
   }
 
   PriorityQueue<Recommendation> get queue {
-    PriorityQueue<Recommendation> queue = PriorityQueue<Recommendation>((a,b) => (b.score.compareTo(a.score)));
+    PriorityQueue<Recommendation> queue = PriorityQueue<Recommendation>((a,b) {
+      int res = b.score.compareTo(a.score);
+      if(res == 0) {
+        return b.clothing.filename!.compareTo(a.clothing.filename!);
+      } else {
+        return res;
+      }
+
+    });
     calculateScore();
     recommendations.removeWhere((element) => element.score == 0);
     recommendations.removeWhere((element) => element.clothing.isLaundry == true);
