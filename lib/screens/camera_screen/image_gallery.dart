@@ -48,9 +48,9 @@ class ImageFromGalleryScreenState extends State<ImageFromGalleryScreen> {
   late List<String> labels;
   final int _labelsLength = 1001;
 
-  final String _labelsFileName = 'assets/dict.txt';
+  final String _labelsFileName = "assets/dict.txt";
 
-  final String _modelFilePath = 'model-export_icn_tflite-Bingabad_20211104015315-2021-11-14T17_06_32.199644Z_model.tflite';
+  final String _modelFilePath = "model-export_icn_tflite-Bingabad_20211203013449-2021-12-03T12_55_54.065266Z_model.tflite";
 
   NormalizeOp preProcessNormalizeOp = NormalizeOp(0, 1);
   NormalizeOp postProcessNormalizeOp = NormalizeOp(0, 255);
