@@ -20,18 +20,43 @@ class RecommendationQueue {
   List<Recommendation> recommendations = <Recommendation>[];
   RecommendationQueue({required this.closet, required this.attributes, required this.outfits}) {
     for (var item in closet) {
-      //print(item.link);
       recommendations.add(Recommendation(score: 0, clothing: item));
     }
-    //print('');
-    //print(outfits.length);
     for (Outfit outfit in outfits) {
       if (outfit.recommendationDate != null &&
-        outfit.recommendationDate!.difference(DateTime.now()).inDays <= 7) {
-        if (outfit.recommendationDate!.difference(DateTime.now()).inDays == 0) {
+        outfit.recommendationFrequency != 'Never') {
+        if (outfit.recommendationDate!.isBefore(DateTime.now()) &&
+          outfit.recommendationFrequency == 'Every day') {
           whitelist.addAll(outfit.clothes);
         } else {
-          blacklist.addAll(outfit.clothes);
+          while (outfit.recommendationDate!.isBefore(DateTime.now())) {
+            if (outfit.recommendationFrequency == 'Every week') {
+              outfit.recommendationDate =
+                outfit.recommendationDate!.add(const Duration(days: 7));
+            } else if (outfit.recommendationFrequency == 'Every month') {
+              outfit.recommendationDate =
+                DateTime(outfit.recommendationDate!.year,
+                outfit.recommendationDate!.month + 1,
+                outfit.recommendationDate!.day);
+            } else if (outfit.recommendationFrequency == 'Every year') {
+              outfit.recommendationDate =
+                DateTime(outfit.recommendationDate!.year + 1,
+                outfit.recommendationDate!.month,
+                outfit.recommendationDate!.day);
+            } else {
+              break;
+            }
+          }
+          if (outfit.recommendationDate!.difference(DateTime.now()).inDays <= 7) {
+            if (outfit.recommendationDate!.year == DateTime.now().year &&
+              outfit.recommendationDate!.month == DateTime.now().month &&
+              outfit.recommendationDate!.day == DateTime.now().day) {
+              whitelist.addAll(outfit.clothes);
+            } else {
+              print(outfit.recommendationDate!.difference(DateTime.now()).inDays);
+              blacklist.addAll(outfit.clothes);
+            }
+          }
         }
       }
     }
