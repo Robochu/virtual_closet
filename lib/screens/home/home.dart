@@ -10,6 +10,7 @@ import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/account/account.dart';
 import 'package:virtual_closet/screens/camera_screen/image_gallery.dart';
 import 'package:virtual_closet/screens/closet/closet.dart';
+import 'package:virtual_closet/screens/combinations/outfit.dart';
 import 'package:virtual_closet/screens/home/calendar.dart';
 import 'package:virtual_closet/screens/home/item_swipe.dart';
 import 'package:virtual_closet/screens/home/notification_services.dart';
@@ -693,38 +694,48 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget buildRecommendation(BuildContext context) {
-    return StreamBuilder<List<Clothing>>(
-        stream:
-            DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<Clothing> closet = snapshot.data ?? <Clothing>[];
-            PriorityQueue<Recommendation> recommendations =
-                RecommendationQueue(closet: closet, attributes: attributes)
-                    .queue;
-            if (closet.isEmpty || recommendations.isEmpty) {
+    return StreamBuilder<List<Outfit>>(
+      stream: DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).outfits,
+      builder: (context, outfitSnapshot) { return StreamBuilder<List<Clothing>>(
+          stream:
+              DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).closet,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<Clothing> closet = snapshot.data ?? <Clothing>[];
+              List<Outfit> outfits = outfitSnapshot.data ?? <Outfit>[];
+              PriorityQueue<Recommendation> recommendations =
+                  RecommendationQueue(closet: closet, attributes: attributes, outfits: outfits)
+                      .queue;
+              if (closet.isEmpty || recommendations.isEmpty) {
+                return Container(
+                    alignment: Alignment.center,
+                    height: 400.0,
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: const Text("There is no recommendation right now :("));
+              }
+              List<ItemSwipe> items = <ItemSwipe>[];
+              while (recommendations.isNotEmpty) {
+                items
+                    .add(ItemSwipe(item: recommendations.removeFirst().clothing));
+              }
+              //for display message when runs out of card
+              items.add(ItemSwipe(item: Clothing.usingLink("","not","","","","","","",false,"",false)));
+
+              List<ItemSwipe> reversed = items.reversed.toList();
+
               return Container(
                   alignment: Alignment.center,
                   height: 400.0,
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: const Text("There is no recommendation right now :("));
+                  padding: const EdgeInsets.only(left: 60.0),
+                  child: Stack(
+                    children: reversed,
+                  ));
+            } else {
+              return const Center(child: CircularProgressIndicator());
             }
-            List<ItemSwipe> items = <ItemSwipe>[];
-            while (recommendations.isNotEmpty) {
-              items
-                  .add(ItemSwipe(item: recommendations.removeFirst().clothing));
-            }
-            return Container(
-                alignment: Alignment.center,
-                height: 400.0,
-                padding: const EdgeInsets.only(left: 60.0),
-                child: Stack(
-                  children: items,
-                ));
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        });
+          });
+      },
+    );
   }
 
   Widget buildReminders(BuildContext context) {
