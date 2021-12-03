@@ -848,6 +848,7 @@ class _HomeViewState extends State<HomeView> {
     _getLaundryFreq();
     _getLaundryNotification();
     getOutfit();
+    setState(() {});
   }
 
   @override
@@ -906,6 +907,7 @@ class _HomeViewState extends State<HomeView> {
                   child: const Text("There is no recommendation right now :("));
             }
             List<ItemSwipe> items = <ItemSwipe>[];
+            items.clear();
             while (recommendations.isNotEmpty) {
               items
                   .add(ItemSwipe(item: recommendations.removeFirst().clothing));

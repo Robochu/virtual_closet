@@ -30,6 +30,9 @@ class _DesignerState extends State<Designer> {
     outfit = widget.outfit;
     name_controller.text = outfit.name;
     original = Outfit.clone(outfit); //keep a copy for "Cancel" button
+    original.recommendationFrequency = outfit.recommendationFrequency;
+    original.recommendationDate = outfit.recommendationDate;
+    original.recommendationWeather = outfit.recommendationWeather;
   }
 
   @override
@@ -49,6 +52,7 @@ class _DesignerState extends State<Designer> {
           ),
           ),
       body: Column(
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             child: GridView.count(
@@ -101,7 +105,7 @@ class _DesignerState extends State<Designer> {
                           setState(() {
                             outfit.clothes.removeAt(index);
                           });
-                          DatabaseService(uid: user!.uid).updateOutfit(outfit);
+                          //DatabaseService(uid: user!.uid).updateOutfit(outfit);
                         },
                       )),
                       child: InkWell(
@@ -211,6 +215,7 @@ class _DesignerState extends State<Designer> {
                   onChanged: outfit.recommendationDate == null ? null :
                     (text) => setState(() {
                     outfit.recommendationFrequency = text!;
+                    original.recommendationFrequency = text;
                     DatabaseService(uid: user!.uid).updateOutfit(outfit);
                   }),
                   items: <String>[
@@ -247,6 +252,7 @@ class _DesignerState extends State<Designer> {
               value: outfit.recommendationWeather,
               onChanged: (text) => setState(() {
                 outfit.recommendationWeather = text!;
+                original.recommendationWeather = text;
                 DatabaseService(uid: user!.uid).updateOutfit(outfit);
               }),
               items: <String>[
@@ -279,6 +285,10 @@ class _DesignerState extends State<Designer> {
                         _isEdit = !_isEdit;
                         outfit = Outfit.clone(original);
                         name_controller.text = outfit.name;
+
+                        outfit.recommendationFrequency = original.recommendationFrequency;
+                        outfit.recommendationDate = original.recommendationDate;
+                        outfit.recommendationWeather = original.recommendationWeather;
                       });
                     }),
               ),
@@ -385,6 +395,7 @@ class _DesignerState extends State<Designer> {
     if (picked != null && picked != outfit.recommendationDate) {
       setState(() {
         outfit.recommendationDate = picked;
+        original.recommendationDate = picked;
         DatabaseService(uid: uid).updateOutfit(outfit);
       });
     }
