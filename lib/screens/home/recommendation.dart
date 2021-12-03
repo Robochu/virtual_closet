@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:collection/collection.dart';
 import 'package:virtual_closet/screens/combinations/outfit.dart';
@@ -20,6 +21,7 @@ class RecommendationQueue {
   String weather;
   List<Recommendation> recommendations = <Recommendation>[];
   RecommendationQueue({required this.closet, required this.attributes, required this.outfits, required this.weather}) {
+    //print(whitelist.length);
     for (var item in closet) {
       recommendations.add(Recommendation(score: 0, clothing: item));
     }
@@ -28,6 +30,36 @@ class RecommendationQueue {
       if(outfit.recommendationWeather.compareTo(weather) == 0) {
         whitelist.addAll(outfit.clothes);
       }
+
+      if(outfit.recommendationDate != null) {
+        if (outfit.recommendationDate!.difference(DateTime.now()).inDays <= 7) {
+          if (outfit.recommendationDate!.year == DateTime.now().year &&
+              outfit.recommendationDate!.month == DateTime.now().month &&
+              outfit.recommendationDate!.day == DateTime.now().day) {
+            //if date is today, add to whitelist to recommend. then calculate new date, update database
+            whitelist.addAll(outfit.clothes);
+            if (outfit.recommendationFrequency == 'Every week') {
+              outfit.recommendationDate =
+                  outfit.recommendationDate!.add(const Duration(days: 7));
+            } else if (outfit.recommendationFrequency == 'Every month') {
+              outfit.recommendationDate =
+                  DateTime(outfit.recommendationDate!.year,
+                      outfit.recommendationDate!.month + 1,
+                      outfit.recommendationDate!.day);
+            } else if (outfit.recommendationFrequency == 'Every year') {
+              outfit.recommendationDate =
+                  DateTime(outfit.recommendationDate!.year + 1,
+                      outfit.recommendationDate!.month,
+                      outfit.recommendationDate!.day);
+            }
+            DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).updateOutfit(outfit);
+          } else {
+            //print(outfit.recommendationDate!.difference(DateTime.now()).inDays);
+            blacklist.addAll(outfit.clothes);
+          }
+        }
+      }
+      /*
       if (outfit.recommendationDate != null &&
         outfit.recommendationFrequency != 'Never') {
         if (outfit.recommendationDate!.isBefore(DateTime.now()) &&
@@ -52,20 +84,12 @@ class RecommendationQueue {
               break;
             }
           }
-          if (outfit.recommendationDate!.difference(DateTime.now()).inDays <= 7) {
-            if (outfit.recommendationDate!.year == DateTime.now().year &&
-              outfit.recommendationDate!.month == DateTime.now().month &&
-              outfit.recommendationDate!.day == DateTime.now().day) {
-              whitelist.addAll(outfit.clothes);
-            } else {
-              print(outfit.recommendationDate!.difference(DateTime.now()).inDays);
-              blacklist.addAll(outfit.clothes);
-            }
-          }
+
 
         }
-      }
+      }*/
     }
+
   }
 
   PriorityQueue<Recommendation> get queue {

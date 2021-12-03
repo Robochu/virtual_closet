@@ -254,6 +254,10 @@ class _HomeViewState extends State<HomeView> {
   List<String> attributes = <String>[];
   List<Outfit> outfits = <Outfit>[];
   String weather = '';
+  int numberOfAlarms = 0;
+  String alarm1 = '';
+  String alarm2 = '';
+  String alarm3 = '';
 
   void _getLaundryFreq() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -548,6 +552,265 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  // Time picker widget
+  selectTime(BuildContext context) async {        
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+    if(timeOfDay != null && timeOfDay != selectedTime)
+    {
+      String alarmToEdit = "alarm" + (numberOfAlarms + 1).toString();
+      setState(() {
+        selectedTime = timeOfDay;
+      });
+      print(alarmToEdit + 'changed' + selectedTime.format(context));
+      prefs.setString(alarmToEdit, selectedTime.toString());
+    }
+    getAllAlarms();
+    Navigator.of(context, rootNavigator: true).pop(true);
+    showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context);
+  }
+
+  editTime(BuildContext context, alarmId) async {        
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+    if(timeOfDay != null && timeOfDay != selectedTime)
+    {
+      setState(() {
+        selectedTime = timeOfDay;
+      });
+      prefs.setString("alarm" + alarmId.toString(), selectedTime.toString());
+      getAllAlarms();
+    }
+    Navigator.of(context, rootNavigator: true).pop(true);
+    showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context);    
+  }
+
+  deleteAlarm(alarmId) async 
+  {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (alarmId == 1 && numberOfAlarms == 3)
+    {
+      TimeOfDay alarm2TOD = TimeOfDay(
+        hour: int.parse(alarm2.substring(10, 12)),
+        minute: int.parse(alarm2.substring(13, 15)),
+      );
+      TimeOfDay alarm3TOD = TimeOfDay(
+        hour: int.parse(alarm3.substring(10, 12)),
+        minute: int.parse(alarm3.substring(13, 15)),
+      );
+      alarm1 = alarm2TOD.toString();
+      alarm2 = alarm3TOD.toString();
+      prefs.setString('alarm1', alarm1);
+      prefs.setString('alarm2', alarm2);
+      prefs.setString('alarm3', "");
+      getAllAlarms();
+    }
+    else if (alarmId == 1 && numberOfAlarms == 2)
+    {
+      TimeOfDay alarm2TOD = TimeOfDay(
+        hour: int.parse(alarm2.substring(10, 12)),
+        minute: int.parse(alarm2.substring(13, 15)),
+      );
+      alarm1 = alarm2TOD.toString();
+      prefs.setString('alarm1', alarm1);
+      prefs.setString('alarm2', "");
+      getAllAlarms();
+    }
+    else if (alarmId == 1 && numberOfAlarms == 1)
+    {
+      prefs.setString('alarm1', "");
+      getAllAlarms();
+    }
+    else if (alarmId == 2 && numberOfAlarms == 3)
+    {
+      TimeOfDay alarm3TOD = TimeOfDay(
+        hour: int.parse(alarm3.substring(10, 12)),
+        minute: int.parse(alarm3.substring(13, 15)),
+      );
+      alarm2 = alarm3TOD.toString();
+      prefs.setString('alarm2', alarm2);
+      prefs.setString('alarm3', "");
+      getAllAlarms();
+    }
+    else if (alarmId == 2 && numberOfAlarms == 2)
+    {
+      prefs.setString('alarm2', "");
+      getAllAlarms();
+    }
+    else
+    {
+      prefs.setString('alarm3', "");
+      getAllAlarms();
+    }
+
+    Navigator.of(context, rootNavigator: true).pop(true);
+    showDialog(builder: (BuildContext context) {return getAlarmDialog();}, context: context); 
+  }
+
+  Future<void> getAllAlarms()
+  async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    alarm1 = prefs.getString('alarm1') ?? "";
+    alarm2 = prefs.getString('alarm2') ?? "";
+    alarm3 = prefs.getString('alarm3') ?? "";
+    numberOfAlarms = 0;
+
+    if (alarm1 != "")
+    {
+      numberOfAlarms++;
+    }
+    if (alarm2 != "")
+    {
+      numberOfAlarms++;
+    }
+    if (alarm3 != "")
+    {
+      numberOfAlarms++;
+    }
+  }
+
+  bool checkNumberOfAlarms() 
+  {
+    if (numberOfAlarms == 3)
+    {
+      return true;
+    }
+    return false;
+  }
+
+  Widget makeAlarmWidget(alarmId)
+  {
+    String inputTime = "";
+    TimeOfDay inputTimeTOD = TimeOfDay.now();
+
+    if (alarmId == 1)
+    {
+      inputTime = alarm1;
+    }
+    else if (alarmId == 2)
+    {
+      inputTime = alarm2;
+    }
+    else
+    {
+      inputTime = alarm3;
+    }
+
+    if (inputTime == "")
+    {
+      return const Spacer();
+    }
+    else
+    {
+      inputTimeTOD = TimeOfDay(
+        hour: int.parse(inputTime.substring(10, 12)),
+        minute: int.parse(inputTime.substring(13, 15)),
+      );
+    }
+
+    return Column(children: [
+      Row(children: [
+      Text(
+        inputTimeTOD.format(context).substring(0, inputTimeTOD.format(context).length - 2) + 
+        inputTimeTOD.format(context).substring(inputTimeTOD.format(context).length - 2, inputTimeTOD.format(context).length).toLowerCase(),
+        textAlign: TextAlign.left, 
+        style: const TextStyle(fontSize: 40, fontWeight: FontWeight.w400),
+      ),
+      const Spacer(),
+      FloatingActionButton(
+        onPressed: () => editTime(context, alarmId), 
+        child: const Icon(Icons.settings),
+        mini: true,
+      ),
+      FloatingActionButton(
+        onPressed: () => deleteAlarm(alarmId),
+        child: const Icon(Icons.delete),
+        mini: true,
+      )
+    ],)
+    ],
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    );
+  }
+
+  Widget getAlarmsText()
+  {    
+    if (alarm1 == "" && alarm2 == "" && alarm3 == "")
+    {
+      return const Text("you have none");
+    }
+
+    return Column(children: [
+      Expanded(child: Column(
+            children: <Widget>[
+                   for (int i = 1; i <= 3; i++)
+                      makeAlarmWidget(i),
+                      const SizedBox(height: 10,),
+                     ],
+            ),)
+    ],);
+  }
+
+  Dialog getAlarmDialog()
+  {
+    return Dialog(
+      child: Container(
+                height: 320,
+                width: 400,
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    const Padding(padding: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+                    const Text("Your Alarms", 
+                    textAlign: TextAlign.center, 
+                    style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+                    ),
+                    const Divider(
+                      color: Colors.black,
+                      thickness: 5.5,
+                      indent: 5.5,
+                      endIndent: 5.5,
+                    ),
+                    Expanded(
+                      child: getAlarmsText()
+                    ),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Column(
+                        children: [
+                        const Divider(
+                          color: Colors.black,
+                          thickness: 5.5,
+                          indent: 5.5,
+                          endIndent: 5.5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                        FloatingActionButton(
+                          onPressed: checkNumberOfAlarms() ? null : () => selectTime(context),
+                          child: const Icon(Icons.alarm_add),
+                        ),
+                        const Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0),)
+                      ],),
+                      const Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),)],
+                      )
+                    )
+                  ],
+                )
+              ),
+    );
+  }
+
   void getRecommendation() {
     // Get filters using helper functions
     weatherClothesFilter(actualIconCode);
@@ -585,6 +848,7 @@ class _HomeViewState extends State<HomeView> {
     _getLaundryFreq();
     _getLaundryNotification();
     getOutfit();
+    setState(() {});
   }
 
   @override
@@ -643,6 +907,7 @@ class _HomeViewState extends State<HomeView> {
                   child: const Text("There is no recommendation right now :("));
             }
             List<ItemSwipe> items = <ItemSwipe>[];
+            items.clear();
             while (recommendations.isNotEmpty) {
               items
                   .add(ItemSwipe(item: recommendations.removeFirst().clothing));
