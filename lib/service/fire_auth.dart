@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'database.dart';
 import 'package:virtual_closet/models/user.dart';
@@ -27,6 +28,7 @@ class Authentication {
     required String name,
     required String email,
     required String password,
+    BuildContext? context,
   }) async {
     User? user;
     try {
@@ -46,10 +48,27 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('This password is too weak');
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("This password is too weak")
+          ));
+        }
         return Future<MyUser?>.value(null);
       } else if (e.code == 'email-already-in-use') {
         print('Account already exists for this email');
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Account already exists for this email")
+          ));
+        }
         return Future<MyUser?>.value(null);
+      } else if (e.code == 'invalid-email') {
+        print("Invalid email");
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Invalid email")
+          ));
+        }
       }
     } catch (e) {
       print(e);
@@ -60,6 +79,7 @@ class Authentication {
   Future<MyUser?> signInWithEmailPassword({
     required String email,
     required String password,
+    BuildContext? context,
   }) async {
     User? user;
     try {
@@ -69,22 +89,51 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("No user found for that email")
+          ));
+        }
         return Future<MyUser?>.value(null);
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided.');
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Wrong password provided")
+          ));
+        }
+        return Future<MyUser?>.value(null);
+      }
+      else if (e.code == 'invalid-email') {
+        print('Invalid email');
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Invalid email")
+          ));
+        }
         return Future<MyUser?>.value(null);
       }
     }
     return _createUser(user);
   }
 
-  void forgotPassword({required String email}) async {
+  void forgotPassword({required String email, BuildContext? context}) async {
     try {
       auth.sendPasswordResetEmail(email: email);
       print("Sent password reset email!");
+      if (context != null) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text("Sent password reset email!")
+        ));
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == "auth/invalid-email") {
         print("Invalid email");
+        if (context != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text("Invalid email")
+          ));
+        }
       }
     }
   }

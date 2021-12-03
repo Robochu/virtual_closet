@@ -216,9 +216,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     try {
                       auth.sendPasswordResetEmail(email: user!.email!);
                       print("Sent password reset email!");
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Sent password reset email!")
+                      ));
                     } on FirebaseAuthException catch (e) {
                       if (e.code == "auth/invalid-email") {
                         print("Invalid email");
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Invalid email")
+                        ));
                       }
                     }
                   },

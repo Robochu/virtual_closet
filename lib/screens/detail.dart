@@ -216,7 +216,7 @@ class _DetailPageState extends State<DetailPage> {
                           });
                         } : null,
                         items: <String>[
-                          'Black', 'Blue', 'Brown', 'Grey', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
+                          'Black', 'Blue', 'Brown', 'Gray', 'Green', 'Orange', 'Pink', 'Purple', 'Red', 'White', 'Yellow', 'Multicolor'
                         ].map<DropdownMenuItem<String>>((String value) {
                           return DropdownMenuItem(
                             value: value,
@@ -499,37 +499,6 @@ class _DetailPageState extends State<DetailPage> {
                 width: 20,
               ),
             ]
-              /*Align(
-                  alignment: Alignment.centerLeft,
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                      filled: true,
-                      labelText: "What attribute is wrong?",
-                    ),
-                    isExpanded: true,
-                    hint: const Text('Choose an attribute'),
-                    value: (attributeError != '')
-                        ? attributeError
-                        : 'Category',
-                    onChanged: (String? value) {
-                      setState(() {
-                        attributeError = value!;
-                      });
-                    },
-                    items: <String>[
-                      'Category',
-                      'Clothing item',
-                      'Color',
-                      'Length',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  )
-              ),*/
         );
       },
     );

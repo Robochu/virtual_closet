@@ -46,6 +46,8 @@ class _LaundryState extends State<Laundry> {
                           DateFormat.yMd().format(DateTime.now());
                       item.upload();
                     }
+                    _selectedIndex.clear();
+                    _selectionMode = false;
                     // Close confirmation dialog box
                     Navigator.of(cxt).pop();
                   },

@@ -69,9 +69,12 @@ class _LoginState extends State<Login> {
                     //print("Open forgot password screen");
                     if (emailText.text == "") {
                       print("Enter email");
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Enter email")
+                      ));
                     }
                     else {
-                      Authentication(auth: FirebaseAuth.instance).forgotPassword(email: emailText.text);
+                      Authentication(auth: FirebaseAuth.instance).forgotPassword(email: emailText.text, context: context);
                     }
                   },
                   style: TextButton.styleFrom(
@@ -88,11 +91,25 @@ class _LoginState extends State<Login> {
                     child: const Text('Login'),
                     onPressed: () {
                       print("Login functionality here");
-                      Future<MyUser?> user =
-                      Authentication(auth: FirebaseAuth.instance).signInWithEmailPassword(
-                          email: emailText.text,
-                          password: passwordText.text);
-
+                      if (emailText.text == "") {
+                        print("Enter email");
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Enter email")
+                        ));
+                      }
+                      else if (passwordText.text == ""){
+                        print("Enter password");
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text("Enter password")
+                        ));
+                      }
+                      else {
+                        Authentication(auth: FirebaseAuth.instance)
+                            .signInWithEmailPassword(
+                            email: emailText.text,
+                            password: passwordText.text,
+                            context: context);
+                      }
                     },
                   )),
 

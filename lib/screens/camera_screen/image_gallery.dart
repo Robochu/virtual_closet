@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:virtual_closet/clothes.dart';
 import 'package:virtual_closet/models/user.dart';
 import 'package:virtual_closet/screens/detail.dart';
-import 'package:firebase_ml_custom/firebase_ml_custom.dart';
+//import 'package:firebase_ml_custom/firebase_ml_custom.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 import 'package:collection/collection.dart';
